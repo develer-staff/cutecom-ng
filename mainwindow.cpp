@@ -1,14 +1,29 @@
+/**
+ * \file
+ * <!--
+ * Copyright 2015 Develer S.r.l. (http://www.develer.com/)
+ * All rights reserved.
+ * -->
+ *
+ * \brief main cutecom-ng window
+ *
+ * \version $Id: $
+ * \author Aurelien Rainone <aurelien@develer.org>
+ */
+
 #include "mainwindow.h"
 #include "connectdialog.h"
 #include "ui_mainwindow.h"
-
+#include "sessionmanager.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    connect(ui->connectButton, &QAbstractButton::clicked, this, &MainWindow::openNewConnection);
+    connect(ui->connectButton, &QAbstractButton::clicked, this, &MainWindow::openConnectionDialog);
+
+    session_mgr = new SessionManager(this);
 }
 
 MainWindow::~MainWindow()
@@ -16,9 +31,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::openNewConnection()
+void MainWindow::openConnectionDialog()
 {
     ConnectDialog dialog(this);
+
+    connect(&dialog, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
     dialog.exec();
 }
 
