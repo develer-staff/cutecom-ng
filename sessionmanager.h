@@ -38,7 +38,7 @@ public slots:
      * @brief open a serial port connection
      * @param port_cfg serial port settings
      */
-    void openSession(const serial_port_cfg_t& port_cfg);
+    void openSession(const QHash<QString, QString>& port_cfg);
 };
 
 #endif // SESSIONMANAGER_H

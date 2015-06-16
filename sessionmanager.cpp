@@ -24,7 +24,7 @@ SessionManager::~SessionManager()
 
 }
 
-void SessionManager::openSession(const serial_port_cfg_t& port_cfg)
+void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
 {
     Q_UNUSED(port_cfg)
 

@@ -18,19 +18,6 @@ namespace Ui {
 class ConnectDialog;
 }
 
-/**
- * @brief Represent the serial port connection settings
- *
- * Has the following keys :
- *  - "device"
- *  - "baud_rate"
- *  - "data_bits"
- *  - "stop_bits"
- *  - "parity"
- *  - "flow_control"
- * All values are QStrings
- */
-typedef QHash<QString, QString> serial_port_cfg_t;
 
 
 /**
@@ -48,7 +35,22 @@ public:
 
 private:
     Ui::ConnectDialog *ui;
-    serial_port_cfg_t defaultValues;
+
+
+    /**
+     * @brief Represent the default serial port settings
+     *
+     * Has the following keys :
+     *  - "device"
+     *  - "baud_rate"
+     *  - "data_bits"
+     *  - "stop_bits"
+     *  - "parity"
+     *  - "flow_control"
+     * All values are QStrings
+     */
+
+    QHash<QString, QString> defaultValues;
 
 private:
     /**
@@ -59,12 +61,14 @@ private:
     /**
      * preselect serial port connection settings
      */
-    void preselectPortSettings(const serial_port_cfg_t& settings);
+    void preselectPortSettings(const QHash<QString, QString>& settings);
 
 
 signals:
-
-    void openDeviceClicked(const serial_port_cfg_t& config);
+    /**
+     * signal emitted 'open device' button has been clicked
+     */
+    void openDeviceClicked(const QHash<QString, QString>& config);
 };
 
 #endif // CONNECTDIALOG_H

@@ -85,7 +85,7 @@ void ConnectDialog::fillSettingsLists()
     ui->flowControlList->addItem("Software", QSerialPort::SoftwareControl);
 }
 
-void ConnectDialog::preselectPortSettings(const serial_port_cfg_t& settings)
+void ConnectDialog::preselectPortSettings(const QHash<QString, QString>& settings)
 {
     ui->deviceList->setCurrentText(settings["device"]);
     ui->baudRateList->setCurrentText(settings["baud_rate"]);
@@ -98,7 +98,7 @@ void ConnectDialog::preselectPortSettings(const serial_port_cfg_t& settings)
 void ConnectDialog::accept()
 {
     // create a serial port config object from current selection
-    serial_port_cfg_t cfg;
+    QHash<QString, QString> cfg;
     cfg["device"] = ui->deviceList->currentText();
     cfg["baud_rate"] = ui->baudRateList->currentText();
     cfg["data_bits"] = ui->dataBitsList->currentText();
