@@ -10,10 +10,11 @@
  */
 
 #include "mainwindow.h"
-#include "connectdialog.h"
 #include "ui_mainwindow.h"
+#include "connectdialog.h"
 #include "sessionmanager.h"
 #include "outputmanager.h"
+#include "inputline.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -25,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // create session and output manager
     OutputManager *output_mgr = new OutputManager(ui->textOutput);
     session_mgr = new SessionManager(output_mgr, this);
+
+    connect(ui->textInput, &InputLine::lineSent, session_mgr, &SessionManager::sendToSerial);
 }
 
 MainWindow::~MainWindow()
@@ -39,4 +42,3 @@ void MainWindow::openConnectionDialog()
     connect(&dialog, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
     dialog.exec();
 }
-

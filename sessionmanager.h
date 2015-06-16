@@ -32,10 +32,6 @@ public:
     explicit SessionManager(OutputManager *output_mgr, QObject *parent = 0);
     ~SessionManager();
 
-signals:
-
-public slots:
-
     /**
      * @brief open a serial port connection
      * @param port_cfg serial port settings
@@ -43,9 +39,16 @@ public slots:
     void openSession(const QHash<QString, QString>& port_cfg);
 
     /**
-     * @brief read data when port is ready
+     * @brief read data from serial port
      */
     void readData();
+
+    /**
+     * @brief send data to serial port
+     * @param data
+     */
+    void sendToSerial(const QByteArray &data);
+
 };
 
 #endif // SESSIONMANAGER_H

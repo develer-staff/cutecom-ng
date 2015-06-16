@@ -96,3 +96,9 @@ void SessionManager::readData()
     QByteArray data(serial->readAll());
     output_mgr->appendData(data);
 }
+
+
+void SessionManager::sendToSerial(const QByteArray &data)
+{
+    serial->write(data);
+}
