@@ -14,10 +14,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    connectdialog.cpp
+    connectdialog.cpp \
+    sessionmanager.cpp \
+    outputmanager.cpp
 
 HEADERS  += mainwindow.h \
-    connectdialog.h
+    connectdialog.h \
+    sessionmanager.h \
+    outputmanager.h
 
 FORMS    += mainwindow.ui \
     connectdialog.ui
