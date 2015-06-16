@@ -2,12 +2,10 @@
  * \file
  * <!--
  * Copyright 2015 Develer S.r.l. (http://www.develer.com/)
- * All rights reserved.
  * -->
  *
  * \brief Serial port connection and settings dialog
  *
- * \version $Id: $
  * \author Aurelien Rainone <aurelien@develer.org>
  */
 
