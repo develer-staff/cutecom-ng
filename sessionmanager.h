@@ -17,6 +17,7 @@
 #include "connectdialog.h"
 
 class QSerialPort;
+class OutputManager;
 
 class SessionManager : public QObject
 {
@@ -24,10 +25,11 @@ class SessionManager : public QObject
 
 private:
     QSerialPort * serial;
+    OutputManager *output_mgr;
 
 public:
 
-    explicit SessionManager(QObject *parent = 0);
+    explicit SessionManager(OutputManager *output_mgr, QObject *parent = 0);
     ~SessionManager();
 
 signals:
@@ -39,6 +41,11 @@ public slots:
      * @param port_cfg serial port settings
      */
     void openSession(const QHash<QString, QString>& port_cfg);
+
+    /**
+     * @brief read data when port is ready
+     */
+    void readData();
 };
 
 #endif // SESSIONMANAGER_H

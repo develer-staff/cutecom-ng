@@ -11,8 +11,19 @@
 
 #include "outputmanager.h"
 
-OutputManager::OutputManager(QObject *parent) : QObject(parent)
+#include <QTextEdit>
+
+OutputManager::OutputManager(QTextEdit *textedit, QObject *parent) : QObject(parent), edit(textedit)
 {
 
+}
+
+void OutputManager::appendData(QByteArray & data)
+{
+    all_data.append(data);
+
+    // test
+    foreach(QByteArray line, data.split('\n'))
+        edit->append(line);
 }
 

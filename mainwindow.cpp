@@ -13,6 +13,7 @@
 #include "connectdialog.h"
 #include "ui_mainwindow.h"
 #include "sessionmanager.h"
+#include "outputmanager.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -21,7 +22,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->connectButton, &QAbstractButton::clicked, this, &MainWindow::openConnectionDialog);
 
-    session_mgr = new SessionManager(this);
+    // create session and output manager
+    OutputManager *output_mgr = new OutputManager(ui->textOutput);
+    session_mgr = new SessionManager(output_mgr, this);
 }
 
 MainWindow::~MainWindow()

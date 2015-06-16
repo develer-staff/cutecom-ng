@@ -13,16 +13,26 @@
 #define OUTPUTMANAGER_H
 
 #include <QObject>
+#include <QByteArray>
+
+class QTextEdit;
 
 class OutputManager : public QObject
 {
     Q_OBJECT
+
+private:
+
+    QByteArray all_data;
+    QTextEdit *edit;
+
 public:
-    explicit OutputManager(QObject *parent = 0);
+    explicit OutputManager(QTextEdit *textedit, QObject *parent = 0);
 
 signals:
 
 public slots:
+    void appendData(QByteArray & data);
 };
 
 #endif // OUTPUTMANAGER_H
