@@ -50,20 +50,24 @@ void ConnectDialog::fillSettingsLists()
         ui->deviceList->addItem(info.portName(), info.portName());
 
     // fill baud rates combo box
-    QList<uint> baud_rates;
-    baud_rates << QSerialPort::Baud1200 << QSerialPort::Baud2400;
-    baud_rates << QSerialPort::Baud4800 << QSerialPort::Baud9600;
-    baud_rates << QSerialPort::Baud19200 << QSerialPort::Baud38400;
-    baud_rates << QSerialPort::Baud57600 << QSerialPort::Baud115200;
-    foreach(int bd, baud_rates)
-        ui->baudRateList->addItem(QString::number(bd));
+    QStringList baud_rates;
+    baud_rates <<
+        QString::number(QSerialPort::Baud1200) << QString::number(QSerialPort::Baud2400);
+    baud_rates <<
+        QString::number(QSerialPort::Baud4800) << QString::number(QSerialPort::Baud9600);
+    baud_rates <<
+        QString::number(QSerialPort::Baud19200) << QString::number(QSerialPort::Baud38400);
+    baud_rates <<
+        QString::number(QSerialPort::Baud57600) << QString::number(QSerialPort::Baud115200); 
+    ui->baudRateList->addItems(baud_rates);
 
     // fill data bits combo box
-    QList<uint> data_bits;
-    data_bits << QSerialPort::Data5 << QSerialPort::Data6;
-    data_bits << QSerialPort::Data7 << QSerialPort::Data8;
-    foreach(int db, data_bits)
-        ui->dataBitsList->addItem(QString::number(db));
+    QStringList data_bits;
+    data_bits <<
+        QString::number(QSerialPort::Data5) << QString::number(QSerialPort::Data6);
+    data_bits <<
+        QString::number(QSerialPort::Data7) << QString::number(QSerialPort::Data8);
+    ui->dataBitsList->addItems(baud_rates);
 
     // fill stop bits combo box
     ui->stopBitsList->addItem("1", QSerialPort::OneStop);
