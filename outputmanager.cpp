@@ -22,8 +22,6 @@ void OutputManager::appendData(QByteArray & data)
 {
     all_data.append(data);
 
-    // test
-    foreach(QByteArray line, data.split('\n'))
-        edit->append(line);
+    edit->insertPlainText (data);
 }
 
