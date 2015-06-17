@@ -4,7 +4,7 @@
  * Copyright 2015 Develer S.r.l. (http://www.develer.com/)
  * -->
  *
- * \brief handle display and saving of serial port output
+ * \brief OutputManager class implementation
  *
  * \author Aurelien Rainone <aurelien@develer.org>
  */
@@ -22,6 +22,7 @@ void OutputManager::appendData(QByteArray & data)
 {
     all_data.append(data);
 
+    edit->moveCursor(QTextCursor::End);
     edit->insertPlainText (data);
 }
 
