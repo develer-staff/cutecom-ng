@@ -28,7 +28,7 @@ class SessionManager : public QObject
     Q_OBJECT
 
 private:
-    QSerialPort * serial;
+    QSerialPort   *serial;
     OutputManager *output_mgr;
 
 public:
@@ -38,7 +38,7 @@ public:
 
     /**
      * \brief open a serial port connection
-     * \param port_cfg serial port settings
+     * \param port_cfg    serial port settings
      */
     void openSession(const QHash<QString, QString>& port_cfg);
 
@@ -49,7 +49,7 @@ public:
 
     /**
      * \brief send data to serial port
-     * \param data
+     * \param data    byte array data
      */
     void sendToSerial(const QByteArray &data);
 

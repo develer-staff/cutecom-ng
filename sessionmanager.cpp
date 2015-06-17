@@ -30,7 +30,9 @@ SessionManager::SessionManager(OutputManager *output_mgr, QObject *parent)
 
 SessionManager::~SessionManager()
 {
-
+    // closes connection if needed
+    if (serial->isOpen())
+        serial->close();
 }
 
 void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
@@ -66,6 +68,10 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
 
     if (cfg_ok)
     {
+        // closes connection if needed
+        if (serial->isOpen())
+            serial->close();
+
         // open serial port
         serial->setPortName(port_cfg["device"]);
         serial->setBaudRate(baud_rate);
