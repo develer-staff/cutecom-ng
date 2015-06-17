@@ -72,7 +72,7 @@ void ConnectDialog::fillSettingsLists()
         QString::number(QSerialPort::Data5) << QString::number(QSerialPort::Data6);
     data_bits <<
         QString::number(QSerialPort::Data7) << QString::number(QSerialPort::Data8);
-    ui->dataBitsList->addItems(baud_rates);
+    ui->dataBitsList->addItems(data_bits);
 
     // fill stop bits combo box
     ui->stopBitsList->addItem("1", QSerialPort::OneStop);
