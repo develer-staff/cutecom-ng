@@ -26,6 +26,7 @@ class OutputManager : public QObject
 
 private:
 
+    /// contains data appended to the output
     QByteArray all_data;
     QTextEdit *edit;
 
@@ -35,6 +36,11 @@ public:
 signals:
 
 public slots:
+
+    /**
+     * /brief append new data
+     * /param data array
+     */
     void appendData(QByteArray & data);
 };
 
