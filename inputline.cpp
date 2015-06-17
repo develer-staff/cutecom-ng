@@ -1,7 +1,8 @@
 #include "inputline.h"
 
-InputLine::InputLine(QWidget *parent) :
-    QLineEdit(parent)
+InputLine::InputLine(QWidget *parent)
+    :   QLineEdit(parent),
+        _line_end("\r\n")
 {
 
 }
@@ -13,8 +14,8 @@ void InputLine::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Return:
         case Qt::Key_Enter:
         {
-            QString line = text() + QString("\r\n");
-            emit lineSent(line.toLocal8Bit());
+            QString line = text() + _line_end;
+            emit commandSent(line.toLocal8Bit());
             clear();
             break;
         }
