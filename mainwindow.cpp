@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     OutputManager *output_mgr = new OutputManager(ui->textOutput);
     session_mgr = new SessionManager(output_mgr, this);
 
-    connect(ui->textInput, &InputLine::lineSent, session_mgr, &SessionManager::sendToSerial);
+    connect(ui->textInput, &InputLine::commandSent, session_mgr, &SessionManager::sendToSerial);
 }
 
 MainWindow::~MainWindow()

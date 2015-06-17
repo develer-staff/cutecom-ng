@@ -4,7 +4,7 @@
  * Copyright 2015 Develer S.r.l. (http://www.develer.com/)
  * -->
  *
- * \brief manage serial port session
+ * \brief SessionManager class header
  *
  * \author Aurelien Rainone <aurelien@develer.org>
  */
@@ -19,6 +19,10 @@
 class QSerialPort;
 class OutputManager;
 
+
+/**
+ * \brief manage serial port session
+ */
 class SessionManager : public QObject
 {
     Q_OBJECT
@@ -33,19 +37,19 @@ public:
     ~SessionManager();
 
     /**
-     * @brief open a serial port connection
-     * @param port_cfg serial port settings
+     * \brief open a serial port connection
+     * \param port_cfg serial port settings
      */
     void openSession(const QHash<QString, QString>& port_cfg);
 
     /**
-     * @brief read data from serial port
+     * \brief read data from serial port
      */
     void readData();
 
     /**
-     * @brief send data to serial port
-     * @param data
+     * \brief send data to serial port
+     * \param data
      */
     void sendToSerial(const QByteArray &data);
 
