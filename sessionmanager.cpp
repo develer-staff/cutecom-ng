@@ -62,33 +62,28 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
             (port_cfg["flow_control"].toInt(&ok));
     cfg_ok &= ok;
 
-    if (cfg_ok)
+    // a conversion didn't make it
+    Q_ASSERT(cfg_ok);
+
+    // closes connection if needed
+    if (serial->isOpen())
+        serial->close();
+
+    // open serial port
+    serial->setPortName(port_cfg["device"]);
+    serial->setBaudRate(baud_rate);
+    serial->setDataBits(data_bits);
+    serial->setParity(parity);
+    serial->setStopBits(stop_bits);
+    serial->setFlowControl(flow_control);
+
+    if (serial->open(QIODevice::ReadWrite))
     {
-        // closes connection if needed
-        if (serial->isOpen())
-            serial->close();
-
-        // open serial port
-        serial->setPortName(port_cfg["device"]);
-        serial->setBaudRate(baud_rate);
-        serial->setDataBits(data_bits);
-        serial->setParity(parity);
-        serial->setStopBits(stop_bits);
-        serial->setFlowControl(flow_control);
-
-        if (serial->open(QIODevice::ReadWrite))
-        {
-            qDebug() << "Connected to : " << port_cfg;
-        }
-        else
-        {
-            QMessageBox::critical(NULL, tr("Error"), serial->errorString());
-        }
+        qDebug() << "Connected to : " << port_cfg;
     }
     else
     {
-        // a conversion didn't make it
-        qDebug() << "badly formatted config value :\n" << port_cfg;
+        QMessageBox::critical(NULL, tr("Error"), serial->errorString());
     }
 }
 
