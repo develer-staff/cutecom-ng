@@ -34,6 +34,15 @@ public:
     ~MainWindow();
 
 private:
+
+    /**
+     * /brief handle return
+     */
+    void handleReturnPressed();
+
+    /**
+     * /brief show the connection dialog
+     */
     void openConnectionDialog();
 };
 

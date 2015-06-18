@@ -16,14 +16,12 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     connectdialog.cpp \
     sessionmanager.cpp \
-    outputmanager.cpp \
-    inputline.cpp
+    outputmanager.cpp
 
 HEADERS  += mainwindow.h \
     connectdialog.h \
     sessionmanager.h \
-    outputmanager.h \
-    inputline.h
+    outputmanager.h
 
 FORMS    += mainwindow.ui \
     connectdialog.ui
