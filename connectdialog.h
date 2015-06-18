@@ -49,7 +49,6 @@ private:
      *  - "flow_control"
      * All values are QStrings
      */
-
     QHash<QString, QString> defaultValues;
 
 private:

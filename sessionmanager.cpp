@@ -16,13 +16,9 @@
 #include <QSerialPort>
 #include <QDebug>
 
-SessionManager::SessionManager(OutputManager *output_mgr, QObject *parent)
+SessionManager::SessionManager(QObject *parent)
     : QObject(parent)
 {
-    // transfer output_mgr ownership to session manager instance
-    this->output_mgr = output_mgr;
-    this->output_mgr->setParent(this);
-
     serial = new QSerialPort(this);
 
     connect(serial, &QSerialPort::readyRead, this, &SessionManager::readData);
@@ -100,7 +96,8 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
 void SessionManager::readData()
 {
     QByteArray data(serial->readAll());
-    output_mgr->appendData(data);
+
+    emit dataReceived(data);
 }
 
 

@@ -26,22 +26,21 @@ class OutputManager : public QObject
 
 private:
 
-    /// contains data appended to the output
-    QByteArray all_data;
-    QTextEdit *edit;
+    /// buffer all the data received (concatenated)
+    QByteArray buffer;
 
 public:
-    explicit OutputManager(QTextEdit *textedit, QObject *parent = 0);
+    explicit OutputManager(QObject *parent = 0);
+
+    /**
+     * /brief handle new data
+     * append the data to the buffer
+     */
+    void handleNewData(const QByteArray &data);
 
 signals:
 
-public slots:
-
-    /**
-     * /brief append new data
-     * /param data array
-     */
-    void appendData(QByteArray & data);
+    void dataConverted(const QString & data);
 };
 
 #endif // OUTPUTMANAGER_H

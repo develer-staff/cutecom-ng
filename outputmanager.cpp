@@ -11,31 +11,16 @@
 
 #include "outputmanager.h"
 
-#include <QTextEdit>
-#include <QScrollBar>
-
-OutputManager::OutputManager(QTextEdit *textedit, QObject *parent) : QObject(parent), edit(textedit)
+OutputManager::OutputManager(QObject *parent) : QObject(parent)
 {
 
 }
 
-void OutputManager::appendData(QByteArray & data)
+void OutputManager::handleNewData(const QByteArray &data)
 {
     // append raw data to the session buffer
-    all_data.append(data);
+    buffer.append(data);
 
-    // save current text selection
-    QTextCursor cursor = edit->textCursor();
-
-    // insert text at end of 'edit' (this clears any selection)
-    edit->moveCursor(QTextCursor::End);
-    edit->insertPlainText (QString::fromLocal8Bit(data).remove('\n'));
-
-    // revert text selection
-    edit->setTextCursor(cursor);
-
-    // push scroll to the bottom
-    QScrollBar *vbar = edit->verticalScrollBar();
-    vbar->setValue(vbar->maximum());
+    // notify that we have new data (in display format)
+    emit dataConverted(QString::fromLocal8Bit(data).remove('\n'));
 }
-
