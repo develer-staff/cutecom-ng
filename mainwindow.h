@@ -40,7 +40,7 @@ private:
     /**
      * /brief handle return
      */
-    void handleReturnPressed();
+    void handleNewInput(QString entry);
 
     /**
      * /brief show the connection dialog
@@ -51,6 +51,9 @@ private:
      * /brief add data to the output view
      */
     void addDataToView(const QString & textdata);
+
+
+    void handleCurrentIndexChanged(int index);
 };
 
 #endif // MAINWINDOW_H

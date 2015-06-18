@@ -15,9 +15,16 @@
 #include "sessionmanager.h"
 #include "outputmanager.h"
 
+#include <QLineEdit>
 #include <QScrollBar>
+#include <QComboBox>
+#include <QDebug>
 
 const QString LINE_ENDING = "\n";
+const int HISTORY_MAX_ENTRIES = 5;
+
+
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -30,14 +37,20 @@ MainWindow::MainWindow(QWidget *parent) :
     output_mgr = new OutputManager(this);
     session_mgr = new SessionManager(this);
 
-    // handle new user input, and send it to the serial port via MainWindow::handleReturnPressed
-    connect(ui->textInput, &QLineEdit::returnPressed, this, &MainWindow::handleReturnPressed);
-
     // let output manager handle new data coming from serial port
     connect(session_mgr, &SessionManager::dataReceived, output_mgr, &OutputManager::handleNewData);
 
     // get data formatted for display and show it in output view
     connect(output_mgr, &OutputManager::dataConverted, this, &MainWindow::addDataToView);
+
+    // get data formatted for display and show it in output view
+    connect(ui->inputBox, &HistoryComboBox::lineEntered, this, &MainWindow::handleNewInput);
+}
+
+
+void MainWindow::handleCurrentIndexChanged(int index)
+{
+    qDebug() << "handleCurrentIndexChanged("<< index << ")";
 }
 
 MainWindow::~MainWindow()
@@ -53,14 +66,14 @@ void MainWindow::openConnectionDialog()
     dialog.exec();
 }
 
-void MainWindow::handleReturnPressed()
+void MainWindow::handleNewInput(QString entry)
 {
     // if session is not open, this also keeps user input
     if (session_mgr->isSessionOpen())
     {
-        QString line = ui->textInput->text() + LINE_ENDING;
-        session_mgr->sendToSerial(line.toLocal8Bit());
-        ui->textInput->clear();
+        entry.append(LINE_ENDING);
+        session_mgr->sendToSerial(entry.toLocal8Bit());
+        ui->inputBox->clearEditText();
     }
 }
 
