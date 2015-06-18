@@ -56,9 +56,13 @@ void MainWindow::openConnectionDialog()
 
 void MainWindow::handleReturnPressed()
 {
-    QString line = ui->textInput->text() + LINE_ENDING;
-    session_mgr->sendToSerial(line.toLocal8Bit());
-    ui->textInput->clear();
+    // if session is not open, this also keeps user input
+    if (session_mgr->isSessionOpen())
+    {
+        QString line = ui->textInput->text() + LINE_ENDING;
+        session_mgr->sendToSerial(line.toLocal8Bit());
+        ui->textInput->clear();
+    }
 }
 
 void MainWindow::addDataToView(const QString & textdata)

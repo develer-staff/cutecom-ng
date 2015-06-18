@@ -42,6 +42,11 @@ public:
     void openSession(const QHash<QString, QString> &port_cfg);
 
     /**
+     * \brief return true if the session is active
+     */
+    bool isSessionOpen() const;
+
+    /**
      * \brief send data to serial port
      * \param data    byte array data
      */

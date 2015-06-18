@@ -33,12 +33,6 @@ SessionManager::~SessionManager()
 
 void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
 {
-    Q_UNUSED(port_cfg)
-
-    qDebug() << "SessionManager::openSession(port_cfg)";
-    qDebug() << "\twith port_cfg:";
-    qDebug() << port_cfg;
-
     bool cfg_ok = true, ok;
 
     // try converting port config from the hash
@@ -77,16 +71,16 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     serial->setStopBits(stop_bits);
     serial->setFlowControl(flow_control);
 
-    if (serial->open(QIODevice::ReadWrite))
-    {
-        qDebug() << "Connected to : " << port_cfg;
-    }
-    else
+    if (serial->open(QIODevice::ReadWrite) == false)
     {
         QMessageBox::critical(NULL, tr("Error"), serial->errorString());
     }
 }
 
+bool SessionManager::isSessionOpen() const
+{
+    return serial->isOpen();
+}
 
 void SessionManager::readData()
 {
