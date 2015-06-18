@@ -15,7 +15,6 @@
 #include "sessionmanager.h"
 #include "outputmanager.h"
 
-#include <QTextEdit>
 #include <QScrollBar>
 
 const QString LINE_ENDING = "\r\n";
@@ -72,7 +71,7 @@ void MainWindow::addDataToView(const QString & textdata)
 
     // insert data at end of 'edit' (but this clears any selection)
     ui->textOutput->moveCursor(QTextCursor::End);
-    ui->textOutput->insertPlainText (textdata);
+    ui->textOutput->insertPlainText(textdata);
 
     // revert text selection
     ui->textOutput->setTextCursor(cursor);
