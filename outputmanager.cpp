@@ -22,5 +22,5 @@ void OutputManager::handleNewData(const QByteArray &data)
     buffer.append(data);
 
     // notify that we have new data (in display format)
-    emit dataConverted(QString::fromLocal8Bit(data).remove('\n'));
+    emit dataConverted(QString::fromLocal8Bit(data));
 }

@@ -17,7 +17,7 @@
 
 #include <QScrollBar>
 
-const QString LINE_ENDING = "\r\n";
+const QString LINE_ENDING = "\n";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
