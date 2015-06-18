@@ -57,7 +57,7 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     cfg_ok &= ok;
 
     // a conversion didn't make it
-    Q_ASSERT(cfg_ok);
+    Q_ASSERT_X(cfg_ok, "SessionManager::openSession", "a conversion didn't make it");
 
     // closes connection if needed
     if (serial->isOpen())
