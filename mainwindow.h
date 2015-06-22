@@ -20,6 +20,7 @@ class MainWindow;
 
 
 class SessionManager;
+class OutputManager;
 
 class MainWindow : public QMainWindow
 {
@@ -28,13 +29,28 @@ class MainWindow : public QMainWindow
 private:
     Ui::MainWindow *ui;
     SessionManager *session_mgr;
+    OutputManager *output_mgr;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 private:
+
+    /**
+     * /brief handle return
+     */
+    void handleReturnPressed();
+
+    /**
+     * /brief show the connection dialog
+     */
     void openConnectionDialog();
+
+    /**
+     * /brief add data to the output view
+     */
+    void addDataToView(const QString & textdata);
 };
 
 #endif // MAINWINDOW_H

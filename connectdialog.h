@@ -21,7 +21,7 @@ class ConnectDialog;
 
 
 /**
- * @brief The ConnectDialog class
+ * \brief The ConnectDialog class
  */
 class ConnectDialog : public QDialog
 {
@@ -38,7 +38,7 @@ private:
 
 
     /**
-     * @brief Represent the default serial port settings
+     * \brief Represent the default serial port settings
      *
      * Has the following keys :
      *  - "device"
@@ -49,7 +49,6 @@ private:
      *  - "flow_control"
      * All values are QStrings
      */
-
     QHash<QString, QString> defaultValues;
 
 private:

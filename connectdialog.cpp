@@ -27,7 +27,12 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
     fillSettingsLists();
 
     // define the default values
-    defaultValues["device"] = "";
+
+    // for device take 1st device listed (if any)
+    QString default_device;
+    if (ui->deviceList->count() > 0)
+        default_device = ui->deviceList->itemText(0);
+    defaultValues["device"] = default_device;
     defaultValues["baud_rate"] = QString::number(QSerialPort::Baud115200);
     defaultValues["data_bits"] = QString::number(QSerialPort::Data8);
     defaultValues["stop_bits"] = QString("1");
@@ -67,7 +72,7 @@ void ConnectDialog::fillSettingsLists()
         QString::number(QSerialPort::Data5) << QString::number(QSerialPort::Data6);
     data_bits <<
         QString::number(QSerialPort::Data7) << QString::number(QSerialPort::Data8);
-    ui->dataBitsList->addItems(baud_rates);
+    ui->dataBitsList->addItems(data_bits);
 
     // fill stop bits combo box
     ui->stopBitsList->addItem("1", QSerialPort::OneStop);

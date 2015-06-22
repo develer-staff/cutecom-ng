@@ -4,7 +4,7 @@
  * Copyright 2015 Develer S.r.l. (http://www.develer.com/)
  * -->
  *
- * \brief handle display and saving of serial port output
+ * \brief OutputManager class header
  *
  * \author Aurelien Rainone <aurelien@develer.org>
  */
@@ -13,16 +13,34 @@
 #define OUTPUTMANAGER_H
 
 #include <QObject>
+#include <QByteArray>
 
+class QTextEdit;
+
+/**
+ * \brief handle display and saving of serial port output
+ */
 class OutputManager : public QObject
 {
     Q_OBJECT
+
+private:
+
+    /// buffer all the data received (concatenated)
+    QByteArray buffer;
+
 public:
     explicit OutputManager(QObject *parent = 0);
 
+    /**
+     * /brief handle new data
+     * append the data to the buffer
+     */
+    void handleNewData(const QByteArray &data);
+
 signals:
 
-public slots:
+    void dataConverted(const QString & data);
 };
 
 #endif // OUTPUTMANAGER_H
