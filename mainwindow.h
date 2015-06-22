@@ -22,6 +22,9 @@ class MainWindow;
 class SessionManager;
 class OutputManager;
 
+/**
+ * \brief main cutecom-ng window
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -51,9 +54,6 @@ private:
      * /brief add data to the output view
      */
     void addDataToView(const QString & textdata);
-
-
-    void handleCurrentIndexChanged(int index);
 };
 
 #endif // MAINWINDOW_H

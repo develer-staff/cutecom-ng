@@ -15,16 +15,9 @@
 #include "sessionmanager.h"
 #include "outputmanager.h"
 
-#include <QLineEdit>
 #include <QScrollBar>
-#include <QComboBox>
-#include <QDebug>
 
 const QString LINE_ENDING = "\n";
-const int HISTORY_MAX_ENTRIES = 5;
-
-
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -47,11 +40,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->inputBox, &HistoryComboBox::lineEntered, this, &MainWindow::handleNewInput);
 }
 
-
-void MainWindow::handleCurrentIndexChanged(int index)
-{
-    qDebug() << "handleCurrentIndexChanged("<< index << ")";
-}
 
 MainWindow::~MainWindow()
 {
