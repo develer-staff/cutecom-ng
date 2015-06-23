@@ -66,3 +66,8 @@ const QStringList& History::getHistory() const
 {
     return history;
 }
+
+void History::setCurrent(int current_index)
+{
+    current = current_index;
+}

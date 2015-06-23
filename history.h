@@ -57,6 +57,12 @@ public:
      * \brief get all history elements
      */
     const QStringList& getHistory() const;
+
+    /**
+     * \brief manually update current element
+     * \param index new index
+     */
+    void setCurrent(int current_index);
 };
 
 #endif // HISTORY_H

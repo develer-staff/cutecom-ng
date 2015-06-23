@@ -19,6 +19,9 @@ HistoryComboBox::HistoryComboBox(QWidget *parent) :
     QComboBox(parent)
 {
     history = new History(this);
+
+    connect(this, static_cast<void (HistoryComboBox::*)(int)>(&HistoryComboBox::activated),
+            history, &History::setCurrent);
 }
 
 void HistoryComboBox::fillList(QString current_text)
