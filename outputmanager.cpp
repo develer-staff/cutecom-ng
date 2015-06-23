@@ -16,8 +16,6 @@ OutputManager::OutputManager(QObject *parent) : QObject(parent)
 
 }
 
-//void OutputManager::handleNewData(const QByteArray &data)
-
 void OutputManager::operator << (const QByteArray &data)
 {
     // append raw data to the session buffer

@@ -44,11 +44,9 @@ public:
 
     /**
      * \brief handle new data
-     * append data to the buffer
+     * append new data to the internal buffer
+     * and emit dataConverted signal
      */
-    void handleNewData(const QByteArray &data);
-
-
     void operator << (const QByteArray &data);
 
 signals:
