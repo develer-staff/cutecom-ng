@@ -20,7 +20,7 @@ History::History(QObject *parent)
 
 void History::add(const QString &entry)
 {
-    // remove eventual duplicates of new entry
+    // remove eventual duplicate of new entry
     int dup = history.indexOf(entry);
     if (dup >= 0)
         history.removeAt(dup);

@@ -15,7 +15,9 @@
 #include <QStringList>
 
 /**
- * \brief Manage a fixed-size list of strings (readline-like history)
+ * \brief readline-like history
+ *
+ * manage a fixed-size list of unique strings
  */
 class History : public QObject
 {
