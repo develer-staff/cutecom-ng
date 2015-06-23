@@ -70,7 +70,11 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     serial->setStopBits(stop_bits);
     serial->setFlowControl(flow_control);
 
-    if (serial->open(QIODevice::ReadWrite) == false)
+    if (serial->open(QIODevice::ReadWrite))
+    {
+        emit sessionStarted();
+    }
+    else
     {
         QMessageBox::critical(NULL, tr("Error"), serial->errorString());
     }

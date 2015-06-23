@@ -38,6 +38,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // get data formatted for display and show it in output view
     connect(ui->inputBox, &HistoryComboBox::lineEntered, this, &MainWindow::handleNewInput);
+
+    // clear output manager buffer at session start
+    connect(session_mgr, &SessionManager::sessionStarted, output_mgr, &OutputManager::clear);
+
+    // clear output text
+    connect(session_mgr, &SessionManager::sessionStarted, ui->textOutput, &QTextEdit::clear);
 }
 
 

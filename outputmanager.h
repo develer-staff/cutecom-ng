@@ -27,14 +27,24 @@ class OutputManager : public QObject
 private:
 
     /// data received in current session (concatenated)
-    QByteArray buffer;
+    QByteArray _buffer;
 
 public:
     explicit OutputManager(QObject *parent = 0);
 
     /**
-     * /brief handle new data
-     * append the data to the buffer
+     * \brief retrieve internal buffer
+     */
+    const QByteArray& buffer();
+
+    /**
+     * \brief clear internal buffer
+     */
+    void clear();
+
+    /**
+     * \brief handle new data
+     * append data to the buffer
      */
     void handleNewData(const QByteArray &data);
 

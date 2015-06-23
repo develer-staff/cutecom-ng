@@ -55,6 +55,11 @@ public:
 signals:
 
     /**
+     * \brief signal emitted at the beggining of a new session
+     */
+    void sessionStarted();
+
+    /**
      * \brief signal emitted when new data has been received from the serial port
      * \param data    byte array data
      */
