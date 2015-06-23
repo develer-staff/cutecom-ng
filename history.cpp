@@ -25,11 +25,11 @@ void History::add(const QString &entry)
     if (dup >= 0)
         history.removeAt(dup);
 
-    history.append(entry);
+    history.prepend(entry);
 
     // remove extra elements
     if (history.size() > max_entries)
-        history.pop_front();
+        history.pop_back();
 
     current = -1;
 }

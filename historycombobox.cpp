@@ -24,7 +24,6 @@ HistoryComboBox::HistoryComboBox(QWidget *parent) :
 void HistoryComboBox::fillList(QString current_text)
 {
     QStringList hist_lines(history->getHistory());
-    std::reverse(hist_lines.begin(), hist_lines.end());
 
     clear();
     addItems(hist_lines);
