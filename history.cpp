@@ -15,7 +15,7 @@ History::History(QObject *parent)
     : QObject(parent),
       max_entries(5)
 {
-    current = -1;
+    _current = -1;
 }
 
 void History::add(const QString &entry)
@@ -31,7 +31,7 @@ void History::add(const QString &entry)
     if (history.size() > max_entries)
         history.pop_back();
 
-    current = -1;
+    _current = -1;
 }
 
 const QString History::previous()
@@ -39,11 +39,11 @@ const QString History::previous()
     QString prev("");
     if (history.size() > 0)
     {
-        if (current == -1)
-            current = history.size() - 1;
-        else if (current > 0)
-            --current;
-        prev = history[current];
+        if (_current == -1)
+            _current = history.size() - 1;
+        else if (_current > 0)
+            --_current;
+        prev = history[_current];
     }
    return prev;
 }
@@ -53,11 +53,11 @@ const QString History::next()
     QString nex("");
     if (history.size() > 0)
     {
-        if (current == -1)
-            current = 0;
-        else if (current < history.size() - 1)
-            ++current;
-        nex = history[current];
+        if (_current == -1)
+            _current = 0;
+        else if (_current < history.size() - 1)
+            ++_current;
+        nex = history[_current];
     }
     return nex;
 }
@@ -69,5 +69,10 @@ const QStringList& History::getHistory() const
 
 void History::setCurrent(int current_index)
 {
-    current = current_index;
+    _current = current_index;
+}
+
+int History::current() const
+{
+    return _current;
 }

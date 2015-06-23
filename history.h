@@ -31,7 +31,7 @@ private:
     const int max_entries;
 
     /// current element in history
-    int current;
+    int _current;
 
 public:
     explicit History(QObject *parent = 0);
@@ -59,7 +59,12 @@ public:
     const QStringList& getHistory() const;
 
     /**
-     * \brief manually update current element
+     * \brief get current history entry index
+     */
+    int current() const;
+
+    /**
+     * \brief manually update current history entry
      * \param index new index
      */
     void setCurrent(int current_index);
