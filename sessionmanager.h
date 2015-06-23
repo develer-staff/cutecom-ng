@@ -31,7 +31,7 @@ private:
     /// serial port instance
     QSerialPort            *serial;
 
-    /// current session config
+    /// current session configuration
     QHash<QString, QString> curr_cfg;
 
 public:

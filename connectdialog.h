@@ -19,7 +19,6 @@ class ConnectDialog;
 }
 
 
-
 /**
  * \brief The ConnectDialog class
  */
@@ -42,9 +41,9 @@ private:
     void fillSettingsLists();
 
     /**
-     * \brief preselect serial port connection settings
+     * \brief preselect serial port connection configuration
      */
-    void preselectPortSettings(const QHash<QString, QString>& settings);
+    void preselectPortConfig(const QHash<QString, QString>& settings);
 
 
 signals:

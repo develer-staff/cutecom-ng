@@ -45,14 +45,13 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
     default_cfg["dump_file"] = QString("./output.raw");
     default_cfg["dump_format"] = QString("raw");
 
-    preselectPortSettings(default_cfg);
+    preselectPortConfig(default_cfg);
 }
 
 ConnectDialog::~ConnectDialog()
 {
     delete ui;
 }
-
 
 void ConnectDialog::fillSettingsLists()
 {
@@ -100,17 +99,20 @@ void ConnectDialog::fillSettingsLists()
     ui->flowControlList->addItem("Software", QSerialPort::SoftwareControl);
 }
 
-void ConnectDialog::preselectPortSettings(const QHash<QString, QString>& settings)
+void ConnectDialog::preselectPortConfig(const QHash<QString, QString>& settings)
 {
     ui->deviceList->setCurrentText(settings["device"]);
     ui->baudRateList->setCurrentText(settings["baud_rate"]);
     ui->dataBitsList->setCurrentText(settings["data_bits"]);
     ui->stopBitsList->setCurrentText(settings["stop_bits"]);
+
     ui->parityList->setCurrentText(settings["parity"]);
     ui->flowControlList->setCurrentText(settings["flow_control"]);
+
     ui->dumpFile->setChecked(settings["dump_enabled"] == "1");
     ui->dumpPath->setText(settings["dump_file"]);
     ui->dumpRawFmt->setChecked(settings["dump_format"] == "raw");
+    ui->dumpTextFmt->setChecked(settings["dump_format"] == "ascii");
 }
 
 void ConnectDialog::accept()
@@ -130,7 +132,7 @@ void ConnectDialog::accept()
     cfg["dump_file"] = ui->dumpPath->text();
     cfg["dump_format"] = ui->dumpRawFmt->isChecked() ? "raw" : "ascii";
 
-    close();
+    hide();
 
     emit openDeviceClicked(cfg);
 }

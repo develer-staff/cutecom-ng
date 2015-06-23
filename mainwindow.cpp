@@ -24,11 +24,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    connect(ui->connectButton, &QAbstractButton::clicked, this, &MainWindow::openConnectionDialog);
 
     // create session and output managers
     output_mgr = new OutputManager(this);
     session_mgr = new SessionManager(this);
+    connect_dlg = new ConnectDialog(this);
+
+    // show connection dialog
+    connect(ui->connectButton, &QAbstractButton::clicked, connect_dlg, &ConnectDialog::show);
 
     // handle reception of new data from serial port
     connect(session_mgr, &SessionManager::dataReceived, this, &MainWindow::handleDataReceived);
@@ -44,20 +47,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // clear output text
     connect(session_mgr, &SessionManager::sessionStarted, ui->textOutput, &QTextEdit::clear);
+
+    // call openSession when user accepts/closes connection dialog
+    connect(connect_dlg, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
 }
 
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::openConnectionDialog()
-{
-    ConnectDialog dialog(this);
-
-    connect(&dialog, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
-    dialog.exec();
 }
 
 void MainWindow::handleNewInput(QString entry)
