@@ -88,6 +88,9 @@
    </item>
    <item row="2" column="2">
     <widget class="QLabel" name="label_6">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="text">
       <string>Flow control</string>
      </property>
@@ -99,7 +102,7 @@
    <item row="3" column="0" colspan="4">
     <widget class="QGroupBox" name="dumpFile">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -110,6 +113,9 @@
        <height>120</height>
       </size>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox {  border: 1px solid rgb(130, 64, 166);}</string>
+     </property>
      <property name="title">
       <string>Dump File</string>
      </property>
@@ -119,78 +125,85 @@
      <property name="text" stdset="0">
       <string>Dump File</string>
      </property>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>186</width>
-        <height>48</height>
+        <x>13</x>
+        <y>32</y>
+        <width>299</width>
+        <height>57</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
-       <property name="sizeConstraint">
-        <enum>QLayout::SetMaximumSize</enum>
-       </property>
-       <property name="topMargin">
-        <number>20</number>
-       </property>
-       <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
         <widget class="QLabel" name="label_7">
          <property name="text">
           <string>Path</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="0" column="2" colspan="3">
         <widget class="QLineEdit" name="dumpPath">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
         </widget>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>22</x>
-        <y>61</y>
-        <width>182</width>
-        <height>77</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <item>
+       <item row="1" column="0">
         <widget class="QLabel" name="label_8">
          <property name="text">
           <string>Type</string>
          </property>
         </widget>
        </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <widget class="QRadioButton" name="dumpRawFmt">
-           <property name="text">
-            <string>Raw</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="dumpTextFmt">
-           <property name="text">
-            <string>Text</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+       <item row="1" column="1">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="2" colspan="2">
+        <widget class="QRadioButton" name="dumpTextFmt">
+         <property name="text">
+          <string>Text</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QRadioButton" name="dumpRawFmt">
+         <property name="text">
+          <string>Raw</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

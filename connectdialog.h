@@ -61,7 +61,6 @@ signals:
      *  - "dump_enabled" dump enabled/disabled
      *  - "dump_file" full path of dump file
      *  - "dump_format" 'raw' or 'ascii'
-     * All values are QStrings
      */
     void openDeviceClicked(const QHash<QString, QString>& config);
 };

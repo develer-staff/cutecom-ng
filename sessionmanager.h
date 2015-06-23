@@ -19,7 +19,6 @@
 class QSerialPort;
 class OutputManager;
 
-
 /**
  * \brief manage serial port session
  */
@@ -28,7 +27,12 @@ class SessionManager : public QObject
     Q_OBJECT
 
 private:
-    QSerialPort   *serial;
+
+    /// serial port instance
+    QSerialPort            *serial;
+
+    /// current session config
+    QHash<QString, QString> curr_cfg;
 
 public:
 
