@@ -36,36 +36,32 @@ public:
 private:
     Ui::ConnectDialog *ui;
 
-
     /**
-     * \brief Represent the default serial port settings
-     *
-     * Has the following keys :
-     *  - "device"
-     *  - "baud_rate"
-     *  - "data_bits"
-     *  - "stop_bits"
-     *  - "parity"
-     *  - "flow_control"
-     * All values are QStrings
-     */
-    QHash<QString, QString> defaultValues;
-
-private:
-    /**
-     * fill connection settings combo boxes
+     * \brief fill connection settings combo boxes
      */
     void fillSettingsLists();
 
     /**
-     * preselect serial port connection settings
+     * \brief preselect serial port connection settings
      */
     void preselectPortSettings(const QHash<QString, QString>& settings);
 
 
 signals:
     /**
-     * signal emitted 'open device' button has been clicked
+     * \brief signal emitted 'open device' button has been clicked
+     *
+     * config parameter is a QHash with the following keys :
+     *  - "device"
+     *  - "baud_rate"
+     *  - "data_bits"
+     *  - "stop_bits"
+     *  - "parity"
+     *  - "flow_control"
+     *  - "dump_enabled" dump enabled/disabled
+     *  - "dump_file" full path of dump file
+     *  - "dump_format" 'raw' or 'ascii'
+     * All values are QStrings
      */
     void openDeviceClicked(const QHash<QString, QString>& config);
 };

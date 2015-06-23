@@ -18,7 +18,7 @@
 class QTextEdit;
 
 /**
- * \brief handle display and saving of serial port output
+ * \brief handle output data
  */
 class OutputManager : public QObject
 {
@@ -26,7 +26,7 @@ class OutputManager : public QObject
 
 private:
 
-    /// buffer all the data received (concatenated)
+    /// data received in current session (concatenated)
     QByteArray buffer;
 
 public:

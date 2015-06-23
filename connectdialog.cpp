@@ -26,20 +26,26 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
     // fill the combo box values
     fillSettingsLists();
 
-    // define the default values
-
     // for device take 1st device listed (if any)
     QString default_device;
     if (ui->deviceList->count() > 0)
         default_device = ui->deviceList->itemText(0);
-    defaultValues["device"] = default_device;
-    defaultValues["baud_rate"] = QString::number(QSerialPort::Baud115200);
-    defaultValues["data_bits"] = QString::number(QSerialPort::Data8);
-    defaultValues["stop_bits"] = QString("1");
-    defaultValues["parity"] = QString("None");
-    defaultValues["flow_control"] = QString("None");
 
-    preselectPortSettings(defaultValues);
+    // define a default configuration
+    QHash<QString, QString> default_cfg;
+    default_cfg["device"] = default_device;
+    default_cfg["baud_rate"] = QString::number(QSerialPort::Baud115200);
+    default_cfg["data_bits"] = QString::number(QSerialPort::Data8);
+    default_cfg["stop_bits"] = QString("1");
+    default_cfg["parity"] = QString("None");
+    default_cfg["flow_control"] = QString("None");
+
+    // define the default values for output dump
+    default_cfg["dump_enabled"] = QString::number(0);
+    default_cfg["dump_file"] = QString("./output.raw");
+    default_cfg["dump_format"] = QString("raw");
+
+    preselectPortSettings(default_cfg);
 }
 
 ConnectDialog::~ConnectDialog()
@@ -63,7 +69,7 @@ void ConnectDialog::fillSettingsLists()
     baud_rates <<
         QString::number(QSerialPort::Baud19200) << QString::number(QSerialPort::Baud38400);
     baud_rates <<
-        QString::number(QSerialPort::Baud57600) << QString::number(QSerialPort::Baud115200); 
+        QString::number(QSerialPort::Baud57600) << QString::number(QSerialPort::Baud115200);
     ui->baudRateList->addItems(baud_rates);
 
     // fill data bits combo box
@@ -102,6 +108,9 @@ void ConnectDialog::preselectPortSettings(const QHash<QString, QString>& setting
     ui->stopBitsList->setCurrentText(settings["stop_bits"]);
     ui->parityList->setCurrentText(settings["parity"]);
     ui->flowControlList->setCurrentText(settings["flow_control"]);
+    ui->dumpFile->setChecked(settings["dump_enabled"] == "1");
+    ui->dumpPath->setText(settings["dump_file"]);
+    ui->dumpRawFmt->setChecked(settings["dump_format"] == "raw");
 }
 
 void ConnectDialog::accept()
@@ -117,6 +126,9 @@ void ConnectDialog::accept()
                 ui->parityList->currentIndex()).toString();
     cfg["flow_control"] = ui->flowControlList->itemData(
                 ui->flowControlList->currentIndex()).toString();
+    cfg["dump_enabled"] = ui->dumpFile->isChecked() ? "1" : "0";
+    cfg["dump_file"] = ui->dumpPath->text();
+    cfg["dump_format"] = ui->dumpRawFmt->isChecked() ? "raw" : "ascii";
 
     close();
 
