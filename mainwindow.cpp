@@ -30,8 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
     output_mgr = new OutputManager(this);
     session_mgr = new SessionManager(this);
 
-    // let output manager handle new data coming from serial port
-    connect(session_mgr, &SessionManager::dataReceived, output_mgr, &OutputManager::handleNewData);
+    // handle reception of new data from serial port
+    connect(session_mgr, &SessionManager::dataReceived, this, &MainWindow::handleDataReceived);
 
     // get data formatted for display and show it in output view
     connect(output_mgr, &OutputManager::dataConverted, this, &MainWindow::addDataToView);
@@ -86,4 +86,10 @@ void MainWindow::addDataToView(const QString & textdata)
     // push scroll to the bottom
     QScrollBar *vbar = ui->textOutput->verticalScrollBar();
     vbar->setValue(vbar->maximum());
+}
+
+
+void MainWindow::handleDataReceived(const QByteArray &data)
+{
+    (*output_mgr) << data;
 }

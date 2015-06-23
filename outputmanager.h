@@ -48,6 +48,9 @@ public:
      */
     void handleNewData(const QByteArray &data);
 
+
+    void operator << (const QByteArray &data);
+
 signals:
 
     void dataConverted(const QString & data);
