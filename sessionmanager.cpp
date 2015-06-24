@@ -87,25 +87,29 @@ bool SessionManager::isSessionOpen() const
     return serial->isOpen();
 }
 
+void SessionManager::saveToFile(const QByteArray &data)
+{
+    QFile dump(curr_cfg["dump_file"]);
+
+    // mode is OR'ed with 'Text' flag in "ascii" mode
+    QIODevice::OpenMode mode = QIODevice::Append;
+
+    if (curr_cfg["dump_file"] == "ascii")
+        mode |= QIODevice::Text;
+
+    if (dump.open(mode))
+        dump.write(data);
+}
+
 void SessionManager::readData()
 {
     QByteArray data(serial->readAll());
 
-    if (curr_cfg["dump_enabled"] == "1")
-    {
-        QFile dump(curr_cfg["dump_file"]);
-
-        QIODevice::OpenMode mode = QIODevice::Append;
-
-        // mode is OR'ed with 'Text' flag in "ascii" mode
-        if (curr_cfg["dump_file"] == "ascii")
-            mode |= QIODevice::Text;
-
-        if (dump.open(mode))
-            dump.write(data);
-    }
-
     emit dataReceived(data);
+
+    // append to dump file if configured
+    if (curr_cfg["dump_enabled"] == "1")
+        saveToFile(data);
 }
 
 void SessionManager::sendToSerial(const QByteArray &data)

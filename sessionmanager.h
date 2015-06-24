@@ -75,6 +75,11 @@ private:
      * \brief read data from serial port
      */
     void readData();
+
+    /**
+     * \brief save given data to configured dump file
+     */
+    void saveToFile(const QByteArray &data);
 };
 
 #endif // SESSIONMANAGER_H
