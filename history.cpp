@@ -13,7 +13,7 @@
 
 History::History(QObject *parent)
     : QObject(parent),
-      max_entries(5)
+      max_entries(10)
 {
     _current = -1;
 }
