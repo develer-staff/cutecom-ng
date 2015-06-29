@@ -33,17 +33,17 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 
     // define a default configuration
     QHash<QString, QString> default_cfg;
-    default_cfg["device"] = default_device;
-    default_cfg["baud_rate"] = QString::number(QSerialPort::Baud115200);
-    default_cfg["data_bits"] = QString::number(QSerialPort::Data8);
-    default_cfg["stop_bits"] = QString("1");
-    default_cfg["parity"] = QString("None");
-    default_cfg["flow_control"] = QString("None");
+    default_cfg[QStringLiteral("device")] = default_device;
+    default_cfg[QStringLiteral("baud_rate")] = QString::number(QSerialPort::Baud115200);
+    default_cfg[QStringLiteral("data_bits")] = QString::number(QSerialPort::Data8);
+    default_cfg[QStringLiteral("stop_bits")] = QStringLiteral("1");
+    default_cfg[QStringLiteral("parity")] = QStringLiteral("None");
+    default_cfg[QStringLiteral("flow_control")] = QStringLiteral("None");
 
     // define the default values for output dump
-    default_cfg["dump_enabled"] = QString::number(0);
-    default_cfg["dump_file"] = QString("cutecom-ng.dump");
-    default_cfg["dump_format"] = QString("raw");
+    default_cfg[QStringLiteral("dump_enabled")] = QString::number(0);
+    default_cfg[QStringLiteral("dump_file")] = QStringLiteral("cutecom-ng.dump");
+    default_cfg[QStringLiteral("dump_format")] = QStringLiteral("raw");
 
     preselectPortConfig(default_cfg);
 }
@@ -101,18 +101,18 @@ void ConnectDialog::fillSettingsLists()
 
 void ConnectDialog::preselectPortConfig(const QHash<QString, QString>& settings)
 {
-    ui->deviceList->setCurrentText(settings["device"]);
-    ui->baudRateList->setCurrentText(settings["baud_rate"]);
-    ui->dataBitsList->setCurrentText(settings["data_bits"]);
-    ui->stopBitsList->setCurrentText(settings["stop_bits"]);
+    ui->deviceList->setCurrentText(settings[QStringLiteral("device")]);
+    ui->baudRateList->setCurrentText(settings[QStringLiteral("baud_rate")]);
+    ui->dataBitsList->setCurrentText(settings[QStringLiteral("data_bits")]);
+    ui->stopBitsList->setCurrentText(settings[QStringLiteral("stop_bits")]);
 
-    ui->parityList->setCurrentText(settings["parity"]);
-    ui->flowControlList->setCurrentText(settings["flow_control"]);
+    ui->parityList->setCurrentText(settings[QStringLiteral("parity")]);
+    ui->flowControlList->setCurrentText(settings[QStringLiteral("flow_control")]);
 
-    ui->dumpFile->setChecked(settings["dump_enabled"] == "1");
-    ui->dumpPath->setText(settings["dump_file"]);
-    ui->dumpRawFmt->setChecked(settings["dump_format"] == "raw");
-    ui->dumpTextFmt->setChecked(settings["dump_format"] == "ascii");
+    ui->dumpFile->setChecked(settings[QStringLiteral("dump_enabled")] == "1");
+    ui->dumpPath->setText(settings[QStringLiteral("dump_file")]);
+    ui->dumpRawFmt->setChecked(settings["dump_format"] == QString::number(Raw));
+    ui->dumpTextFmt->setChecked(settings["dump_format"] == QString::number(Ascii));
 }
 
 void ConnectDialog::accept()
@@ -130,7 +130,7 @@ void ConnectDialog::accept()
                 ui->flowControlList->currentIndex()).toString();
     cfg["dump_enabled"] = ui->dumpFile->isChecked() ? "1" : "0";
     cfg["dump_file"] = ui->dumpPath->text();
-    cfg["dump_format"] = ui->dumpRawFmt->isChecked() ? "raw" : "ascii";
+    cfg["dump_format"] = QString::number(ui->dumpRawFmt->isChecked() ? Raw : Ascii);
 
     hide();
 

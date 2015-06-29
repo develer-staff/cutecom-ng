@@ -91,10 +91,10 @@ void SessionManager::saveToFile(const QByteArray &data)
 {
     QFile dump(curr_cfg["dump_file"]);
 
-    // mode is OR'ed with 'Text' flag in "ascii" mode
+    // mode is OR'ed with 'Text' flag in "Ascii" mode
     QIODevice::OpenMode mode = QIODevice::Append;
 
-    if (curr_cfg["dump_file"] == "ascii")
+    if (curr_cfg["dump_file"] == QString::number(ConnectDialog::Ascii))
         mode |= QIODevice::Text;
 
     if (dump.open(mode))

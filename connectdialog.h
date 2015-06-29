@@ -27,6 +27,15 @@ class ConnectDialog : public QDialog
     Q_OBJECT
 
 public:
+    /**
+     * \brief dump file formats
+     */
+    enum DumpFormat {
+        Raw   = 1,
+        Ascii = 2
+    };
+
+public:
     explicit ConnectDialog(QWidget *parent = 0);
     ~ConnectDialog();
 
@@ -59,7 +68,7 @@ signals:
      *  - "flow_control"
      *  - "dump_enabled" dump enabled/disabled
      *  - "dump_file" full path of dump file
-     *  - "dump_format" 'raw' or 'ascii'
+     *  - "dump_format" DumpFormat enum 'Raw' or 'Ascii'
      */
     void openDeviceClicked(const QHash<QString, QString>& config);
 };
