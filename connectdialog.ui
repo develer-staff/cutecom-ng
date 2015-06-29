@@ -173,7 +173,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QRadioButton" name="radioButton">
+       <widget class="QRadioButton" name="dumpTextFmt">
         <property name="text">
          <string>text</string>
         </property>
@@ -183,14 +183,14 @@
        </widget>
       </item>
       <item row="1" column="2">
-       <widget class="QRadioButton" name="radioButton_2">
+       <widget class="QRadioButton" name="dumpRawFmt">
         <property name="text">
          <string>raw</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEdit"/>
+       <widget class="QLineEdit" name="dumpPath"/>
       </item>
      </layout>
     </widget>

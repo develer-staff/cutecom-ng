@@ -42,7 +42,7 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 
     // define the default values for output dump
     default_cfg["dump_enabled"] = QString::number(0);
-    default_cfg["dump_file"] = QString("./output.raw");
+    default_cfg["dump_file"] = QString("cutecom-ng.dump");
     default_cfg["dump_format"] = QString("raw");
 
     preselectPortConfig(default_cfg);
