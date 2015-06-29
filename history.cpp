@@ -51,7 +51,7 @@ const QString History::previous()
 const QString History::next()
 {
     QString nex("");
-    if ((history.size() > 0) && (_current != -1))
+    if (history.size() > 0 && _current != -1)
     {
         if (_current < history.size() - 1)
             ++_current;
