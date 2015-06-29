@@ -14,7 +14,6 @@
 
 #include <QMessageBox>
 #include <QSerialPort>
-#include <QDebug>
 
 SessionManager::SessionManager(QObject *parent)
     : QObject(parent)

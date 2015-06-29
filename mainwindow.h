@@ -22,6 +22,9 @@ class MainWindow;
 class SessionManager;
 class OutputManager;
 
+/**
+ * \brief main cutecom-ng window
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -40,7 +43,7 @@ private:
     /**
      * /brief handle return
      */
-    void handleReturnPressed();
+    void handleNewInput(QString entry);
 
     /**
      * /brief show the connection dialog
