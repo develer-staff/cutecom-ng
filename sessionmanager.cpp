@@ -13,15 +13,17 @@
 #include "outputmanager.h"
 
 #include <QMessageBox>
-#include <QSerialPort>
 #include <QFile>
 
 SessionManager::SessionManager(QObject *parent)
     : QObject(parent)
 {
     serial = new QSerialPort(this);
+    in_progress = false;
 
     connect(serial, &QSerialPort::readyRead, this, &SessionManager::readData);
+    connect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>
+                (&QSerialPort::error), this, &SessionManager::handleError);
 }
 
 SessionManager::~SessionManager()
@@ -29,6 +31,44 @@ SessionManager::~SessionManager()
     // closes connection if needed
     if (serial->isOpen())
         serial->close();
+}
+
+void SessionManager::handleError(QSerialPort::SerialPortError serialPortError)
+{
+    switch (serialPortError)
+    {
+        // no error
+        case QSerialPort::NoError:
+            break;
+
+        // recoverable errors : inform user and clear error
+        case QSerialPort::OpenError:
+
+            QMessageBox::warning(NULL, tr("Error"), serial->errorString());
+            // reset error
+            serial->clearError();
+            break;
+
+        // unrecoverable errors : inform user and close the port/connection
+        default:
+            if (in_progress)
+            {
+                QMessageBox::critical(NULL, tr("Error"), serial->errorString());
+
+                // on some error (ex: hot unplugging) the 'QSerialPort::error' property successively
+                // takes multiple values.
+                // to prevent from displaying successive error messages, the in_progress flag is
+                // set to indicate that we are not interested by next messages, until the user tries to open
+                // again the serial port
+                in_progress = false;
+                if (serial->isOpen())
+                {
+                    serial->clearError();
+                    serial->close();
+                }
+            }
+            break;
+    }
 }
 
 void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
@@ -71,14 +111,12 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     serial->setStopBits(stop_bits);
     serial->setFlowControl(flow_control);
 
+    // flag indicating that a connection is in progress (eventually successful or not)
+    in_progress = true;
     if (serial->open(QIODevice::ReadWrite))
     {
         curr_cfg = port_cfg;
         emit sessionStarted();
-    }
-    else
-    {
-        QMessageBox::critical(NULL, tr("Error"), serial->errorString());
     }
 }
 
