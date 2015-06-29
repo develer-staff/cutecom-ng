@@ -38,14 +38,9 @@ void HistoryComboBox::keyPressEvent(QKeyEvent *e)
     switch (e->key())
     {
         case Qt::Key_Up:
-            // history current not set means we just added an element or we
-            // added nothing yet. either case there is no more recent element
-            if (history->current() != -1)
-            {
-                setCurrentIndex(0);
-                setItemText(0, history->previous());
-                fillList(this->lineEdit()->text());
-            }
+            setCurrentIndex(0);
+            setItemText(0, history->previous());
+            fillList(this->lineEdit()->text());
             break;
 
         case Qt::Key_Down:
@@ -53,7 +48,6 @@ void HistoryComboBox::keyPressEvent(QKeyEvent *e)
             setItemText(0, history->next());
             fillList(this->lineEdit()->text());
             break;
-
         case Qt::Key_Return:
         case Qt::Key_Enter:
         {

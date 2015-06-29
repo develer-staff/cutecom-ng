@@ -25,11 +25,11 @@ void History::add(const QString &entry)
     if (dup >= 0)
         history.removeAt(dup);
 
-    history.prepend(entry);
+    history.append(entry);
 
     // remove extra elements
     if (history.size() > max_entries)
-        history.pop_back();
+        history.pop_front();
 
     _current = -1;
 }
@@ -51,11 +51,9 @@ const QString History::previous()
 const QString History::next()
 {
     QString nex("");
-    if (history.size() > 0)
+    if ((history.size() > 0) && (_current != -1))
     {
-        if (_current == -1)
-            _current = 0;
-        else if (_current < history.size() - 1)
+        if (_current < history.size() - 1)
             ++_current;
         nex = history[_current];
     }
