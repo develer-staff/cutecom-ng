@@ -9,6 +9,9 @@
  * \author Aurelien Rainone <aurelien@develer.org>
  */
 
+#include <algorithm>
+#include <iterator>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "connectdialog.h"
@@ -71,12 +74,40 @@ void MainWindow::handleNewInput(QString entry)
 
 void MainWindow::addDataToView(const QString & textdata)
 {
+    // problem : QTextEdit interprets a '\r' as a new line, so if a buffer ending
+    //           with '\r\n' happens to be cut in the middle, there will be 1 extra
+    //           line jump in the QTextEdit. To prevent we remove ending '\r' and
+    //           prepend them to the next received buffer
+
+    // flag indicating that the previously received buffer ended with CR
+    static bool prev_ends_with_CR = false;
+
+    QString newdata;
+    if (prev_ends_with_CR)
+    {
+        // CR was removed at the previous buffer, so now we prepend it
+        newdata.append('\r');
+        prev_ends_with_CR = false;
+    }
+
+    if (textdata.length() > 0)
+    {
+        QString::const_iterator end_cit = textdata.cend();
+        if (textdata.endsWith('\r'))
+        {
+            // if buffer ends with CR, we don't copy it
+            end_cit--;
+            prev_ends_with_CR = true;
+        }
+        std::copy(textdata.begin(), end_cit, std::back_inserter(newdata));
+    }
+
     // save current text selection
     QTextCursor cursor = ui->textOutput->textCursor();
 
     // insert data at end of 'edit' (but this clears any selection)
     ui->textOutput->moveCursor(QTextCursor::End);
-    ui->textOutput->insertPlainText(textdata);
+    ui->textOutput->insertPlainText(newdata);
 
     // revert text selection
     ui->textOutput->setTextCursor(cursor);
