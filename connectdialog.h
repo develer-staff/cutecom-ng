@@ -19,13 +19,21 @@ class ConnectDialog;
 }
 
 
-
 /**
  * \brief The ConnectDialog class
  */
 class ConnectDialog : public QDialog
 {
     Q_OBJECT
+
+public:
+    /**
+     * \brief dump file formats
+     */
+    enum DumpFormat {
+        Raw   = 1,
+        Ascii = 2
+    };
 
 public:
     explicit ConnectDialog(QWidget *parent = 0);
@@ -36,36 +44,31 @@ public:
 private:
     Ui::ConnectDialog *ui;
 
+    /**
+     * \brief fill connection settings combo boxes
+     */
+    void fillSettingsLists();
 
     /**
-     * \brief Represent the default serial port settings
+     * \brief preselect serial port connection configuration
+     */
+    void preselectPortConfig(const QHash<QString, QString>& settings);
+
+
+signals:
+    /**
+     * \brief signal emitted 'open device' button has been clicked
      *
-     * Has the following keys :
+     * config parameter is a QHash with the following keys :
      *  - "device"
      *  - "baud_rate"
      *  - "data_bits"
      *  - "stop_bits"
      *  - "parity"
      *  - "flow_control"
-     * All values are QStrings
-     */
-    QHash<QString, QString> defaultValues;
-
-private:
-    /**
-     * fill connection settings combo boxes
-     */
-    void fillSettingsLists();
-
-    /**
-     * preselect serial port connection settings
-     */
-    void preselectPortSettings(const QHash<QString, QString>& settings);
-
-
-signals:
-    /**
-     * signal emitted 'open device' button has been clicked
+     *  - "dump_enabled" dump enabled/disabled
+     *  - "dump_file" full path of dump file
+     *  - "dump_format" DumpFormat enum 'Raw' or 'Ascii'
      */
     void openDeviceClicked(const QHash<QString, QString>& config);
 };

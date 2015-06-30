@@ -19,7 +19,6 @@
 class QSerialPort;
 class OutputManager;
 
-
 /**
  * \brief manage serial port session
  */
@@ -28,7 +27,12 @@ class SessionManager : public QObject
     Q_OBJECT
 
 private:
-    QSerialPort   *serial;
+
+    /// serial port instance
+    QSerialPort            *serial;
+
+    /// current session configuration
+    QHash<QString, QString> curr_cfg;
 
 public:
 
@@ -55,6 +59,11 @@ public:
 signals:
 
     /**
+     * \brief signal emitted at the beggining of a new session
+     */
+    void sessionStarted();
+
+    /**
      * \brief signal emitted when new data has been received from the serial port
      * \param data    byte array data
      */
@@ -66,6 +75,11 @@ private:
      * \brief read data from serial port
      */
     void readData();
+
+    /**
+     * \brief save given data to configured dump file
+     */
+    void saveToFile(const QByteArray &data);
 };
 
 #endif // SESSIONMANAGER_H

@@ -14,6 +14,7 @@
 
 #include <QMessageBox>
 #include <QSerialPort>
+#include <QFile>
 
 SessionManager::SessionManager(QObject *parent)
     : QObject(parent)
@@ -70,7 +71,12 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     serial->setStopBits(stop_bits);
     serial->setFlowControl(flow_control);
 
-    if (serial->open(QIODevice::ReadWrite) == false)
+    if (serial->open(QIODevice::ReadWrite))
+    {
+        curr_cfg = port_cfg;
+        emit sessionStarted();
+    }
+    else
     {
         QMessageBox::critical(NULL, tr("Error"), serial->errorString());
     }
@@ -81,15 +87,33 @@ bool SessionManager::isSessionOpen() const
     return serial->isOpen();
 }
 
+void SessionManager::saveToFile(const QByteArray &data)
+{
+    QFile dump(curr_cfg["dump_file"]);
+
+    // mode is OR'ed with 'Text' flag in "Ascii" mode
+    QIODevice::OpenMode mode = QIODevice::Append;
+
+    if (curr_cfg["dump_file"] == QString::number(ConnectDialog::Ascii))
+        mode |= QIODevice::Text;
+
+    if (dump.open(mode))
+        dump.write(data);
+}
+
 void SessionManager::readData()
 {
     QByteArray data(serial->readAll());
 
     emit dataReceived(data);
-}
 
+    // append to dump file if configured
+    if (curr_cfg["dump_enabled"] == "1")
+        saveToFile(data);
+}
 
 void SessionManager::sendToSerial(const QByteArray &data)
 {
     serial->write(data);
 }
+

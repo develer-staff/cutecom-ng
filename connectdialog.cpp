@@ -26,27 +26,32 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
     // fill the combo box values
     fillSettingsLists();
 
-    // define the default values
-
     // for device take 1st device listed (if any)
     QString default_device;
     if (ui->deviceList->count() > 0)
         default_device = ui->deviceList->itemText(0);
-    defaultValues["device"] = default_device;
-    defaultValues["baud_rate"] = QString::number(QSerialPort::Baud115200);
-    defaultValues["data_bits"] = QString::number(QSerialPort::Data8);
-    defaultValues["stop_bits"] = QString("1");
-    defaultValues["parity"] = QString("None");
-    defaultValues["flow_control"] = QString("None");
 
-    preselectPortSettings(defaultValues);
+    // define a default configuration
+    QHash<QString, QString> default_cfg;
+    default_cfg[QStringLiteral("device")] = default_device;
+    default_cfg[QStringLiteral("baud_rate")] = QString::number(QSerialPort::Baud115200);
+    default_cfg[QStringLiteral("data_bits")] = QString::number(QSerialPort::Data8);
+    default_cfg[QStringLiteral("stop_bits")] = QStringLiteral("1");
+    default_cfg[QStringLiteral("parity")] = QStringLiteral("None");
+    default_cfg[QStringLiteral("flow_control")] = QStringLiteral("None");
+
+    // define the default values for output dump
+    default_cfg[QStringLiteral("dump_enabled")] = QString::number(0);
+    default_cfg[QStringLiteral("dump_file")] = QStringLiteral("cutecom-ng.dump");
+    default_cfg[QStringLiteral("dump_format")] = QString::number(Raw);
+
+    preselectPortConfig(default_cfg);
 }
 
 ConnectDialog::~ConnectDialog()
 {
     delete ui;
 }
-
 
 void ConnectDialog::fillSettingsLists()
 {
@@ -63,7 +68,7 @@ void ConnectDialog::fillSettingsLists()
     baud_rates <<
         QString::number(QSerialPort::Baud19200) << QString::number(QSerialPort::Baud38400);
     baud_rates <<
-        QString::number(QSerialPort::Baud57600) << QString::number(QSerialPort::Baud115200); 
+        QString::number(QSerialPort::Baud57600) << QString::number(QSerialPort::Baud115200);
     ui->baudRateList->addItems(baud_rates);
 
     // fill data bits combo box
@@ -94,14 +99,20 @@ void ConnectDialog::fillSettingsLists()
     ui->flowControlList->addItem("Software", QSerialPort::SoftwareControl);
 }
 
-void ConnectDialog::preselectPortSettings(const QHash<QString, QString>& settings)
+void ConnectDialog::preselectPortConfig(const QHash<QString, QString>& settings)
 {
-    ui->deviceList->setCurrentText(settings["device"]);
-    ui->baudRateList->setCurrentText(settings["baud_rate"]);
-    ui->dataBitsList->setCurrentText(settings["data_bits"]);
-    ui->stopBitsList->setCurrentText(settings["stop_bits"]);
-    ui->parityList->setCurrentText(settings["parity"]);
-    ui->flowControlList->setCurrentText(settings["flow_control"]);
+    ui->deviceList->setCurrentText(settings[QStringLiteral("device")]);
+    ui->baudRateList->setCurrentText(settings[QStringLiteral("baud_rate")]);
+    ui->dataBitsList->setCurrentText(settings[QStringLiteral("data_bits")]);
+    ui->stopBitsList->setCurrentText(settings[QStringLiteral("stop_bits")]);
+
+    ui->parityList->setCurrentText(settings[QStringLiteral("parity")]);
+    ui->flowControlList->setCurrentText(settings[QStringLiteral("flow_control")]);
+
+    ui->dumpFile->setChecked(settings[QStringLiteral("dump_enabled")] == "1");
+    ui->dumpPath->setText(settings[QStringLiteral("dump_file")]);
+    ui->dumpRawFmt->setChecked(settings["dump_format"] == QString::number(Raw));
+    ui->dumpTextFmt->setChecked(settings["dump_format"] == QString::number(Ascii));
 }
 
 void ConnectDialog::accept()
@@ -117,8 +128,11 @@ void ConnectDialog::accept()
                 ui->parityList->currentIndex()).toString();
     cfg["flow_control"] = ui->flowControlList->itemData(
                 ui->flowControlList->currentIndex()).toString();
+    cfg["dump_enabled"] = ui->dumpFile->isChecked() ? "1" : "0";
+    cfg["dump_file"] = ui->dumpPath->text();
+    cfg["dump_format"] = QString::number(ui->dumpRawFmt->isChecked() ? Raw : Ascii);
 
-    close();
+    hide();
 
     emit openDeviceClicked(cfg);
 }

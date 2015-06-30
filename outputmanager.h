@@ -18,7 +18,7 @@
 class QTextEdit;
 
 /**
- * \brief handle display and saving of serial port output
+ * \brief handle output data
  */
 class OutputManager : public QObject
 {
@@ -26,17 +26,28 @@ class OutputManager : public QObject
 
 private:
 
-    /// buffer all the data received (concatenated)
-    QByteArray buffer;
+    /// data received in current session (concatenated)
+    QByteArray _buffer;
 
 public:
     explicit OutputManager(QObject *parent = 0);
 
     /**
-     * /brief handle new data
-     * append the data to the buffer
+     * \brief retrieve internal buffer
      */
-    void handleNewData(const QByteArray &data);
+    const QByteArray& buffer();
+
+    /**
+     * \brief clear internal buffer
+     */
+    void clear();
+
+    /**
+     * \brief handle new data
+     * append new data to the internal buffer
+     * and emit dataConverted signal
+     */
+    void operator << (const QByteArray &data);
 
 signals:
 
