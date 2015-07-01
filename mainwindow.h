@@ -66,6 +66,11 @@ private:
      * \brief event filter
      */
     bool eventFilter(QObject *target, QEvent *event);
+
+    /**
+     * \brief handle a text search in the output
+     */
+    void handleTextSearch();
 };
 
 #endif // MAINWINDOW_H

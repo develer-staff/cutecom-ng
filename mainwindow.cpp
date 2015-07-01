@@ -62,6 +62,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->bottomOutput->hide();
     ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
     ui->bottomOutput->viewport()->installEventFilter(this);
+
+    // returnPressed on the search line trigger a text search
+    connect(ui->searchInput, &QLineEdit::returnPressed, this, &MainWindow::handleTextSearch);
 }
 
 
@@ -148,3 +151,19 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
     // base class behaviour
     return QMainWindow::eventFilter(target, event);
 }
+
+void MainWindow::handleTextSearch()
+{
+    const QString searched(ui->searchInput->text());
+
+    if (!searched.isEmpty())
+    {
+        QTextCursor pos = ui->mainOutput->document()->find(searched);
+        if (!pos.isNull())
+        {
+            // CONTINUER ICI, DEFINIR COMME SELECTIONNE LE TEXTE 'searched'
+
+        }
+    }
+}
+
