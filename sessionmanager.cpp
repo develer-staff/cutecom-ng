@@ -13,6 +13,7 @@
 #include "outputmanager.h"
 
 #include <QMessageBox>
+#include <QSerialPortInfo>
 #include <QFile>
 
 SessionManager::SessionManager(QObject *parent)
@@ -103,8 +104,11 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     if (serial->isOpen())
         serial->close();
 
-    // open serial port
-    serial->setPortName(port_cfg["device"]);
+    // configure port
+    //
+    // connection error on MacOsX if port name is set with setPortName instead
+    // of setPort (issue #7)
+    serial->setPort(QSerialPortInfo(port_cfg[QStringLiteral("device")]));
     serial->setBaudRate(baud_rate);
     serial->setDataBits(data_bits);
     serial->setParity(parity);
@@ -113,6 +117,8 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
 
     // flag indicating that a connection is in progress (eventually successful or not)
     in_progress = true;
+
+    // open serial port
     if (serial->open(QIODevice::ReadWrite))
     {
         curr_cfg = port_cfg;
