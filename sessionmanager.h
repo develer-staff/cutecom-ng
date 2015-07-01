@@ -13,10 +13,10 @@
 #define SESSIONMANAGER_H
 
 #include <QObject>
+#include <QSerialPort>
 
 #include "connectdialog.h"
 
-class QSerialPort;
 class OutputManager;
 
 /**
@@ -33,6 +33,9 @@ private:
 
     /// current session configuration
     QHash<QString, QString> curr_cfg;
+
+    /// indicate that a connection has been initiated or is in progress
+    bool        in_progress;
 
 public:
 
@@ -80,6 +83,11 @@ private:
      * \brief save given data to configured dump file
      */
     void saveToFile(const QByteArray &data);
+
+    /**
+     * \brief handle serial port error
+     */
+    void handleError(QSerialPort::SerialPortError serialPortError);
 };
 
 #endif // SESSIONMANAGER_H
