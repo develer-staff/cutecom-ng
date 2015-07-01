@@ -64,17 +64,7 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="inputLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Input</string>
-        </property>
-       </widget>
-      </item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="HistoryComboBox" name="inputBox">
         <property name="sizePolicy">
@@ -94,6 +84,20 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="splitOutputBtn">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/v-splitter.png</normaloff>:/v-splitter.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -108,6 +112,8 @@
    <header>historycombobox.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="cutecom-ng.qrc"/>
+ </resources>
  <connections/>
 </ui>
