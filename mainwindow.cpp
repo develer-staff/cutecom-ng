@@ -18,13 +18,11 @@
 #include "sessionmanager.h"
 #include "outputmanager.h"
 
-#include <QScrollBar>
-
 /// line ending char appended to the commands sent to the serial port
 const QString LINE_ENDING = "\n";
 
 /// maximum count of document blocks for the bootom output
-const int MAX_OUTPUT_LINES = 50;
+const int MAX_OUTPUT_LINES = 100;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -112,19 +110,23 @@ void MainWindow::addDataToView(const QString & textdata)
         std::copy(textdata.begin(), end_cit, std::back_inserter(newdata));
     }
 
-    // save current text selection
-    QTextCursor cursor = ui->mainOutput->textCursor();
+    if (ui->bottomOutput->isVisible())
+    {
+        // append text to the top output and stay at current position
+        QTextCursor cursor(ui->mainOutput->document());
+        cursor.movePosition(QTextCursor::End);
+        cursor.insertText(newdata);
+    }
+    else
+    {
+        // append text to the top output and scroll down
+        ui->mainOutput->moveCursor(QTextCursor::End);
+        ui->mainOutput->insertPlainText(newdata);
+    }
 
-    // insert data at end of 'edit' (but this clears any selection)
-    ui->mainOutput->moveCursor(QTextCursor::End);
-    ui->mainOutput->insertPlainText(newdata);
-
-    // revert text selection
-    ui->mainOutput->setTextCursor(cursor);
-
-    // push scroll to the bottom
-    QScrollBar *vbar = ui->mainOutput->verticalScrollBar();
-    vbar->setValue(vbar->maximum());
+    // append text to bottom output and scroll
+    ui->bottomOutput->moveCursor(QTextCursor::End);
+    ui->bottomOutput->insertPlainText(newdata);
 }
 
 void MainWindow::handleDataReceived(const QByteArray &data)
@@ -136,4 +138,3 @@ void MainWindow::toggleOutputSplitter()
 {
     ui->bottomOutput->setVisible(!ui->bottomOutput->isVisible());
 }
-
