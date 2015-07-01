@@ -80,23 +80,23 @@ void ConnectDialog::fillSettingsLists()
     ui->dataBitsList->addItems(data_bits);
 
     // fill stop bits combo box
-    ui->stopBitsList->addItem("1", QSerialPort::OneStop);
+    ui->stopBitsList->addItem(QStringLiteral("1"), QSerialPort::OneStop);
 #ifdef Q_WS_WIN
-    ui->stopBitsList->addItem("1.5", QSerialPort::OneAndHalfStop);
+    ui->stopBitsList->addItem(QStringLiteral("1.5"), QSerialPort::OneAndHalfStop);
 #endif
-    ui->stopBitsList->addItem("2", QSerialPort::TwoStop);
+    ui->stopBitsList->addItem(QStringLiteral("2"), QSerialPort::TwoStop);
 
     // fill parity combo box
-    ui->parityList->addItem("None", QSerialPort::NoParity);
-    ui->parityList->addItem("Even", QSerialPort::EvenParity);
-    ui->parityList->addItem("Odd", QSerialPort::OddParity);
-    ui->parityList->addItem("Space", QSerialPort::SpaceParity);
-    ui->parityList->addItem("Mark", QSerialPort::MarkParity);
+    ui->parityList->addItem(QStringLiteral("None"), QSerialPort::NoParity);
+    ui->parityList->addItem(QStringLiteral("Even"), QSerialPort::EvenParity);
+    ui->parityList->addItem(QStringLiteral("Odd"), QSerialPort::OddParity);
+    ui->parityList->addItem(QStringLiteral("Space"), QSerialPort::SpaceParity);
+    ui->parityList->addItem(QStringLiteral("Mark"), QSerialPort::MarkParity);
 
     // fill flow control
-    ui->flowControlList->addItem("None", QSerialPort::NoFlowControl);
-    ui->flowControlList->addItem("Hardware", QSerialPort::HardwareControl);
-    ui->flowControlList->addItem("Software", QSerialPort::SoftwareControl);
+    ui->flowControlList->addItem(QStringLiteral("None"), QSerialPort::NoFlowControl);
+    ui->flowControlList->addItem(QStringLiteral("Hardware"), QSerialPort::HardwareControl);
+    ui->flowControlList->addItem(QStringLiteral("Software"), QSerialPort::SoftwareControl);
 }
 
 void ConnectDialog::preselectPortConfig(const QHash<QString, QString>& settings)
@@ -119,18 +119,18 @@ void ConnectDialog::accept()
 {
     // create a serial port config object from current selection
     QHash<QString, QString> cfg;
-    cfg["device"] = ui->deviceList->currentText();
-    cfg["baud_rate"] = ui->baudRateList->currentText();
-    cfg["data_bits"] = ui->dataBitsList->currentText();
-    cfg["stop_bits"] = ui->stopBitsList->itemData(
+    cfg[QStringLiteral("device")] = ui->deviceList->currentText();
+    cfg[QStringLiteral("baud_rate")] = ui->baudRateList->currentText();
+    cfg[QStringLiteral("data_bits")] = ui->dataBitsList->currentText();
+    cfg[QStringLiteral("stop_bits")] = ui->stopBitsList->itemData(
                 ui->stopBitsList->currentIndex()).toString();
-    cfg["parity"] = ui->parityList->itemData(
+    cfg[QStringLiteral("parity")] = ui->parityList->itemData(
                 ui->parityList->currentIndex()).toString();
-    cfg["flow_control"] = ui->flowControlList->itemData(
+    cfg[QStringLiteral("flow_control")] = ui->flowControlList->itemData(
                 ui->flowControlList->currentIndex()).toString();
-    cfg["dump_enabled"] = ui->dumpFile->isChecked() ? "1" : "0";
-    cfg["dump_file"] = ui->dumpPath->text();
-    cfg["dump_format"] = QString::number(ui->dumpRawFmt->isChecked() ? Raw : Ascii);
+    cfg[QStringLiteral("dump_enabled")] = ui->dumpFile->isChecked() ? "1" : "0";
+    cfg[QStringLiteral("dump_file")] = ui->dumpPath->text();
+    cfg[QStringLiteral("dump_format")] = QString::number(ui->dumpRawFmt->isChecked() ? Raw : Ascii);
 
     hide();
 
