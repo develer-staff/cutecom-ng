@@ -51,12 +51,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(session_mgr, &SessionManager::sessionStarted, output_mgr, &OutputManager::clear);
 
     // clear output text
-    connect(session_mgr, &SessionManager::sessionStarted, ui->mainOutput, &QTextEdit::clear);
+    connect(session_mgr, &SessionManager::sessionStarted, ui->mainOutput, &QPlainTextEdit::clear);
 
     // call openSession when user accepts/closes connection dialog
     connect(connect_dlg, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
 
-    connect(ui->splitOutputBtn, &QPushButton::clicked, this, &MainWindow::toggleOutputSplitter);
+    connect(ui->splitOutputBtn, &QToolButton::clicked, this, &MainWindow::toggleOutputSplitter);
 
     // additional configuration for bottom output
     ui->bottomOutput->hide();

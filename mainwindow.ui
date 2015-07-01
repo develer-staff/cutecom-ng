@@ -64,7 +64,7 @@
       <property name="childrenCollapsible">
        <bool>false</bool>
       </property>
-      <widget class="QTextEdit" name="mainOutput">
+      <widget class="QPlainTextEdit" name="mainOutput">
        <property name="font">
         <font>
          <family>Monospace</family>
@@ -75,7 +75,7 @@
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QTextEdit" name="bottomOutput">
+      <widget class="QPlainTextEdit" name="bottomOutput">
        <property name="font">
         <font>
          <family>Monospace</family>
@@ -99,6 +99,9 @@
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item>
        <widget class="HistoryComboBox" name="inputBox">
         <property name="sizePolicy">
@@ -119,7 +122,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="splitOutputBtn">
+       <widget class="QToolButton" name="splitOutputBtn">
         <property name="text">
          <string/>
         </property>
