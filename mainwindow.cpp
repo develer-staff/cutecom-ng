@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // additional configuration for bottom output
     ui->bottomOutput->hide();
     ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
+    ui->bottomOutput->viewport()->installEventFilter(this);
 }
 
 
@@ -137,4 +138,13 @@ void MainWindow::handleDataReceived(const QByteArray &data)
 void MainWindow::toggleOutputSplitter()
 {
     ui->bottomOutput->setVisible(!ui->bottomOutput->isVisible());
+}
+
+bool MainWindow::eventFilter(QObject *target, QEvent *event)
+{
+    if (event->type() == QEvent::Wheel)
+        return true;
+
+    // base class behaviour
+    return QMainWindow::eventFilter(target, event);
 }

@@ -124,7 +124,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="cutecom-ng.qrc">
           <normaloff>:/v-splitter.png</normaloff>:/v-splitter.png</iconset>
         </property>
         <property name="checkable">
