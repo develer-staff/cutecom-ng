@@ -56,6 +56,11 @@ private:
      * \brief handle arrival of new data
      */
     void handleDataReceived(const QByteArray &data);
+
+    /**
+     * \brief toggle bottom output text window and splitter
+     */
+    void toggleOutputSplitter();
 };
 
 #endif // MAINWINDOW_H

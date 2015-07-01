@@ -20,7 +20,11 @@
 
 #include <QScrollBar>
 
+/// line ending char appended to the commands sent to the serial port
 const QString LINE_ENDING = "\n";
+
+/// maximum count of document blocks for the bootom output
+const int MAX_OUTPUT_LINES = 50;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -53,6 +57,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // call openSession when user accepts/closes connection dialog
     connect(connect_dlg, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
+
+    connect(ui->splitOutputBtn, &QPushButton::clicked, this, &MainWindow::toggleOutputSplitter);
+
+    // additional configuration for bottom output
+    ui->bottomOutput->hide();
+    ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
 }
 
 
@@ -117,8 +127,13 @@ void MainWindow::addDataToView(const QString & textdata)
     vbar->setValue(vbar->maximum());
 }
 
-
 void MainWindow::handleDataReceived(const QByteArray &data)
 {
     (*output_mgr) << data;
 }
+
+void MainWindow::toggleOutputSplitter()
+{
+    ui->bottomOutput->setVisible(!ui->bottomOutput->isVisible());
+}
+
