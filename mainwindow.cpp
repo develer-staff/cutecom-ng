@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(session_mgr, &SessionManager::sessionStarted, output_mgr, &OutputManager::clear);
 
     // clear output text
-    connect(session_mgr, &SessionManager::sessionStarted, ui->textOutput, &QTextEdit::clear);
+    connect(session_mgr, &SessionManager::sessionStarted, ui->mainOutput, &QTextEdit::clear);
 
     // call openSession when user accepts/closes connection dialog
     connect(connect_dlg, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
@@ -103,17 +103,17 @@ void MainWindow::addDataToView(const QString & textdata)
     }
 
     // save current text selection
-    QTextCursor cursor = ui->textOutput->textCursor();
+    QTextCursor cursor = ui->mainOutput->textCursor();
 
     // insert data at end of 'edit' (but this clears any selection)
-    ui->textOutput->moveCursor(QTextCursor::End);
-    ui->textOutput->insertPlainText(newdata);
+    ui->mainOutput->moveCursor(QTextCursor::End);
+    ui->mainOutput->insertPlainText(newdata);
 
     // revert text selection
-    ui->textOutput->setTextCursor(cursor);
+    ui->mainOutput->setTextCursor(cursor);
 
     // push scroll to the bottom
-    QScrollBar *vbar = ui->textOutput->verticalScrollBar();
+    QScrollBar *vbar = ui->mainOutput->verticalScrollBar();
     vbar->setValue(vbar->maximum());
 }
 
