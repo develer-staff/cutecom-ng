@@ -29,3 +29,6 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui \
     connectdialog.ui
+
+RESOURCES += \
+    cutecom-ng.qrc
