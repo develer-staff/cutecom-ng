@@ -73,7 +73,7 @@ void ConnectDialog::fillSettingsLists()
             // add ' / manufacturer' if not empty
             if (!tooltip.isEmpty())
                 tooltip.push_back(QStringLiteral(" / "));
-            tooltip.append(port_info.description());
+            tooltip.append(port_info.manufacturer());
         }
         // assign portName
         if (tooltip.isEmpty())
