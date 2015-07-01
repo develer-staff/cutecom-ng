@@ -56,8 +56,31 @@ ConnectDialog::~ConnectDialog()
 void ConnectDialog::fillSettingsLists()
 {
     // fill devices combo box
-    foreach(QSerialPortInfo info, QSerialPortInfo::availablePorts())
-        ui->deviceList->addItem(info.portName(), info.portName());
+    QList<QSerialPortInfo> ports(QSerialPortInfo::availablePorts());
+    for (int idx = 0; idx < ports.length(); ++idx)
+    {
+        const QSerialPortInfo& port_info = ports.at(idx);
+        ui->deviceList->addItem(port_info.portName());
+
+        // construct description tooltip
+        QString tooltip;
+
+        // add decription if not empty
+        if (!port_info.description().isEmpty())
+            tooltip.append(port_info.description());
+        if (!port_info.manufacturer().isEmpty())
+        {
+            // add ' / manufacturer' if not empty
+            if (!tooltip.isEmpty())
+                tooltip.push_back(QStringLiteral(" / "));
+            tooltip.append(port_info.description());
+        }
+        // assign portName
+        if (tooltip.isEmpty())
+            tooltip = port_info.portName();
+
+        ui->deviceList->setItemData(idx, tooltip, Qt::ToolTipRole);
+    }
 
     // fill baud rates combo box
     QStringList baud_rates;
