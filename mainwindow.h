@@ -13,31 +13,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QMap>
 #include <QTextCharFormat>
+#include <QMap>
 
 namespace Ui {
 class MainWindow;
 }
-
-
-
-struct TextSelection {
-
-    TextSelection(int _pos, int _len) : pos(_pos), len(_len) {}
-    int pos;
-    int len;
-
-
-    bool operator < (const TextSelection &lhs) const
-    {
-        if (pos < lhs.pos)
-            return true;
-        else
-            return len < lhs.len;
-    }
-};
-
 
 class SessionManager;
 class OutputManager;
@@ -56,7 +37,18 @@ private:
     OutputManager *output_mgr;
     ConnectDialog *connect_dlg;
 
-    QMap<TextSelection, QTextCharFormat> prev_formats;
+    /**
+     * \brief pair {position ; length}
+     * (used for keeping track of highlighted search results)
+     */
+    typedef QPair<int, int> position_length_type;
+
+    /**
+     * \brief currently highlighted search results
+     * - key : search text position
+     * - value : text char format before being highlighted
+     */
+    QMap<position_length_type, QTextCharFormat> search_results;
 
 public:
     explicit MainWindow(QWidget *parent = 0);

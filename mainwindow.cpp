@@ -24,6 +24,9 @@ const QString LINE_ENDING = "\n";
 /// maximum count of document blocks for the bootom output
 const int MAX_OUTPUT_LINES = 100;
 
+/// highlighted text background color (search results)
+const Qt::GlobalColor HIGHLIGHT_COLOR = Qt::yellow;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -153,8 +156,6 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
     return QMainWindow::eventFilter(target, event);
 }
 
-#include <QDebug>
-
 void MainWindow::handleSearchNext()
 {
     // there is a point having 'find next' feature in 'browsing mode only'
@@ -162,41 +163,30 @@ void MainWindow::handleSearchNext()
     // new text is received
     if (ui->bottomOutput->isVisible())
     {
-        const QString searched(ui->searchInput->text());
-
-        if (!searched.isEmpty())
-        {
-            QTextCursor pos = ui->mainOutput->document()->find(searched);
-            if (!pos.isNull())
-            {
-                // CONTINUER ICI, DEFINIR COMME SELECTIONNE LE TEXTE 'searched'
-
-            }
-        }
 
     }
 }
 
 void MainWindow::handleSearchTextChanged(const QString & text)
 {
-    // un-highlight all text previously highlighted
-    foreach(const TextSelection & sel, prev_formats.keys())
+    // un-highlight search strings previously found
+    foreach(const position_length_type & pair, search_results.keys())
     {
-        const QTextCharFormat & org_format = prev_formats.value(sel);
-        qDebug() << "original block format:" << org_format;
+        const QTextCharFormat & org_format = search_results.value(pair);
 
+        // get a document cursor
         QTextCursor htext_cursor(ui->mainOutput->document());
-        htext_cursor.setPosition(sel.pos, QTextCursor::KeepAnchor);
-        htext_cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, sel.len);
 
+        // select search string using backed up {position; length} pair
+        htext_cursor.setPosition(pair.first, QTextCursor::KeepAnchor);
+        htext_cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, pair.second);
+
+        // set original format back
         htext_cursor.setCharFormat(org_format);
-        qDebug() << "current highlighted format:" << htext_cursor.charFormat();
     }
-    prev_formats.clear();
+    search_results.clear();
 
-    qDebug() << "-------------------";
-    qDebug() << "search text changed: " << text;
-
+    // highlight searched text
     QTextCursor cursor(ui->mainOutput->document());
     cursor.movePosition(QTextCursor::Start);
     cursor = ui->mainOutput->document()->find(text, cursor);
@@ -205,21 +195,16 @@ void MainWindow::handleSearchTextChanged(const QString & text)
     {
         if (cursor.hasSelection())
         {
-            qDebug() << "\tselection: " << cursor.selectionStart() << ':' << cursor.selectionEnd();
-            ui->mainOutput->setTextCursor(cursor);
-
             // save current text format before highlighting it
             QTextCharFormat ch_fmt = cursor.charFormat();
-            QTextCharFormat bck_fmt = cursor.blockCharFormat();
 
-            prev_formats.insert(TextSelection(cursor.position(), text.length()), ch_fmt);
+            search_results.insert(
+                        position_length_type(cursor.position(), text.length()),
+                        ch_fmt);
 
-            ch_fmt.setBackground(QBrush(Qt::yellow));
+            ch_fmt.setBackground(QBrush(HIGHLIGHT_COLOR));
             cursor.setCharFormat(ch_fmt);
-
-            QTextCharFormat dbg_fmt = cursor.charFormat();
-
-            cursor.setPosition(cursor.position() + 1);
+            cursor.movePosition(QTextCursor::NextCharacter);
         }
         cursor = ui->mainOutput->document()->find(text, cursor);
     }
