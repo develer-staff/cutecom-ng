@@ -13,10 +13,30 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMap>
+#include <QTextCharFormat>
 
 namespace Ui {
 class MainWindow;
 }
+
+
+
+struct TextSelection {
+
+    TextSelection(int _pos, int _len) : pos(_pos), len(_len) {}
+    int pos;
+    int len;
+
+
+    bool operator < (const TextSelection &lhs) const
+    {
+        if (pos < lhs.pos)
+            return true;
+        else
+            return len < lhs.len;
+    }
+};
 
 
 class SessionManager;
@@ -35,6 +55,8 @@ private:
     SessionManager *session_mgr;
     OutputManager *output_mgr;
     ConnectDialog *connect_dlg;
+
+    QMap<TextSelection, QTextCharFormat> prev_formats;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -68,9 +90,14 @@ private:
     bool eventFilter(QObject *target, QEvent *event);
 
     /**
-     * \brief handle a text search in the output
+     * \brief handle return pressed in the search box
      */
-    void handleTextSearch();
+    void handleSearchNext();
+
+    /**
+     * \brief handle text search changed signal
+     */
+    void handleSearchTextChanged(const QString & text);
 };
 
 #endif // MAINWINDOW_H

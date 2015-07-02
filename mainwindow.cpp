@@ -63,8 +63,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
     ui->bottomOutput->viewport()->installEventFilter(this);
 
-    // returnPressed on the search line trigger a text search
-    connect(ui->searchInput, &QLineEdit::returnPressed, this, &MainWindow::handleTextSearch);
+    // connect search related signals
+    connect(ui->searchInput, &QLineEdit::returnPressed, this, &MainWindow::handleSearchNext);
+    connect(ui->searchInput, &QLineEdit::textChanged, this, &MainWindow::handleSearchTextChanged);
 }
 
 
@@ -152,18 +153,75 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
     return QMainWindow::eventFilter(target, event);
 }
 
-void MainWindow::handleTextSearch()
+#include <QDebug>
+
+void MainWindow::handleSearchNext()
 {
-    const QString searched(ui->searchInput->text());
-
-    if (!searched.isEmpty())
+    // there is a point having 'find next' feature in 'browsing mode only'
+    // indeed in standard mode we are scrolling down automatically when
+    // new text is received
+    if (ui->bottomOutput->isVisible())
     {
-        QTextCursor pos = ui->mainOutput->document()->find(searched);
-        if (!pos.isNull())
-        {
-            // CONTINUER ICI, DEFINIR COMME SELECTIONNE LE TEXTE 'searched'
+        const QString searched(ui->searchInput->text());
 
+        if (!searched.isEmpty())
+        {
+            QTextCursor pos = ui->mainOutput->document()->find(searched);
+            if (!pos.isNull())
+            {
+                // CONTINUER ICI, DEFINIR COMME SELECTIONNE LE TEXTE 'searched'
+
+            }
         }
+
+    }
+}
+
+void MainWindow::handleSearchTextChanged(const QString & text)
+{
+    // un-highlight all text previously highlighted
+    foreach(const TextSelection & sel, prev_formats.keys())
+    {
+        const QTextCharFormat & org_format = prev_formats.value(sel);
+        qDebug() << "original block format:" << org_format;
+
+        QTextCursor htext_cursor(ui->mainOutput->document());
+        htext_cursor.setPosition(sel.pos, QTextCursor::KeepAnchor);
+        htext_cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, sel.len);
+
+        htext_cursor.setCharFormat(org_format);
+        qDebug() << "current highlighted format:" << htext_cursor.charFormat();
+    }
+    prev_formats.clear();
+
+    qDebug() << "-------------------";
+    qDebug() << "search text changed: " << text;
+
+    QTextCursor cursor(ui->mainOutput->document());
+    cursor.movePosition(QTextCursor::Start);
+    cursor = ui->mainOutput->document()->find(text, cursor);
+
+    while (!cursor.isNull())
+    {
+        if (cursor.hasSelection())
+        {
+            qDebug() << "\tselection: " << cursor.selectionStart() << ':' << cursor.selectionEnd();
+            ui->mainOutput->setTextCursor(cursor);
+
+            // save current text format before highlighting it
+            QTextCharFormat ch_fmt = cursor.charFormat();
+            QTextCharFormat bck_fmt = cursor.blockCharFormat();
+
+            prev_formats.insert(TextSelection(cursor.position(), text.length()), ch_fmt);
+
+            ch_fmt.setBackground(QBrush(Qt::yellow));
+            cursor.setCharFormat(ch_fmt);
+
+            QTextCharFormat dbg_fmt = cursor.charFormat();
+
+            cursor.setPosition(cursor.position() + 1);
+        }
+        cursor = ui->mainOutput->document()->find(text, cursor);
     }
 }
 
