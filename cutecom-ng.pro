@@ -18,17 +18,20 @@ SOURCES += main.cpp\
     sessionmanager.cpp \
     outputmanager.cpp \
     historycombobox.cpp \
-    history.cpp
+    history.cpp \
+    searchwidget.cpp
 
 HEADERS  += mainwindow.h \
     connectdialog.h \
     sessionmanager.h \
     outputmanager.h \
     historycombobox.h \
-    history.h
+    history.h \
+    searchwidget.h
 
 FORMS    += mainwindow.ui \
-    connectdialog.ui
+    connectdialog.ui \
+    searchwidget.ui
 
 RESOURCES += \
     cutecom-ng.qrc
