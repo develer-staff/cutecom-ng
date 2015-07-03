@@ -90,6 +90,13 @@ private:
      * \brief handle text search changed signal
      */
     void handleSearchTextChanged(const QString & text);
+
+    /**
+     * \brief highlight text corresponding to searchtext
+     * \param text  text to highlight
+     * \param start starting position in the document
+     */
+    void highlightSearchText(const QString & search_text, int start = 0);
 };
 
 #endif // MAINWINDOW_H

@@ -15,6 +15,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "connectdialog.h"
+#include "searchwidget.h"
 #include "sessionmanager.h"
 #include "outputmanager.h"
 
@@ -37,6 +38,11 @@ MainWindow::MainWindow(QWidget *parent) :
     output_mgr = new OutputManager(this);
     session_mgr = new SessionManager(this);
     connect_dlg = new ConnectDialog(this);
+
+
+    SearchWidget *search_widget = new SearchWidget(this);
+    search_widget->setGeometry(0, 0, 400, 40);
+    search_widget->show();
 
     // show connection dialog
     connect(ui->connectButton, &QAbstractButton::clicked, connect_dlg, &ConnectDialog::show);
@@ -67,8 +73,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->bottomOutput->viewport()->installEventFilter(this);
 
     // connect search related signals
-    connect(ui->searchInput, &QLineEdit::returnPressed, this, &MainWindow::handleSearchNext);
-    connect(ui->searchInput, &QLineEdit::textChanged, this, &MainWindow::handleSearchTextChanged);
+//    connect(ui->searchInput, &QLineEdit::returnPressed, this, &MainWindow::handleSearchNext);
+//    connect(ui->searchInput, &QLineEdit::textChanged, this, &MainWindow::handleSearchTextChanged);
+
+
+    // now we have :
+    // - or to manually create the searchWidget UI
+    // or there is another way
+
+    // anyway it seems that i will not need a qwidget subclass (i dont think)
+    // links :
+    // https://forum.qt.io/topic/870/looking-for-advice-on-how-to-make-one-widget-be-displayed-over-another/7
+    // gestion du resizeEvent (si necessaire) http://www.qtforum.org/article/37037/locking-a-qwidget-ontop-of-another.html
+
+
 }
 
 
@@ -118,6 +136,10 @@ void MainWindow::addDataToView(const QString & textdata)
         std::copy(textdata.begin(), end_cit, std::back_inserter(newdata));
     }
 
+    // record end cursor position before adding text
+    QTextCursor prev_end_cursor(ui->mainOutput->document());
+    prev_end_cursor.movePosition(QTextCursor::End);
+
     if (ui->bottomOutput->isVisible())
     {
         // append text to the top output and stay at current position
@@ -135,6 +157,9 @@ void MainWindow::addDataToView(const QString & textdata)
     // append text to bottom output and scroll
     ui->bottomOutput->moveCursor(QTextCursor::End);
     ui->bottomOutput->insertPlainText(newdata);
+
+    // highlight eventual search string found in new text
+    //highlightSearchText(ui->searchInput->text(), prev_end_cursor.position());
 }
 
 void MainWindow::handleDataReceived(const QByteArray &data)
@@ -186,10 +211,17 @@ void MainWindow::handleSearchTextChanged(const QString & text)
     }
     search_results.clear();
 
-    // highlight searched text
+    // highlight new search string in all the document
+    highlightSearchText(text);
+}
+
+void MainWindow::highlightSearchText(const QString & search_text, int start)
+{
     QTextCursor cursor(ui->mainOutput->document());
+//    cursor.setPosition(start);
     cursor.movePosition(QTextCursor::Start);
-    cursor = ui->mainOutput->document()->find(text, cursor);
+    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, start);
+    cursor = ui->mainOutput->document()->find(search_text, cursor);
 
     while (!cursor.isNull())
     {
@@ -199,14 +231,13 @@ void MainWindow::handleSearchTextChanged(const QString & text)
             QTextCharFormat ch_fmt = cursor.charFormat();
 
             search_results.insert(
-                        position_length_type(cursor.position(), text.length()),
+                        position_length_type(cursor.position(), search_text.length()),
                         ch_fmt);
 
             ch_fmt.setBackground(QBrush(HIGHLIGHT_COLOR));
             cursor.setCharFormat(ch_fmt);
             cursor.movePosition(QTextCursor::NextCharacter);
         }
-        cursor = ui->mainOutput->document()->find(text, cursor);
+        cursor = ui->mainOutput->document()->find(search_text, cursor);
     }
 }
-
