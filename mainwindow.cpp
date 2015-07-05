@@ -92,6 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->searchButton, &QToolButton::toggled, this, &MainWindow::showSearchWidget);
     connect(search_input, &QLineEdit::textChanged, search_highlighter, &SearchHighlighter::setSearchString);
+    search_input->installEventFilter(this);
 }
 
 MainWindow::~MainWindow()
@@ -180,6 +181,14 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
 {
     if (event->type() == QEvent::Wheel)
         return true;
+    if (event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if (keyEvent->key() == Qt::Key_Escape && search_widget->isVisible())
+        {
+            emit ui->searchButton->toggle();
+        }
+    }
 
     // base class behaviour
     return QMainWindow::eventFilter(target, event);
