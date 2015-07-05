@@ -14,6 +14,7 @@
 
 #include <QUiLoader>
 #include <QLineEdit>
+#include <QPropertyAnimation>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -89,10 +90,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // create the search results highlighter and connect search-related signals/slots
     search_highlighter = new SearchHighlighter(ui->mainOutput->document());
 
-    connect(ui->searchButton, &QToolButton::toggled, search_widget, &QWidget::setVisible);
+    connect(ui->searchButton, &QToolButton::toggled, this, &MainWindow::showSearchWidget);
     connect(search_input, &QLineEdit::textChanged, search_highlighter, &SearchHighlighter::setSearchString);
 }
-
 
 MainWindow::~MainWindow()
 {
@@ -192,4 +192,19 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
     // base class implementations
     QMainWindow::resizeEvent(event);
+}
+
+void MainWindow::showSearchWidget(bool show)
+{
+    QPropertyAnimation *animation = new QPropertyAnimation(search_widget, "geometry");
+    animation->setDuration(150);
+
+    QRect showed_pos(this->size().width() - search_widget->width() - 40, -2, 300, 40);
+    QRect hidden_pos(this->size().width() - search_widget->width() - 40, -40, 300, 40);
+
+    animation->setStartValue(show ? hidden_pos : showed_pos);
+    animation->setEndValue(show ? showed_pos : hidden_pos);
+
+    animation->start();
+    search_widget->setVisible(true);
 }

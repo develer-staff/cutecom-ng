@@ -92,6 +92,12 @@ private:
      * \brief event filter
      */
     bool eventFilter(QObject *target, QEvent *event);
+
+    /**
+     * \brief show search widget
+     * \param show show or hide?
+     */
+    void showSearchWidget(bool show);
 };
 
 #endif // MAINWINDOW_H
