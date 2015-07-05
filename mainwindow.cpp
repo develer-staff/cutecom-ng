@@ -20,14 +20,13 @@
 #include "connectdialog.h"
 #include "sessionmanager.h"
 #include "outputmanager.h"
+#include "searchhighlighter.h"
 
 /// line ending char appended to the commands sent to the serial port
 const QString LINE_ENDING = "\n";
 
 /// maximum count of document blocks for the bootom output
 const int MAX_OUTPUT_LINES = 100;
-
-#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -55,6 +54,8 @@ MainWindow::MainWindow(QWidget *parent) :
     Q_ASSERT_X(search_input, "MainWindow::MainWindow", "didn't find searchInput");
 
     // to make widget appear on top of : NOT WORKING
+//    search_widget->setWindowFlags(search_widget->windowFlags() | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
+//    search_widget->setWindowModality(Qt::WindowModal);
     search_widget->hide();
 
     // show connection dialog
@@ -85,7 +86,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
     ui->bottomOutput->viewport()->installEventFilter(this);
 
+    // create the search results highlighter and connect search-related signals/slots
+    search_highlighter = new SearchHighlighter(ui->mainOutput->document());
+
     connect(ui->searchButton, &QToolButton::toggled, search_widget, &QWidget::setVisible);
+    connect(search_input, &QLineEdit::textChanged, search_highlighter, &SearchHighlighter::setSearchString);
 }
 
 

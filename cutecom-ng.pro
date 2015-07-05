@@ -18,14 +18,16 @@ SOURCES += main.cpp\
     sessionmanager.cpp \
     outputmanager.cpp \
     historycombobox.cpp \
-    history.cpp
+    history.cpp \
+    searchhighlighter.cpp
 
 HEADERS  += mainwindow.h \
     connectdialog.h \
     sessionmanager.h \
     outputmanager.h \
     historycombobox.h \
-    history.h
+    history.h \
+    searchhighlighter.h
 
 FORMS    += mainwindow.ui \
     connectdialog.ui \
