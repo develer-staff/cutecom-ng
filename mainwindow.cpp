@@ -12,10 +12,12 @@
 #include <algorithm>
 #include <iterator>
 
+#include <QUiLoader>
+#include <QLineEdit>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "connectdialog.h"
-#include "searchwidget.h"
 #include "sessionmanager.h"
 #include "outputmanager.h"
 
@@ -25,12 +27,13 @@ const QString LINE_ENDING = "\n";
 /// maximum count of document blocks for the bootom output
 const int MAX_OUTPUT_LINES = 100;
 
-/// highlighted text background color (search results)
-const Qt::GlobalColor HIGHLIGHT_COLOR = Qt::yellow;
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    search_widget(0),
+    search_input(0)
 {
     ui->setupUi(this);
 
@@ -39,10 +42,20 @@ MainWindow::MainWindow(QWidget *parent) :
     session_mgr = new SessionManager(this);
     connect_dlg = new ConnectDialog(this);
 
+    // load search widget and hide it
+    QUiLoader loader;
+    QFile file(":/searchwidget.ui");
+    file.open(QFile::ReadOnly);
+    search_widget = loader.load(&file, ui->mainOutput);
+    Q_ASSERT_X(search_widget, "MainWindow::MainWindow", "error while loading searchwidget.ui");
+    file.close();
 
-    SearchWidget *search_widget = new SearchWidget(this);
-    search_widget->setGeometry(0, 0, 400, 40);
-    search_widget->show();
+    search_input = search_widget->findChild<QLineEdit*>("searchInput");
+
+    Q_ASSERT_X(search_input, "MainWindow::MainWindow", "didn't find searchInput");
+
+    // to make widget appear on top of : NOT WORKING
+    search_widget->hide();
 
     // show connection dialog
     connect(ui->connectButton, &QAbstractButton::clicked, connect_dlg, &ConnectDialog::show);
@@ -72,21 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
     ui->bottomOutput->viewport()->installEventFilter(this);
 
-    // connect search related signals
-//    connect(ui->searchInput, &QLineEdit::returnPressed, this, &MainWindow::handleSearchNext);
-//    connect(ui->searchInput, &QLineEdit::textChanged, this, &MainWindow::handleSearchTextChanged);
-
-
-    // now we have :
-    // - or to manually create the searchWidget UI
-    // or there is another way
-
-    // anyway it seems that i will not need a qwidget subclass (i dont think)
-    // links :
-    // https://forum.qt.io/topic/870/looking-for-advice-on-how-to-make-one-widget-be-displayed-over-another/7
-    // gestion du resizeEvent (si necessaire) http://www.qtforum.org/article/37037/locking-a-qwidget-ontop-of-another.html
-
-
+    connect(ui->searchButton, &QToolButton::toggled, search_widget, &QWidget::setVisible);
 }
 
 
@@ -158,8 +157,8 @@ void MainWindow::addDataToView(const QString & textdata)
     ui->bottomOutput->moveCursor(QTextCursor::End);
     ui->bottomOutput->insertPlainText(newdata);
 
-    // highlight eventual search string found in new text
-    //highlightSearchText(ui->searchInput->text(), prev_end_cursor.position());
+
+//    handleSearchTextChanged(search_input->text());
 }
 
 void MainWindow::handleDataReceived(const QByteArray &data)
@@ -181,63 +180,11 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
     return QMainWindow::eventFilter(target, event);
 }
 
-void MainWindow::handleSearchNext()
+void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    // there is a point having 'find next' feature in 'browsing mode only'
-    // indeed in standard mode we are scrolling down automatically when
-    // new text is received
-    if (ui->bottomOutput->isVisible())
-    {
+    // todo :remove hardcoded values
+    search_widget->setGeometry(event->size().width() - search_widget->width() - 40, -2, 300, 40);
 
-    }
-}
-
-void MainWindow::handleSearchTextChanged(const QString & text)
-{
-    // un-highlight search strings previously found
-    foreach(const position_length_type & pair, search_results.keys())
-    {
-        const QTextCharFormat & org_format = search_results.value(pair);
-
-        // get a document cursor
-        QTextCursor htext_cursor(ui->mainOutput->document());
-
-        // select search string using backed up {position; length} pair
-        htext_cursor.setPosition(pair.first, QTextCursor::KeepAnchor);
-        htext_cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, pair.second);
-
-        // set original format back
-        htext_cursor.setCharFormat(org_format);
-    }
-    search_results.clear();
-
-    // highlight new search string in all the document
-    highlightSearchText(text);
-}
-
-void MainWindow::highlightSearchText(const QString & search_text, int start)
-{
-    QTextCursor cursor(ui->mainOutput->document());
-//    cursor.setPosition(start);
-    cursor.movePosition(QTextCursor::Start);
-    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, start);
-    cursor = ui->mainOutput->document()->find(search_text, cursor);
-
-    while (!cursor.isNull())
-    {
-        if (cursor.hasSelection())
-        {
-            // save current text format before highlighting it
-            QTextCharFormat ch_fmt = cursor.charFormat();
-
-            search_results.insert(
-                        position_length_type(cursor.position(), search_text.length()),
-                        ch_fmt);
-
-            ch_fmt.setBackground(QBrush(HIGHLIGHT_COLOR));
-            cursor.setCharFormat(ch_fmt);
-            cursor.movePosition(QTextCursor::NextCharacter);
-        }
-        cursor = ui->mainOutput->document()->find(search_text, cursor);
-    }
+    // base class implementations
+    QMainWindow::resizeEvent(event);
 }

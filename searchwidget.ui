@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SearchWidget</class>
- <widget class="QWidget" name="SearchWidget">
+ <class>QFrame</class>
+ <widget class="QFrame" name="SearchWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,8 +10,42 @@
     <height>40</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>400</width>
+    <height>40</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>400</width>
+    <height>40</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <family>Ubuntu</family>
+    <pointsize>11</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QFrame{
+  border-color: #E0E0E0;
+  border-style: none solid solid solid;
+  border-width: 0 1px 1px 1px;
+}</string>
+  </property>
+  <property name="frameShape">
+   <enum>QFrame::NoFrame</enum>
+  </property>
+  <property name="frameShadow">
+   <enum>QFrame::Plain</enum>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">
@@ -45,14 +79,14 @@
    <item>
     <widget class="QToolButton" name="previousButton">
      <property name="text">
-      <string>P</string>
+      <string>▴</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QToolButton" name="nextButton">
      <property name="text">
-      <string>N</string>
+      <string>▾</string>
      </property>
     </widget>
    </item>

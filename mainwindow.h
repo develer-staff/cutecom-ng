@@ -23,6 +23,8 @@ class MainWindow;
 class SessionManager;
 class OutputManager;
 class ConnectDialog;
+class QLineEdit;
+class SearchHighlighter;
 
 /**
  * \brief main cutecom-ng window
@@ -32,10 +34,13 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 private:
-    Ui::MainWindow *ui;
-    SessionManager *session_mgr;
-    OutputManager *output_mgr;
-    ConnectDialog *connect_dlg;
+    Ui::MainWindow      *ui;
+    SessionManager      *session_mgr;
+    OutputManager       *output_mgr;
+    ConnectDialog       *connect_dlg;
+    QWidget             *search_widget;
+    QLineEdit           *search_input;
+    SearchHighlighter   *search_highlighter;
 
     /**
      * \brief pair {position ; length}
@@ -53,6 +58,13 @@ private:
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+protected:
+
+    /**
+     * \brief overriden resizeEvent to position search widget
+     */
+    void resizeEvent(QResizeEvent *event);
 
 private:
 
@@ -80,23 +92,6 @@ private:
      * \brief event filter
      */
     bool eventFilter(QObject *target, QEvent *event);
-
-    /**
-     * \brief handle return pressed in the search box
-     */
-    void handleSearchNext();
-
-    /**
-     * \brief handle text search changed signal
-     */
-    void handleSearchTextChanged(const QString & text);
-
-    /**
-     * \brief highlight text corresponding to searchtext
-     * \param text  text to highlight
-     * \param start starting position in the document
-     */
-    void highlightSearchText(const QString & search_text, int start = 0);
 };
 
 #endif // MAINWINDOW_H
