@@ -48,15 +48,9 @@ MainWindow::MainWindow(QWidget *parent) :
     file.open(QFile::ReadOnly);
     search_widget = loader.load(&file, ui->mainOutput);
     Q_ASSERT_X(search_widget, "MainWindow::MainWindow", "error while loading searchwidget.ui");
-    file.close();
-
     search_input = search_widget->findChild<QLineEdit*>("searchInput");
-
     Q_ASSERT_X(search_input, "MainWindow::MainWindow", "didn't find searchInput");
-
-    // to make widget appear on top of : NOT WORKING
-//    search_widget->setWindowFlags(search_widget->windowFlags() | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
-//    search_widget->setWindowModality(Qt::WindowModal);
+    file.close();
     search_widget->hide();
 
     // show connection dialog
@@ -162,9 +156,6 @@ void MainWindow::addDataToView(const QString & textdata)
     // append text to bottom output and scroll
     ui->bottomOutput->moveCursor(QTextCursor::End);
     ui->bottomOutput->insertPlainText(newdata);
-
-
-//    handleSearchTextChanged(search_input->text());
 }
 
 void MainWindow::handleDataReceived(const QByteArray &data)
@@ -196,8 +187,11 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    // todo :remove hardcoded values
-    search_widget->setGeometry(event->size().width() - search_widget->width() - 40, -2, 300, 40);
+    // translate on x axis, by mainwindow size increase
+    QRect rect(search_widget->geometry());
+    rect.translate(event->size().width() - event->oldSize().width(), 0);
+
+    search_widget->setGeometry(rect);
 
     // base class implementations
     QMainWindow::resizeEvent(event);
@@ -208,12 +202,18 @@ void MainWindow::showSearchWidget(bool show)
     QPropertyAnimation *animation = new QPropertyAnimation(search_widget, "geometry");
     animation->setDuration(150);
 
-    QRect showed_pos(this->size().width() - search_widget->width() - 40, -2, 300, 40);
-    QRect hidden_pos(this->size().width() - search_widget->width() - 40, -40, 300, 40);
+    // arbitrary offset chosen to be way bigger than any scrollbar width, on any platform
+    const int right_margin = 40;
+    const QRect rect(search_widget->geometry());
+    QRect showed_pos(ui->mainOutput->width() - rect.width() - right_margin, 0, rect.width(), rect.height());
+    QRect hidden_pos(ui->mainOutput->width() - rect.width() - right_margin, -rect.height(), rect.width(), rect.height());
 
     animation->setStartValue(show ? hidden_pos : showed_pos);
     animation->setEndValue(show ? showed_pos : hidden_pos);
 
-    animation->start();
-    search_widget->setVisible(true);
+    if (show)
+        search_widget->setVisible(show);
+    else
+        connect(animation, &QPropertyAnimation::destroyed, search_widget, &QWidget::hide);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
 }

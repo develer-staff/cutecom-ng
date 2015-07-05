@@ -88,6 +88,9 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
       <widget class="QPlainTextEdit" name="mainOutput">
        <property name="font">
         <font>
