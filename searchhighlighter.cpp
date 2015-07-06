@@ -14,77 +14,125 @@
 SearchHighlighter::SearchHighlighter(QTextDocument *parent) :
     QSyntaxHighlighter(parent),
     _num_occurences(0),
-    _cur_occurence(0)
+    _occurence_cursor(0),
+    occurence_pos(0),
+    last_cursor_pos(0)
 {
 }
 
 void SearchHighlighter::setSearchString(const QString &search)
 {
     _search_string = search;
-    _cur_occurence = 0;
+    _occurence_cursor = 0;
     _num_occurences = 0;
+    occurence_pos = 0;
+    search_string_changed = true;
     rehighlight();
+    if (search_string_changed && _num_occurences > 0)
+    {
+        // last highlight loop, we didn't mark nothing because the string
+        // is before current position, reset it and redo the loop
+        last_cursor_pos = 0;
+        setSearchString(search);
+    }
 }
 
-#include <QDebug>
 void SearchHighlighter::highlightBlock(const QString &text)
 {
     // highlighted text background color (search results)
-    static const Qt::GlobalColor SEARCH_RESULT_BACKGROUND_COLOR = Qt::yellow;
+    static const Qt::GlobalColor SEARCHRESULT_BACKCOL = Qt::yellow;
 
     // highlighted text background color (search results)
-    static const Qt::GlobalColor CURRENT_SEARCH_RESULT_BACKGROUND_COLOR = Qt::red;
+    static const Qt::GlobalColor MARKED_SEARCHRESULT_BACKCOL = Qt::red;
 
-    if (!_search_string.isEmpty() && !text.isEmpty())
+    if (!_search_string.isEmpty())
     {
-        QTextCharFormat charFormat;
-        charFormat.setBackground(SEARCH_RESULT_BACKGROUND_COLOR);
-
-        const int length = _search_string.length();
-        int index = text.indexOf(_search_string, 0, Qt::CaseInsensitive);
-        while (index >= 0)
+        if (!text.isEmpty())
         {
-            charFormat.setBackground(SEARCH_RESULT_BACKGROUND_COLOR);
-            if (_num_occurences == _cur_occurence)
-                charFormat.setBackground(CURRENT_SEARCH_RESULT_BACKGROUND_COLOR);
+            QTextCharFormat charFormat;
+            charFormat.setBackground(SEARCHRESULT_BACKCOL);
 
-            setFormat(index, length, charFormat);
-            index = text.indexOf(_search_string, index + length, Qt::CaseInsensitive);
-            ++_num_occurences;
+            const int length = _search_string.length();
+            int index = text.indexOf(_search_string, 0, Qt::CaseInsensitive);
+            while (index >= 0)
+            {
+                charFormat.setBackground(SEARCHRESULT_BACKCOL);
+
+                if (search_string_changed)
+                {
+                    if (occurence_pos + index >= last_cursor_pos)
+                    {
+                        // if search_string just changed, _occurence_cursor has been invalidated
+                        // because it is bound to a specific search string
+                        // however last_cursor_pos records the position
+                        // so now we highlight the first search result we find
+                       last_cursor_pos = occurence_pos + index;
+                       _occurence_cursor = _num_occurences;
+                        charFormat.setBackground(MARKED_SEARCHRESULT_BACKCOL);
+                        search_string_changed = false;
+
+                        emit currentStringChanged(occurence_pos + index);
+                    }
+                }
+                else if (_num_occurences == _occurence_cursor)
+                {
+                    // record position of this occurence
+                   last_cursor_pos = occurence_pos + index;
+                    charFormat.setBackground(MARKED_SEARCHRESULT_BACKCOL);
+
+                    emit currentStringChanged(occurence_pos + index);
+                }
+
+                setFormat(index, length, charFormat);
+
+                index = text.indexOf(_search_string, index + length, Qt::CaseInsensitive);
+                ++_num_occurences;
+            }
+
+            occurence_pos += text.length();
         }
     }
-
-    qDebug() << "occurences: " << _num_occurences;
-
 }
 
 void SearchHighlighter::previousOccurence()
 {
     // nothing to do if the string-search returned nothing
-    if (_num_occurences > 0)
+    if (!_search_string.isEmpty())
     {
         // cyclic behaviour
-        if (_cur_occurence == 0)
-            _cur_occurence = _num_occurences - 1;
+        if (_occurence_cursor == 0)
+            _occurence_cursor = _num_occurences - 1;
         else
-            --_cur_occurence;
+            --_occurence_cursor;
         _num_occurences = 0;
+        occurence_pos = 0;
+
         rehighlight();
     }
 }
 
 void SearchHighlighter::nextOccurence()
 {
-    // nothing to do if the string-search returned nothing
-    if (_num_occurences > 0)
+    if (!_search_string.isEmpty())
     {
         // cyclic behaviour
-        if (_cur_occurence == _num_occurences - 1)
-            _cur_occurence = 0;
+        if (_occurence_cursor == _num_occurences - 1)
+            _occurence_cursor = 0;
         else
-            ++_cur_occurence;
+            ++_occurence_cursor;
         _num_occurences = 0;
+        occurence_pos = 0;
+
         rehighlight();
     }
 }
 
+int SearchHighlighter::cursorOccurence() const
+{
+    return _occurence_cursor;
+}
+
+int SearchHighlighter::totalOccurences() const
+{
+    return _num_occurences;
+}

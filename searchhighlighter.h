@@ -16,7 +16,11 @@
 #include <QSyntaxHighlighter>
 
 /**
- * \brief a syntax highliter used to highlight search results
+ * \brief syntax highliter for search results
+ *
+ * - highlight the found occurences of a given string
+ *  - manage an occurence cursor and its position,
+ *    allowing to highlight one particular occurence
  */
 class SearchHighlighter : public QSyntaxHighlighter
 {
@@ -24,11 +28,22 @@ private:
     /// the current search string
     QString _search_string;
 
-    /// count occurences of search string in document
+    /// count number N of occurences of search string in document
     int _num_occurences;
 
-    /// current occurence of search string in document
-    int _cur_occurence;
+    /// occurence cursor [0, N-1]
+    int _occurence_cursor;
+
+
+    /// used to record position of occurences (in the whole document)
+    /// through multiples highlightBlock calls
+    int occurence_pos;
+
+    /// last occurence cursor position
+    int last_cursor_pos;
+
+    /// indicates that search string has just been changed
+    bool search_string_changed;
 
 public:
     SearchHighlighter(QTextDocument *parent);
@@ -38,20 +53,41 @@ public:
     void setSearchString(const QString &search);
 
     /**
-     * \brief check for text to highlight
-     * \param text text to check for the search string
+     * \brief highlight given text block
+     * \param text text in which looking for text to highlight
      */
     void highlightBlock(const QString &text);
 
     /**
-     * \brief highlist previous occurence of search string
+     * \brief highlight previous occurence of search string
      */
     void previousOccurence();
 
     /**
-     * \brief highlist next occurence of search string
+     * \brief highlight next occurence of search string
      */
     void nextOccurence();
+
+    /**
+     * \brief get index of cursor occurence
+     * \return 0 based index of cursor occurence
+     */
+    int cursorOccurence() const;
+
+    /**
+     * \brief get total number of search result occurences
+     * \return total number of occurences
+     */
+    int totalOccurences() const;
+
+
+signals:
+
+    /**
+     * \brief signal emitted when current string changed
+     * \param pos position of string
+     */
+    void currentStringChanged(int pos);
 };
 
 #endif // SEARCHHIGHLIGHTER_H
