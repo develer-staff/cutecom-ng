@@ -66,12 +66,12 @@ void SearchHighlighter::highlightBlock(const QString &text)
                         // because it is bound to a specific search string
                         // however last_cursor_pos records the position
                         // so now we highlight the first search result we find
-                       last_cursor_pos = occurence_pos + index;
-                       _occurence_cursor = _num_occurences;
+                        last_cursor_pos = occurence_pos + index;
+                        _occurence_cursor = _num_occurences;
                         charFormat.setBackground(MARKED_SEARCHRESULT_BACKCOL);
                         search_string_changed = false;
 
-                        emit currentStringChanged(occurence_pos + index);
+                        emit cursorPosChanged(occurence_pos + index);
                     }
                 }
                 else if (_num_occurences == _occurence_cursor)
@@ -80,7 +80,7 @@ void SearchHighlighter::highlightBlock(const QString &text)
                    last_cursor_pos = occurence_pos + index;
                     charFormat.setBackground(MARKED_SEARCHRESULT_BACKCOL);
 
-                    emit currentStringChanged(occurence_pos + index);
+                    emit cursorPosChanged(occurence_pos + index);
                 }
 
                 setFormat(index, length, charFormat);

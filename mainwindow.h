@@ -69,7 +69,7 @@ protected:
 private:
 
     /**
-     * \brief handle return
+     * \brief handle new input
      */
     void handleNewInput(QString entry);
 
@@ -98,6 +98,12 @@ private:
      * \param show show or hide?
      */
     void showSearchWidget(bool show);
+
+    /**
+     * \brief handle search result cursor position changes
+     * \param pos pos of search result cursor
+     */
+    void handleCursosPosChanged(int pos);
 };
 
 #endif // MAINWINDOW_H

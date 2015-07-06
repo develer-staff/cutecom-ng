@@ -24,6 +24,8 @@
  */
 class SearchHighlighter : public QSyntaxHighlighter
 {
+    Q_OBJECT
+
 private:
     /// the current search string
     QString _search_string;
@@ -44,6 +46,13 @@ private:
 
     /// indicates that search string has just been changed
     bool search_string_changed;
+
+signals:
+    /**
+     * \brief signal emitted when current string changed
+     * \param pos position of string
+     */
+    void cursorPosChanged(int pos);
 
 public:
     SearchHighlighter(QTextDocument *parent);
@@ -81,13 +90,6 @@ public:
     int totalOccurences() const;
 
 
-signals:
-
-    /**
-     * \brief signal emitted when current string changed
-     * \param pos position of string
-     */
-    void currentStringChanged(int pos);
 };
 
 #endif // SEARCHHIGHLIGHTER_H

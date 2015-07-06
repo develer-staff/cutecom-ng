@@ -94,6 +94,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(searchPrevButton, &QToolButton::clicked, search_highlighter, &SearchHighlighter::previousOccurence);
     connect(searchNextButton, &QToolButton::clicked, search_highlighter, &SearchHighlighter::nextOccurence);
 
+    connect(search_highlighter, &SearchHighlighter::cursorPosChanged, this, &MainWindow::handleCursosPosChanged);
+
     search_input->installEventFilter(this);
 }
 
@@ -235,4 +237,19 @@ void MainWindow::showSearchWidget(bool show)
         prevFocus->setFocus();
     }
     animation->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void MainWindow::handleCursosPosChanged(int pos)
+{
+    // only in browsing mode
+    if (ui->bottomOutput->isVisible())
+    {
+        // move cursor
+        QTextCursor text_cursor = ui->mainOutput->textCursor();
+        text_cursor.setPosition(pos);
+
+        // ensure search result cursor is visible
+        ui->mainOutput->ensureCursorVisible();
+        ui->mainOutput->setTextCursor(text_cursor);
+    }
 }
