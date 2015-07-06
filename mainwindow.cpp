@@ -50,6 +50,11 @@ MainWindow::MainWindow(QWidget *parent) :
     Q_ASSERT_X(search_widget, "MainWindow::MainWindow", "error while loading searchwidget.ui");
     search_input = search_widget->findChild<QLineEdit*>("searchInput");
     Q_ASSERT_X(search_input, "MainWindow::MainWindow", "didn't find searchInput");
+    QToolButton * searchPrevButton = search_widget->findChild<QToolButton*>("previousButton");
+    QToolButton * searchNextButton = search_widget->findChild<QToolButton*>("nextButton");
+    Q_ASSERT_X(searchPrevButton, "MainWindow::MainWindow", "didn't find previousButton");
+    Q_ASSERT_X(searchNextButton, "MainWindow::MainWindow", "didn't find nextButton");
+
     file.close();
     search_widget->hide();
 
@@ -70,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // clear output text
     connect(session_mgr, &SessionManager::sessionStarted, ui->mainOutput, &QPlainTextEdit::clear);
+    connect(session_mgr, &SessionManager::sessionStarted, ui->bottomOutput, &QPlainTextEdit::clear);
 
     // call openSession when user accepts/closes connection dialog
     connect(connect_dlg, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
@@ -83,9 +89,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // create the search results highlighter and connect search-related signals/slots
     search_highlighter = new SearchHighlighter(ui->mainOutput->document());
-
     connect(ui->searchButton, &QToolButton::toggled, this, &MainWindow::showSearchWidget);
     connect(search_input, &QLineEdit::textChanged, search_highlighter, &SearchHighlighter::setSearchString);
+    connect(searchPrevButton, &QToolButton::clicked, search_highlighter, &SearchHighlighter::previousOccurence);
+    connect(searchNextButton, &QToolButton::clicked, search_highlighter, &SearchHighlighter::nextOccurence);
+
     search_input->installEventFilter(this);
 }
 

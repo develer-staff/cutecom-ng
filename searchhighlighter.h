@@ -24,6 +24,12 @@ private:
     /// the current search string
     QString _search_string;
 
+    /// count occurences of search string in document
+    int _num_occurences;
+
+    /// current occurence of search string in document
+    int _cur_occurence;
+
 public:
     SearchHighlighter(QTextDocument *parent);
 
@@ -36,6 +42,16 @@ public:
      * \param text text to check for the search string
      */
     void highlightBlock(const QString &text);
+
+    /**
+     * \brief highlist previous occurence of search string
+     */
+    void previousOccurence();
+
+    /**
+     * \brief highlist next occurence of search string
+     */
+    void nextOccurence();
 };
 
 #endif // SEARCHHIGHLIGHTER_H
