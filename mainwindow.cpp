@@ -207,6 +207,10 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::showSearchWidget(bool show)
 {
+    // record which widget had focus before showing search widget, in
+    // to return focus to it when search widget is hidden
+    static QWidget *prevFocus = 0;
+
     QPropertyAnimation *animation = new QPropertyAnimation(search_widget, "geometry");
     animation->setDuration(150);
 
@@ -220,8 +224,15 @@ void MainWindow::showSearchWidget(bool show)
     animation->setEndValue(show ? showed_pos : hidden_pos);
 
     if (show)
+    {
+        prevFocus = QApplication::focusWidget();
         search_widget->setVisible(show);
+        search_input->setFocus();
+    }
     else
+    {
         connect(animation, &QPropertyAnimation::destroyed, search_widget, &QWidget::hide);
+        prevFocus->setFocus();
+    }
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
