@@ -30,6 +30,9 @@ private:
     /// the current search string
     QString _search_string;
 
+    /// indicate if highliter maintains an occurence cursor
+    bool has_cursor;
+
     /// count number N of occurences of search string in document
     int _num_occurences;
 
@@ -64,7 +67,12 @@ signals:
     void totalOccurencesChanged(int total_occurences);
 
 public:
-    SearchHighlighter(QTextDocument *parent);
+    /**
+     * \brief SearchHighlighter construct a search results highlighter
+     * \param parent parent widget
+     * \param has_cursor_ maintain an occurence cursor
+     */
+    SearchHighlighter(QTextDocument *parent, bool has_cursor_ = true);
 
     /**
      * \brief define the search string     */

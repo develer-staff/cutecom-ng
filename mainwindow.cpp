@@ -94,14 +94,20 @@ MainWindow::MainWindow(QWidget *parent) :
     file.close();
     search_widget->hide();
 
-    // create the search results highlighter and connect search-related signals/slots
-    SearchHighlighter *search_highlighter = new SearchHighlighter(ui->mainOutput->document());
+    // create the search results highlighter for main output
+    SearchHighlighter *search_highlighter_main = new SearchHighlighter(ui->mainOutput->document());
+    connect(search_input, &QLineEdit::textChanged, search_highlighter_main, &SearchHighlighter::setSearchString);
+
+    // search result highlighter (without search cursor) for bottom output
+    SearchHighlighter *search_highlighter_bottom = new SearchHighlighter(ui->bottomOutput->document(), false);
+    connect(search_input, &QLineEdit::textChanged, search_highlighter_bottom, &SearchHighlighter::setSearchString);
+
+    // connect search-related signals/slots
+    connect(search_prev_button, &QToolButton::clicked, search_highlighter_main, &SearchHighlighter::previousOccurence);
+    connect(search_next_button, &QToolButton::clicked, search_highlighter_main, &SearchHighlighter::nextOccurence);
+    connect(search_highlighter_main, &SearchHighlighter::cursorPosChanged, this, &MainWindow::handleCursosPosChanged);
+    connect(search_highlighter_main, &SearchHighlighter::totalOccurencesChanged, this, &MainWindow::handleTotalOccurencesChanged);
     connect(ui->searchButton, &QToolButton::toggled, this, &MainWindow::showSearchWidget);
-    connect(search_input, &QLineEdit::textChanged, search_highlighter, &SearchHighlighter::setSearchString);
-    connect(search_prev_button, &QToolButton::clicked, search_highlighter, &SearchHighlighter::previousOccurence);
-    connect(search_next_button, &QToolButton::clicked, search_highlighter, &SearchHighlighter::nextOccurence);
-    connect(search_highlighter, &SearchHighlighter::cursorPosChanged, this, &MainWindow::handleCursosPosChanged);
-    connect(search_highlighter, &SearchHighlighter::totalOccurencesChanged, this, &MainWindow::handleTotalOccurencesChanged);
 
     search_input->installEventFilter(this);
     ui->mainOutput->viewport()->installEventFilter(this);
