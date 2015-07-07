@@ -48,8 +48,10 @@ MainWindow::MainWindow(QWidget *parent) :
     file.open(QFile::ReadOnly);
     search_widget = loader.load(&file, ui->mainOutput);
     Q_ASSERT_X(search_widget, "MainWindow::MainWindow", "error while loading searchwidget.ui");
+
     search_input = search_widget->findChild<QLineEdit*>("searchInput");
     Q_ASSERT_X(search_input, "MainWindow::MainWindow", "didn't find searchInput");
+
     QToolButton * searchPrevButton = search_widget->findChild<QToolButton*>("previousButton");
     QToolButton * searchNextButton = search_widget->findChild<QToolButton*>("nextButton");
     Q_ASSERT_X(searchPrevButton, "MainWindow::MainWindow", "didn't find previousButton");
@@ -97,6 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(search_highlighter, &SearchHighlighter::cursorPosChanged, this, &MainWindow::handleCursosPosChanged);
 
     search_input->installEventFilter(this);
+    ui->mainOutput->viewport()->installEventFilter(this);
 }
 
 MainWindow::~MainWindow()
@@ -182,29 +185,25 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
 {
     if (event->type() == QEvent::Wheel)
         return true;
-    if (event->type() == QEvent::KeyPress)
+    else if (event->type() == QEvent::KeyPress)
     {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
         if (keyEvent->key() == Qt::Key_Escape && search_widget->isVisible())
         {
+            // hide search widget on Escape key press
             emit ui->searchButton->toggle();
         }
+    }
+    else if (event->type() == QEvent::Resize && target == ui->mainOutput->viewport())
+    {
+        // re position search widget when main output inner size changes
+        // this takes into account vertical scrollbar visibility
+        QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
+        search_widget->move(resizeEvent->size().width() - search_widget->width(), 0);
     }
 
     // base class behaviour
     return QMainWindow::eventFilter(target, event);
-}
-
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
-    // translate on x axis, by mainwindow size increase
-    QRect rect(search_widget->geometry());
-    rect.translate(event->size().width() - event->oldSize().width(), 0);
-
-    search_widget->setGeometry(rect);
-
-    // base class implementations
-    QMainWindow::resizeEvent(event);
 }
 
 void MainWindow::showSearchWidget(bool show)
@@ -217,10 +216,9 @@ void MainWindow::showSearchWidget(bool show)
     animation->setDuration(150);
 
     // arbitrary offset chosen to be way bigger than any scrollbar width, on any platform
-    const int right_margin = 40;
     const QRect rect(search_widget->geometry());
-    QRect showed_pos(ui->mainOutput->width() - rect.width() - right_margin, 0, rect.width(), rect.height());
-    QRect hidden_pos(ui->mainOutput->width() - rect.width() - right_margin, -rect.height(), rect.width(), rect.height());
+    QRect showed_pos(ui->mainOutput->viewport()->width() - rect.width(), 0, rect.width(), rect.height());
+    QRect hidden_pos(ui->mainOutput->viewport()->width() - rect.width(), -rect.height(), rect.width(), rect.height());
 
     animation->setStartValue(show ? hidden_pos : showed_pos);
     animation->setEndValue(show ? showed_pos : hidden_pos);

@@ -59,13 +59,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-protected:
-
-    /**
-     * \brief overriden resizeEvent to position search widget
-     */
-    void resizeEvent(QResizeEvent *event);
-
 private:
 
     /**
