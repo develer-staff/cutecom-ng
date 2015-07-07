@@ -248,7 +248,7 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
 
 void MainWindow::showSearchWidget(bool show)
 {
-    // record which widget had focus before showing search widget, in
+    // record which widget had focus before showing search widget, in order
     // to return focus to it when search widget is hidden
     static QWidget *prevFocus = 0;
 
