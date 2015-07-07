@@ -46,6 +46,8 @@ void SearchHighlighter::setSearchString(const QString &search)
 
 void SearchHighlighter::highlightBlock(const QString &text)
 {
+    const int block_position = currentBlock().position();
+
     // highlighted text background color (search results)
     static const Qt::GlobalColor SEARCHRESULT_BACKCOL = Qt::yellow;
 
@@ -69,27 +71,27 @@ void SearchHighlighter::highlightBlock(const QString &text)
                 {
                     if (search_string_changed)
                     {
-                        if (occurence_pos + index >= last_cursor_pos)
+                        if (block_position + index >= last_cursor_pos)
                         {
                             // if search_string just changed, _occurence_cursor has been invalidated
                             // because it is bound to a specific search string
                             // however last_cursor_pos records the position
                             // so now we highlight the first search result we find
-                            last_cursor_pos = occurence_pos + index;
+                            last_cursor_pos = block_position + index;
                             _occurence_cursor = _num_occurences;
                             charFormat.setBackground(CURSOR_SEARCHRESULT_BACKCOL);
                             search_string_changed = false;
 
-                            emit cursorPosChanged(occurence_pos + index);
+                            emit cursorPosChanged(block_position + index);
                         }
                     }
                     else if (_num_occurences == _occurence_cursor)
                     {
                         // record position of this occurence
-                       last_cursor_pos = occurence_pos + index;
+                       last_cursor_pos = block_position + index;
                         charFormat.setBackground(CURSOR_SEARCHRESULT_BACKCOL);
 
-                        emit cursorPosChanged(occurence_pos + index);
+                        emit cursorPosChanged(block_position + index);
                     }
                 }
 
@@ -98,8 +100,6 @@ void SearchHighlighter::highlightBlock(const QString &text)
                 index = text.indexOf(_search_string, index + length, Qt::CaseInsensitive);
                 ++_num_occurences;
             }
-
-            occurence_pos += text.length();
         }
     }
 }
