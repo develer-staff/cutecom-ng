@@ -24,7 +24,7 @@ class SessionManager;
 class OutputManager;
 class ConnectDialog;
 class QLineEdit;
-class SearchHighlighter;
+class QToolButton;
 
 /**
  * \brief main cutecom-ng window
@@ -40,7 +40,8 @@ private:
     ConnectDialog       *connect_dlg;
     QWidget             *search_widget;
     QLineEdit           *search_input;
-    SearchHighlighter   *search_highlighter;
+    QToolButton         *search_prev_button;
+    QToolButton         *search_next_button;
 
     /**
      * \brief pair {position ; length}

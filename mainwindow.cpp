@@ -15,6 +15,7 @@
 #include <QUiLoader>
 #include <QLineEdit>
 #include <QPropertyAnimation>
+#include <QShortcut>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -41,24 +42,6 @@ MainWindow::MainWindow(QWidget *parent) :
     output_mgr = new OutputManager(this);
     session_mgr = new SessionManager(this);
     connect_dlg = new ConnectDialog(this);
-
-    // load search widget and hide it
-    QUiLoader loader;
-    QFile file(":/searchwidget.ui");
-    file.open(QFile::ReadOnly);
-    search_widget = loader.load(&file, ui->mainOutput);
-    Q_ASSERT_X(search_widget, "MainWindow::MainWindow", "error while loading searchwidget.ui");
-
-    search_input = search_widget->findChild<QLineEdit*>("searchInput");
-    Q_ASSERT_X(search_input, "MainWindow::MainWindow", "didn't find searchInput");
-
-    QToolButton * searchPrevButton = search_widget->findChild<QToolButton*>("previousButton");
-    QToolButton * searchNextButton = search_widget->findChild<QToolButton*>("nextButton");
-    Q_ASSERT_X(searchPrevButton, "MainWindow::MainWindow", "didn't find previousButton");
-    Q_ASSERT_X(searchNextButton, "MainWindow::MainWindow", "didn't find nextButton");
-
-    file.close();
-    search_widget->hide();
 
     // show connection dialog
     connect(ui->connectButton, &QAbstractButton::clicked, connect_dlg, &ConnectDialog::show);
@@ -89,17 +72,35 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
     ui->bottomOutput->viewport()->installEventFilter(this);
 
+    // load search widget and hide it
+    QUiLoader loader;
+    QFile file(":/searchwidget.ui");
+    file.open(QFile::ReadOnly);
+    search_widget = loader.load(&file, ui->mainOutput);
+    Q_ASSERT_X(search_widget, "MainWindow::MainWindow", "error while loading searchwidget.ui");
+
+    search_input = search_widget->findChild<QLineEdit*>("searchInput");
+    Q_ASSERT_X(search_input, "MainWindow::MainWindow", "didn't find searchInput");
+
+    search_prev_button = search_widget->findChild<QToolButton*>("previousButton");
+    search_next_button = search_widget->findChild<QToolButton*>("nextButton");
+    Q_ASSERT_X(search_prev_button, "MainWindow::MainWindow", "didn't find previousButton");
+    Q_ASSERT_X(search_next_button, "MainWindow::MainWindow", "didn't find nextButton");
+
+    file.close();
+    search_widget->hide();
+
     // create the search results highlighter and connect search-related signals/slots
-    search_highlighter = new SearchHighlighter(ui->mainOutput->document());
+    SearchHighlighter *search_highlighter = new SearchHighlighter(ui->mainOutput->document());
     connect(ui->searchButton, &QToolButton::toggled, this, &MainWindow::showSearchWidget);
     connect(search_input, &QLineEdit::textChanged, search_highlighter, &SearchHighlighter::setSearchString);
-    connect(searchPrevButton, &QToolButton::clicked, search_highlighter, &SearchHighlighter::previousOccurence);
-    connect(searchNextButton, &QToolButton::clicked, search_highlighter, &SearchHighlighter::nextOccurence);
-
+    connect(search_prev_button, &QToolButton::clicked, search_highlighter, &SearchHighlighter::previousOccurence);
+    connect(search_next_button, &QToolButton::clicked, search_highlighter, &SearchHighlighter::nextOccurence);
     connect(search_highlighter, &SearchHighlighter::cursorPosChanged, this, &MainWindow::handleCursosPosChanged);
 
     search_input->installEventFilter(this);
     ui->mainOutput->viewport()->installEventFilter(this);
+    installEventFilter(this);
 }
 
 MainWindow::~MainWindow()
@@ -204,11 +205,29 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
         if (event->type() == QEvent::KeyPress)
         {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-            if (keyEvent->key() == Qt::Key_Escape && search_widget->isVisible())
+            if (ui->searchButton->isChecked())
             {
                 // hide search widget on Escape key press
-                emit ui->searchButton->toggle();
+                if (keyEvent->key() == Qt::Key_Escape)
+                    emit ui->searchButton->toggle();
             }
+            else
+            {
+                // show search widget on Ctrl-F
+                if (keyEvent->key() == Qt::Key_F && keyEvent->modifiers() == Qt::ControlModifier)
+                    emit ui->searchButton->toggle();
+            }
+            if (target == search_input)
+            {
+                if (keyEvent->key() == Qt::Key_Return)
+                {
+                    if (keyEvent->modifiers() == Qt::ShiftModifier)
+                        emit search_prev_button->click();
+                    else
+                        emit search_next_button->click();
+                }
+            }
+
         }
     }
 
