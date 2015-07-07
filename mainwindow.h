@@ -98,6 +98,13 @@ private:
      * \param pos pos of search result cursor
      */
     void handleCursosPosChanged(int pos);
+
+    /**
+     * \brief handle changes of number of search string occurences
+     * \param total_occurences
+     */
+    void handleTotalOccurencesChanged(int total_occurences);
+
 };
 
 #endif // MAINWINDOW_H

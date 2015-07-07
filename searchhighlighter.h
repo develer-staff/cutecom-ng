@@ -36,7 +36,6 @@ private:
     /// occurence cursor [0, N-1]
     int _occurence_cursor;
 
-
     /// used to record position of occurences (in the whole document)
     /// through multiples highlightBlock calls
     int occurence_pos;
@@ -53,6 +52,16 @@ signals:
      * \param pos position of string
      */
     void cursorPosChanged(int pos);
+
+    /**
+     * \brief signal emitted when total number of search string occurences
+     * has chnaged
+     * \param total_occurences number of occurences:
+     *     * -1: no search string
+     *     *  0: search string defined but 0 occurences found
+     *     *  n: n occurences of search string
+     */
+    void totalOccurencesChanged(int total_occurences);
 
 public:
     SearchHighlighter(QTextDocument *parent);
@@ -88,8 +97,6 @@ public:
      * \return total number of occurences
      */
     int totalOccurences() const;
-
-
 };
 
 #endif // SEARCHHIGHLIGHTER_H

@@ -35,6 +35,10 @@ void SearchHighlighter::setSearchString(const QString &search)
         last_cursor_pos = 0;
         setSearchString(search);
     }
+    if (search.isEmpty())
+        emit totalOccurencesChanged(-1);
+    else
+        emit totalOccurencesChanged(_num_occurences);
 }
 
 void SearchHighlighter::highlightBlock(const QString &text)

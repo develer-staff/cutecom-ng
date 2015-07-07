@@ -97,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(search_prev_button, &QToolButton::clicked, search_highlighter, &SearchHighlighter::previousOccurence);
     connect(search_next_button, &QToolButton::clicked, search_highlighter, &SearchHighlighter::nextOccurence);
     connect(search_highlighter, &SearchHighlighter::cursorPosChanged, this, &MainWindow::handleCursosPosChanged);
+    connect(search_highlighter, &SearchHighlighter::totalOccurencesChanged, this, &MainWindow::handleTotalOccurencesChanged);
 
     search_input->installEventFilter(this);
     ui->mainOutput->viewport()->installEventFilter(this);
@@ -279,4 +280,12 @@ void MainWindow::handleCursosPosChanged(int pos)
         ui->mainOutput->ensureCursorVisible();
         ui->mainOutput->setTextCursor(text_cursor);
     }
+}
+
+void MainWindow::handleTotalOccurencesChanged(int total_occurences)
+{
+    if (total_occurences == 0)
+        search_input->setStyleSheet("QLineEdit{background-color: red;}");
+    else
+        search_input->setStyleSheet("");
 }
