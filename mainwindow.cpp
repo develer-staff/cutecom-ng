@@ -58,9 +58,13 @@ MainWindow::MainWindow(QWidget *parent) :
     // clear output manager buffer at session start
     connect(session_mgr, &SessionManager::sessionStarted, output_mgr, &OutputManager::clear);
 
-    // clear output text
+    // clear both output text at session start
     connect(session_mgr, &SessionManager::sessionStarted, ui->mainOutput, &QPlainTextEdit::clear);
     connect(session_mgr, &SessionManager::sessionStarted, ui->bottomOutput, &QPlainTextEdit::clear);
+
+    // clear both output text when 'clear' is clicked
+    connect(ui->clearButton, &QToolButton::clicked, ui->mainOutput, &QPlainTextEdit::clear);
+    connect(ui->clearButton, &QToolButton::clicked, ui->bottomOutput, &QPlainTextEdit::clear);
 
     // call openSession when user accepts/closes connection dialog
     connect(connect_dlg, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
