@@ -220,22 +220,22 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event)
             {
                 // hide search widget on Escape key press
                 if (keyEvent->key() == Qt::Key_Escape)
-                    emit ui->searchButton->toggle();
+                    ui->searchButton->toggle();
             }
             else
             {
                 // show search widget on Ctrl-F
                 if (keyEvent->key() == Qt::Key_F && keyEvent->modifiers() == Qt::ControlModifier)
-                    emit ui->searchButton->toggle();
+                    ui->searchButton->toggle();
             }
             if (target == search_input)
             {
                 if (keyEvent->key() == Qt::Key_Return)
                 {
                     if (keyEvent->modifiers() == Qt::ShiftModifier)
-                        emit search_prev_button->click();
+                        search_prev_button->click();
                     else
-                        emit search_next_button->click();
+                        search_next_button->click();
                 }
             }
 
