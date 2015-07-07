@@ -183,23 +183,33 @@ void MainWindow::toggleOutputSplitter()
 
 bool MainWindow::eventFilter(QObject *target, QEvent *event)
 {
-    if (event->type() == QEvent::Wheel)
-        return true;
-    else if (event->type() == QEvent::KeyPress)
+    if (target == ui->mainOutput->viewport())
     {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-        if (keyEvent->key() == Qt::Key_Escape && search_widget->isVisible())
+        if (event->type() == QEvent::Resize)
         {
-            // hide search widget on Escape key press
-            emit ui->searchButton->toggle();
+            // re position search widget when main output inner size changes
+            // this takes into account existence of vertical scrollbar
+            QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
+            search_widget->move(resizeEvent->size().width() - search_widget->width(), 0);
+        }
+        else if (event->type() == QEvent::Wheel)
+        {
+            // allow mouse wheel usage only in 'browsing mode'
+            if (!ui->bottomOutput->isVisible())
+                return true;
         }
     }
-    else if (event->type() == QEvent::Resize && target == ui->mainOutput->viewport())
+    else
     {
-        // re position search widget when main output inner size changes
-        // this takes into account vertical scrollbar visibility
-        QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
-        search_widget->move(resizeEvent->size().width() - search_widget->width(), 0);
+        if (event->type() == QEvent::KeyPress)
+        {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent->key() == Qt::Key_Escape && search_widget->isVisible())
+            {
+                // hide search widget on Escape key press
+                emit ui->searchButton->toggle();
+            }
+        }
     }
 
     // base class behaviour
