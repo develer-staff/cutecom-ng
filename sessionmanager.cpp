@@ -105,7 +105,7 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
         serial->close();
 
     // configure port
-#ifdef Q_OS_MAC
+#if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0)) && Q_OS_MAC
     // connection error on MacOsX if port name is set with setPortName instead
     // of setPort (issue #7)
     serial->setPort(QSerialPortInfo(port_cfg[QStringLiteral("device")]));
