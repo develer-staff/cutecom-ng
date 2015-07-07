@@ -252,14 +252,12 @@ void MainWindow::showSearchWidget(bool show)
     // to return focus to it when search widget is hidden
     static QWidget *prevFocus = 0;
 
-    QPropertyAnimation *animation = new QPropertyAnimation(search_widget, "geometry");
+    QPropertyAnimation *animation = new QPropertyAnimation(search_widget, "pos");
     animation->setDuration(150);
 
-    // arbitrary offset chosen to be way bigger than any scrollbar width, on any platform
-    const QRect rect(search_widget->geometry());
-    QRect showed_pos(ui->mainOutput->viewport()->width() - rect.width(), 0, rect.width(), rect.height());
-    QRect hidden_pos(ui->mainOutput->viewport()->width() - rect.width(), -rect.height(), rect.width(), rect.height());
-
+    // place search widget at the rightmost position of mainoutput viewport
+    QPoint showed_pos(ui->mainOutput->viewport()->width() - search_widget->width(), 0);
+    QPoint hidden_pos(ui->mainOutput->viewport()->width() - search_widget->width(), -search_widget->height());
     animation->setStartValue(show ? hidden_pos : showed_pos);
     animation->setEndValue(show ? showed_pos : hidden_pos);
 
