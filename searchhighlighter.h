@@ -4,7 +4,7 @@
  * Copyright 2015 Develer S.r.l. (http://www.develer.com/)
  * -->
  *
- * \brief cutecom-ng search result highliter header
+ * \brief cutecom-ng search result highlighter header
  *
  * \author Aurelien Rainone <aurelien@develer.org>
  */
@@ -16,7 +16,7 @@
 #include <QSyntaxHighlighter>
 
 /**
- * \brief syntax highliter for search results
+ * \brief syntax highlighter for search results
  *
  * - highlight the found occurences of a given string
  *  - manage an occurence cursor and its position,
@@ -30,7 +30,7 @@ private:
     /// the current search string
     QString _search_string;
 
-    /// indicate if highliter maintains an occurence cursor
+    /// indicate if highlighter maintains an occurence cursor
     bool has_cursor;
 
     /// count number N of occurences of search string in document
