@@ -43,19 +43,6 @@ private:
     QToolButton         *search_prev_button;
     QToolButton         *search_next_button;
 
-    /**
-     * \brief pair {position ; length}
-     * (used for keeping track of highlighted search results)
-     */
-    typedef QPair<int, int> position_length_type;
-
-    /**
-     * \brief currently highlighted search results
-     * - key : search text position
-     * - value : text char format before being highlighted
-     */
-    QMap<position_length_type, QTextCharFormat> search_results;
-
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
