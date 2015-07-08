@@ -71,11 +71,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->splitOutputBtn, &QToolButton::clicked, this, &MainWindow::toggleOutputSplitter);
 
-    // additional configuration for bottom output
-    ui->bottomOutput->hide();
-    ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
-    ui->bottomOutput->viewport()->installEventFilter(this);
-
     // load search widget and hide it
     QUiLoader loader;
     QFile file(":/searchwidget.ui");
@@ -109,6 +104,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(search_highlighter_main, &SearchHighlighter::totalOccurencesChanged, this, &MainWindow::handleTotalOccurencesChanged);
     connect(ui->searchButton, &QToolButton::toggled, this, &MainWindow::showSearchWidget);
 
+    // additional configuration for bottom output
+    ui->bottomOutput->hide();
+    ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
+
+    // install event filters
+    ui->bottomOutput->viewport()->installEventFilter(this);
     search_input->installEventFilter(this);
     ui->mainOutput->viewport()->installEventFilter(this);
     installEventFilter(this);
@@ -195,50 +196,44 @@ void MainWindow::toggleOutputSplitter()
 
 bool MainWindow::eventFilter(QObject *target, QEvent *event)
 {
-    if (target == ui->mainOutput->viewport())
+    if (event->type() == QEvent::Resize && target == ui->mainOutput->viewport())
     {
-        if (event->type() == QEvent::Resize)
-        {
-            // re position search widget when main output inner size changes
-            // this takes into account existence of vertical scrollbar
-            QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
-            search_widget->move(resizeEvent->size().width() - search_widget->width(), 0);
-        }
-        else if (event->type() == QEvent::Wheel)
-        {
-            // allow mouse wheel usage only in 'browsing mode'
-            if (!ui->bottomOutput->isVisible())
-                return true;
-        }
+        // re position search widget when main output inner size changes
+        // this takes into account existence of vertical scrollbar
+        QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
+        search_widget->move(resizeEvent->size().width() - search_widget->width(), 0);
     }
-    else
+    else if (event->type() == QEvent::Wheel)
     {
-        if (event->type() == QEvent::KeyPress)
+        // mouse wheel allowed only for main output in 'browsing mode'
+        if (target == ui->bottomOutput->viewport() ||
+                (target == ui->mainOutput->viewport() && !ui->bottomOutput->isVisible()))
+            return true;
+    }
+    else if (event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if (ui->searchButton->isChecked())
         {
-            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-            if (ui->searchButton->isChecked())
+            // hide search widget on Escape key press
+            if (keyEvent->key() == Qt::Key_Escape)
+                ui->searchButton->toggle();
+        }
+        else
+        {
+            // show search widget on Ctrl-F
+            if (keyEvent->key() == Qt::Key_F && keyEvent->modifiers() == Qt::ControlModifier)
+                ui->searchButton->toggle();
+        }
+        if (target == search_input)
+        {
+            if (keyEvent->key() == Qt::Key_Return)
             {
-                // hide search widget on Escape key press
-                if (keyEvent->key() == Qt::Key_Escape)
-                    ui->searchButton->toggle();
+                if (keyEvent->modifiers() == Qt::ShiftModifier)
+                    search_prev_button->click();
+                else
+                    search_next_button->click();
             }
-            else
-            {
-                // show search widget on Ctrl-F
-                if (keyEvent->key() == Qt::Key_F && keyEvent->modifiers() == Qt::ControlModifier)
-                    ui->searchButton->toggle();
-            }
-            if (target == search_input)
-            {
-                if (keyEvent->key() == Qt::Key_Return)
-                {
-                    if (keyEvent->modifiers() == Qt::ShiftModifier)
-                        search_prev_button->click();
-                    else
-                        search_next_button->click();
-                }
-            }
-
         }
     }
 
