@@ -18,10 +18,11 @@ namespace Ui {
 class MainWindow;
 }
 
-
 class SessionManager;
 class OutputManager;
 class ConnectDialog;
+class QLineEdit;
+class QToolButton;
 
 /**
  * \brief main cutecom-ng window
@@ -31,10 +32,14 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 private:
-    Ui::MainWindow *ui;
-    SessionManager *session_mgr;
-    OutputManager *output_mgr;
-    ConnectDialog *connect_dlg;
+    Ui::MainWindow      *ui;
+    SessionManager      *session_mgr;
+    OutputManager       *output_mgr;
+    ConnectDialog       *connect_dlg;
+    QWidget             *search_widget;
+    QLineEdit           *search_input;
+    QToolButton         *search_prev_button;
+    QToolButton         *search_next_button;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -43,7 +48,7 @@ public:
 private:
 
     /**
-     * \brief handle return
+     * \brief handle new input
      */
     void handleNewInput(QString entry);
 
@@ -66,6 +71,25 @@ private:
      * \brief event filter
      */
     bool eventFilter(QObject *target, QEvent *event);
+
+    /**
+     * \brief show search widget
+     * \param show show or hide?
+     */
+    void showSearchWidget(bool show);
+
+    /**
+     * \brief handle search result cursor position changes
+     * \param pos pos of search result cursor
+     */
+    void handleCursosPosChanged(int pos);
+
+    /**
+     * \brief handle changes of number of search string occurences
+     * \param total_occurences
+     */
+    void handleTotalOccurencesChanged(int total_occurences);
+
 };
 
 #endif // MAINWINDOW_H

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui serialport
+QT       += core gui serialport uitools
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,17 +18,20 @@ SOURCES += main.cpp\
     sessionmanager.cpp \
     outputmanager.cpp \
     historycombobox.cpp \
-    history.cpp
+    history.cpp \
+    searchhighlighter.cpp
 
 HEADERS  += mainwindow.h \
     connectdialog.h \
     sessionmanager.h \
     outputmanager.h \
     historycombobox.h \
-    history.h
+    history.h \
+    searchhighlighter.h
 
 FORMS    += mainwindow.ui \
-    connectdialog.ui
+    connectdialog.ui \
+    searchwidget.ui
 
 RESOURCES += \
     cutecom-ng.qrc

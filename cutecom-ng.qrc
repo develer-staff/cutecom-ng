@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>v-splitter.png</file>
+        <file>searchwidget.ui</file>
     </qresource>
 </RCC>
