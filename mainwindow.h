@@ -13,8 +13,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTextCharFormat>
-#include <QMap>
 
 namespace Ui {
 class MainWindow;
