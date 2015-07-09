@@ -24,7 +24,7 @@ void SearchHighlighter::setSearchString(const QString &search)
 {
     // reset all before highlight loop
     _search_string = search;
-    _occurence_cursor = _num_occurences = occurence_pos = 0;
+    _occurence_cursor = _num_occurences = 0;
     search_string_changed = true;
     rehighlight();
     if (has_cursor)
@@ -111,7 +111,6 @@ void SearchHighlighter::previousOccurence()
         else
             --_occurence_cursor;
         _num_occurences = 0;
-        occurence_pos = 0;
 
         rehighlight();
     }
@@ -127,7 +126,6 @@ void SearchHighlighter::nextOccurence()
         else
             ++_occurence_cursor;
         _num_occurences = 0;
-        occurence_pos = 0;
 
         rehighlight();
     }

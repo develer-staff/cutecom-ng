@@ -39,10 +39,6 @@ private:
     /// occurence cursor [0, N-1]
     int _occurence_cursor;
 
-    /// used to record position of occurences (in the whole document)
-    /// through multiples highlightBlock calls
-    int occurence_pos;
-
     /// last occurence cursor position
     int last_cursor_pos;
 
