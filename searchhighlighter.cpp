@@ -58,7 +58,6 @@ void SearchHighlighter::highlightBlock(const QString &text)
         return;
 
     QTextCharFormat charFormat;
-    charFormat.setBackground(SEARCHRESULT_BACKCOL);
 
     const int length = _search_string.length();
     int index = text.indexOf(_search_string, 0, Qt::CaseInsensitive);
