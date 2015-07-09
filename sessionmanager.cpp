@@ -105,10 +105,17 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
         serial->close();
 
     // configure port
-    //
+#if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0)) && defined(Q_OS_MAC)
     // connection error on MacOsX if port name is set with setPortName instead
     // of setPort (issue #7)
+    // on OSX, versions prior to Qt5.5 do not prepend device path to device name
     serial->setPort(QSerialPortInfo(port_cfg[QStringLiteral("device")]));
+#else
+    // tested on linux and windows
+    // and this is necessary to make QSerialPort work with pseudo
+    // terminal created with socat for example
+    serial->setPortName(port_cfg[QStringLiteral("device")]);
+#endif
     serial->setBaudRate(baud_rate);
     serial->setDataBits(data_bits);
     serial->setParity(parity);
