@@ -272,17 +272,13 @@ void MainWindow::showSearchWidget(bool show)
 
 void MainWindow::handleCursosPosChanged(int pos)
 {
-    // only in browsing mode
-    if (ui->bottomOutput->isVisible())
-    {
-        // move cursor
-        QTextCursor text_cursor = ui->mainOutput->textCursor();
-        text_cursor.setPosition(pos);
+    // move cursor
+    QTextCursor text_cursor = ui->mainOutput->textCursor();
+    text_cursor.setPosition(pos);
 
-        // ensure search result cursor is visible
-        ui->mainOutput->ensureCursorVisible();
-        ui->mainOutput->setTextCursor(text_cursor);
-    }
+    // ensure search result cursor is visible
+    ui->mainOutput->ensureCursorVisible();
+    ui->mainOutput->setTextCursor(text_cursor);
 }
 
 void MainWindow::handleTotalOccurencesChanged(int total_occurences)
