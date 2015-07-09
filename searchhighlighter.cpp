@@ -32,7 +32,7 @@ void SearchHighlighter::setSearchString(const QString &search)
         if (search_string_changed && _num_occurences > 0)
         {
             // last highlight loop, we didn't mark nothing because the cursor
-            // should be positionned before the previous position
+            // should be positioned before the previous position
             // so now we rest it and redo the loop
             last_cursor_pos = 0;
             setSearchString(search);
