@@ -19,12 +19,23 @@
 
 class OutputManager;
 
+
+
 /**
  * \brief manage serial port session
  */
 class SessionManager : public QObject
 {
     Q_OBJECT
+
+public:
+
+    enum FileTransfer
+    {
+        XMODEM = 1,
+        YMODEM = 10,
+        ZMODEM = 100
+    };
 
 private:
 
@@ -63,6 +74,13 @@ public:
      * \param data    byte array data
      */
     void sendToSerial(const QByteArray &data);
+
+    /**
+     * \brief init a file transfer thread
+     * \param filename file to transfer
+     * \param type 'X'
+     */
+    void initFileTransfer(QString filename, FileTransfer type);
 
 signals:
 

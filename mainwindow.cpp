@@ -16,6 +16,7 @@
 #include <QLineEdit>
 #include <QPropertyAnimation>
 #include <QShortcut>
+#include <QFileDialog>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -71,20 +72,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // load search widget and hide it
     QUiLoader loader;
-    QFile file(":/searchwidget.ui");
-    file.open(QFile::ReadOnly);
-    search_widget = loader.load(&file, ui->mainOutput);
-    Q_ASSERT_X(search_widget, "MainWindow::MainWindow", "error while loading searchwidget.ui");
-
-    search_input = search_widget->findChild<QLineEdit*>("searchInput");
-    Q_ASSERT_X(search_input, "MainWindow::MainWindow", "didn't find searchInput");
-
-    search_prev_button = search_widget->findChild<QToolButton*>("previousButton");
-    search_next_button = search_widget->findChild<QToolButton*>("nextButton");
-    Q_ASSERT_X(search_prev_button, "MainWindow::MainWindow", "didn't find previousButton");
-    Q_ASSERT_X(search_next_button, "MainWindow::MainWindow", "didn't find nextButton");
-
-    file.close();
+    {
+        QFile file(":/searchwidget.ui");
+        file.open(QFile::ReadOnly);
+        search_widget = loader.load(&file, ui->mainOutput);
+        search_input = search_widget->findChild<QLineEdit*>("searchInput");
+        search_prev_button = search_widget->findChild<QToolButton*>("previousButton");
+        search_next_button = search_widget->findChild<QToolButton*>("nextButton");
+    }
     search_widget->hide();
 
     // create the search results highlighter for main output
@@ -96,20 +91,34 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(search_input, &QLineEdit::textChanged, search_highlighter_bottom, &SearchHighlighter::setSearchString);
 
     // connect search-related signals/slots
-    connect(search_prev_button, &QToolButton::clicked, search_highlighter_main, &SearchHighlighter::previousOccurence);
-    connect(search_next_button, &QToolButton::clicked, search_highlighter_main, &SearchHighlighter::nextOccurence);
-    connect(search_highlighter_main, &SearchHighlighter::cursorPosChanged, this, &MainWindow::handleCursosPosChanged);
-    connect(search_highlighter_main, &SearchHighlighter::totalOccurencesChanged, this, &MainWindow::handleTotalOccurencesChanged);
+    connect(search_prev_button, &QToolButton::clicked,
+	search_highlighter_main, &SearchHighlighter::previousOccurence);
+    connect(search_next_button, &QToolButton::clicked,
+	search_highlighter_main, &SearchHighlighter::nextOccurence);
+    connect(search_highlighter_main, &SearchHighlighter::cursorPosChanged,
+	this, &MainWindow::handleCursosPosChanged);
+    connect(search_highlighter_main, &SearchHighlighter::totalOccurencesChanged,
+	this, &MainWindow::handleTotalOccurencesChanged);
     connect(ui->searchButton, &QToolButton::toggled, this, &MainWindow::showSearchWidget);
 
     // additional configuration for bottom output
     ui->bottomOutput->hide();
     ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
 
+
+    // x/y/zmodem buttons
+    QButtonGroup *xyz_group = new QButtonGroup(this);
+    xyz_group->addButton(ui->transferXButton, SessionManager::XMODEM);
+    xyz_group->addButton(ui->transferYButton, SessionManager::YMODEM);
+    xyz_group->addButton(ui->transferZButton, SessionManager::ZMODEM);
+
+    connect(xyz_group, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked),
+            this, &MainWindow::handleTransferButtonClicked);
+
     // install event filters
+    ui->mainOutput->viewport()->installEventFilter(this);
     ui->bottomOutput->viewport()->installEventFilter(this);
     search_input->installEventFilter(this);
-    ui->mainOutput->viewport()->installEventFilter(this);
     installEventFilter(this);
 }
 
@@ -132,8 +141,10 @@ void MainWindow::handleSessionOpened()
 
     // enable file transfer
     ui->transferXButton->setEnabled(true);
-    ui->transferYButton->setEnabled(true);
-    ui->transferZButton->setEnabled(true);
+
+    // commented while Y/Z modems are not implemented
+//    ui->transferYButton->setEnabled(true);
+//    ui->transferZButton->setEnabled(true);
 }
 
 void MainWindow::handleSessionClosed()
@@ -145,6 +156,17 @@ void MainWindow::handleSessionClosed()
     ui->transferXButton->setDisabled(true);
     ui->transferYButton->setDisabled(true);
     ui->transferZButton->setDisabled(true);
+}
+
+void MainWindow::handleTransferButtonClicked(int type)
+{
+    QString filename = QFileDialog::getOpenFileName(
+                this, QStringLiteral("Select file for transfer"));
+    if (filename.isNull())
+        return;
+
+    session_mgr->initFileTransfer(filename,
+                                  static_cast<SessionManager::FileTransfer>(type));
 }
 
 void MainWindow::handleNewInput(QString entry)

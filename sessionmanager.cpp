@@ -184,3 +184,9 @@ void SessionManager::sendToSerial(const QByteArray &data)
     serial->write(data);
 }
 
+
+void SessionManager::initFileTransfer(QString filename, FileTransfer type)
+{
+    if (type != XMODEM)
+        Q_ASSERT_X(false, "SessionManager::initFileTransfer", "protocol not implemented");
+}

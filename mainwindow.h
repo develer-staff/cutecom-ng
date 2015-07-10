@@ -58,6 +58,12 @@ private:
     void handleSessionClosed();
 
     /**
+     * \brief handle buttonClicked on the x/y/zmodem buttons
+     * \param type
+     */
+    void handleTransferButtonClicked(int type);
+
+    /**
      * \brief handle new input
      */
     void handleNewInput(QString entry);
