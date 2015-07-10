@@ -48,6 +48,16 @@ public:
 private:
 
     /**
+     * \brief handle sessionStarted signal
+     */
+    void handleSessionStarted();
+
+    /**
+     * \brief handle sessionStopped signal
+     */
+    void handleSessionStopped();
+
+    /**
      * \brief handle new input
      */
     void handleNewInput(QString entry);

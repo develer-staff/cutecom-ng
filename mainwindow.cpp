@@ -55,12 +55,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // get data formatted for display and show it in output view
     connect(ui->inputBox, &HistoryComboBox::lineEntered, this, &MainWindow::handleNewInput);
 
-    // clear output manager buffer at session start
-    connect(session_mgr, &SessionManager::sessionStarted, output_mgr, &OutputManager::clear);
-
-    // clear both output text at session start
-    connect(session_mgr, &SessionManager::sessionStarted, ui->mainOutput, &QPlainTextEdit::clear);
-    connect(session_mgr, &SessionManager::sessionStarted, ui->bottomOutput, &QPlainTextEdit::clear);
+    // handle start/stop session
+    connect(session_mgr, &SessionManager::sessionStarted, this, &MainWindow::handleSessionStarted);
+    connect(session_mgr, &SessionManager::sessionStopped, this, &MainWindow::handleSessionStopped);
 
     // clear both output text when 'clear' is clicked
     connect(ui->clearButton, &QToolButton::clicked, ui->mainOutput, &QPlainTextEdit::clear);
@@ -118,6 +115,35 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::handleSessionStarted()
+{
+    // clear output buffer
+    output_mgr->clear();
+
+    // clear both output windows
+    ui->mainOutput->clear();
+    ui->bottomOutput->clear();
+
+    ui->connectButton->setDisabled(true);
+    ui->disconnectButton->setEnabled(true);
+
+    // enable file transfer
+    ui->transferXButton->setEnabled(true);
+    ui->transferYButton->setEnabled(true);
+    ui->transferZButton->setEnabled(true);
+}
+
+void MainWindow::handleSessionStopped()
+{
+    ui->connectButton->setEnabled(true);
+    ui->disconnectButton->setDisabled(true);
+
+    // disable file transfer
+    ui->transferXButton->setDisabled(true);
+    ui->transferYButton->setDisabled(true);
+    ui->transferZButton->setDisabled(true);
 }
 
 void MainWindow::handleNewInput(QString entry)

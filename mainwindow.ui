@@ -59,6 +59,9 @@
       </item>
       <item>
        <widget class="QToolButton" name="disconnectButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="font">
          <font>
           <pointsize>13</pointsize>
@@ -86,7 +89,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="transferX">
+       <widget class="QToolButton" name="transferXButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -99,7 +102,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="transferY">
+       <widget class="QToolButton" name="transferYButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -109,7 +112,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="transferZ">
+       <widget class="QToolButton" name="transferZButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
