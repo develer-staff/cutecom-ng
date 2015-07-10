@@ -31,7 +31,10 @@ SessionManager::~SessionManager()
 {
     // closes connection if needed
     if (serial->isOpen())
+    {
         serial->close();
+        emit sessionStopped();
+    }
 }
 
 void SessionManager::handleError(QSerialPort::SerialPortError serialPortError)
@@ -66,6 +69,7 @@ void SessionManager::handleError(QSerialPort::SerialPortError serialPortError)
                 {
                     serial->clearError();
                     serial->close();
+                    emit sessionStopped();
                 }
             }
             break;
@@ -101,8 +105,9 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     Q_ASSERT_X(cfg_ok, "SessionManager::openSession", "a conversion didn't make it");
 
     // closes connection if needed
-    if (serial->isOpen())
-        serial->close();
+    // just commented: normally this is not needed any more
+//    if (serial->isOpen())
+//        serial->close();
 
     // configure port
 #if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0)) && defined(Q_OS_MAC)
@@ -130,6 +135,11 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     {
         curr_cfg = port_cfg;
         emit sessionStarted();
+    }
+    else
+    {
+        // here, stopped means 'no connection is in progress'
+        emit sessionStopped();
     }
 }
 

@@ -67,6 +67,13 @@ signals:
     void sessionStarted();
 
     /**
+     * \brief signal emitted at the end of current session
+     *  - either user 'disconnected'
+     *  - either an error happened
+     */
+    void sessionStopped();
+
+    /**
      * \brief signal emitted when new data has been received from the serial port
      * \param data    byte array data
      */
