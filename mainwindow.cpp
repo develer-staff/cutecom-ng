@@ -56,15 +56,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->inputBox, &HistoryComboBox::lineEntered, this, &MainWindow::handleNewInput);
 
     // handle start/stop session
-    connect(session_mgr, &SessionManager::sessionStarted, this, &MainWindow::handleSessionStarted);
-    connect(session_mgr, &SessionManager::sessionStopped, this, &MainWindow::handleSessionStopped);
+    connect(session_mgr, &SessionManager::sessionOpened, this, &MainWindow::handleSessionOpened);
+    connect(session_mgr, &SessionManager::sessionClosed, this, &MainWindow::handleSessionClosed);
 
     // clear both output text when 'clear' is clicked
     connect(ui->clearButton, &QToolButton::clicked, ui->mainOutput, &QPlainTextEdit::clear);
     connect(ui->clearButton, &QToolButton::clicked, ui->bottomOutput, &QPlainTextEdit::clear);
 
-    // call openSession when user accepts/closes connection dialog
+    // connect open/close session slots
     connect(connect_dlg, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
+    connect(ui->disconnectButton, &QToolButton::clicked, session_mgr, &SessionManager::closeSession);
 
     connect(ui->splitOutputBtn, &QToolButton::clicked, this, &MainWindow::toggleOutputSplitter);
 
@@ -117,7 +118,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::handleSessionStarted()
+void MainWindow::handleSessionOpened()
 {
     // clear output buffer
     output_mgr->clear();
@@ -135,7 +136,7 @@ void MainWindow::handleSessionStarted()
     ui->transferZButton->setEnabled(true);
 }
 
-void MainWindow::handleSessionStopped()
+void MainWindow::handleSessionClosed()
 {
     ui->connectButton->setEnabled(true);
     ui->disconnectButton->setDisabled(true);

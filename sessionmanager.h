@@ -43,10 +43,15 @@ public:
     ~SessionManager();
 
     /**
-     * \brief open a serial port connection
+     * \brief open a serial port session
      * \param port_cfg    serial port settings
      */
     void openSession(const QHash<QString, QString> &port_cfg);
+
+    /**
+     * \brief close current serial port session
+     */
+    void closeSession();
 
     /**
      * \brief return true if the session is active
@@ -61,17 +66,20 @@ public:
 
 signals:
 
-    /**
-     * \brief signal emitted at the beggining of a new session
+    /* maybe we need other signals in case opening/closing a session takes time :
+     * - sessionOpening
+     * - sessionClosing
      */
-    void sessionStarted();
 
     /**
-     * \brief signal emitted at the end of current session
-     *  - either user 'disconnected'
-     *  - either an error happened
+     * \brief signal emitted when a new session is opened
      */
-    void sessionStopped();
+    void sessionOpened();
+
+    /**
+     * \brief signal emitted when current has been closed
+     */
+    void sessionClosed();
 
     /**
      * \brief signal emitted when new data has been received from the serial port

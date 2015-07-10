@@ -48,14 +48,14 @@ public:
 private:
 
     /**
-     * \brief handle sessionStarted signal
+     * \brief handle sessionOpened signal
      */
-    void handleSessionStarted();
+    void handleSessionOpened();
 
     /**
-     * \brief handle sessionStopped signal
+     * \brief handle sessionClosed signal
      */
-    void handleSessionStopped();
+    void handleSessionClosed();
 
     /**
      * \brief handle new input

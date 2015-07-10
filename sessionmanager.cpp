@@ -31,10 +31,7 @@ SessionManager::~SessionManager()
 {
     // closes connection if needed
     if (serial->isOpen())
-    {
         serial->close();
-        emit sessionStopped();
-    }
 }
 
 void SessionManager::handleError(QSerialPort::SerialPortError serialPortError)
@@ -68,8 +65,8 @@ void SessionManager::handleError(QSerialPort::SerialPortError serialPortError)
                 if (serial->isOpen())
                 {
                     serial->clearError();
-                    serial->close();
-                    emit sessionStopped();
+
+                    closeSession();
                 }
             }
             break;
@@ -134,12 +131,21 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     if (serial->open(QIODevice::ReadWrite))
     {
         curr_cfg = port_cfg;
-        emit sessionStarted();
+        emit sessionOpened();
     }
     else
     {
         // here, stopped means 'no connection is in progress'
-        emit sessionStopped();
+        emit sessionClosed();
+    }
+}
+
+void SessionManager::closeSession()
+{
+    if (serial->isOpen())
+    {
+        serial->close();
+        emit sessionClosed();
     }
 }
 
