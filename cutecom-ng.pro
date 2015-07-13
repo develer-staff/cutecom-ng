@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     outputmanager.cpp \
     historycombobox.cpp \
     history.cpp \
-    searchhighlighter.cpp
+    searchhighlighter.cpp \
+    transferthread.cpp
 
 HEADERS  += mainwindow.h \
     connectdialog.h \
@@ -27,7 +28,8 @@ HEADERS  += mainwindow.h \
     outputmanager.h \
     historycombobox.h \
     history.h \
-    searchhighlighter.h
+    searchhighlighter.h \
+    transferthread.h
 
 FORMS    += mainwindow.ui \
     connectdialog.ui \
