@@ -20,7 +20,9 @@ SOURCES += main.cpp\
     historycombobox.cpp \
     history.cpp \
     searchhighlighter.cpp \
-    transferthread.cpp
+    transferthread.cpp \
+    xmodem.cpp \
+    crc16.cpp
 
 HEADERS  += mainwindow.h \
     connectdialog.h \
@@ -29,7 +31,9 @@ HEADERS  += mainwindow.h \
     historycombobox.h \
     history.h \
     searchhighlighter.h \
-    transferthread.h
+    transferthread.h \
+    xmodem.h \
+    crc16.h
 
 FORMS    += mainwindow.ui \
     connectdialog.ui \
