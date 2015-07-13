@@ -30,7 +30,10 @@ class SessionManager : public QObject
 
 public:
 
-    enum FileTransfer
+    /**
+     * \brief file transfer protocols and variants
+     */
+    enum FileTransferMode
     {
         XMODEM = 1,
         YMODEM = 10,
@@ -77,10 +80,10 @@ public:
 
     /**
      * \brief init a file transfer thread
-     * \param filename file to transfer
-     * \param type 'X'
+     * \param filename  file to transfer
+     * \param type      protocol to use
      */
-    void initFileTransfer(QString filename, FileTransfer type);
+    void initFileTransfer(const QString &filename, FileTransferMode type);
 
 signals:
 

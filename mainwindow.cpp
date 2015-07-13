@@ -142,7 +142,7 @@ void MainWindow::handleSessionOpened()
     // enable file transfer
     ui->transferXButton->setEnabled(true);
 
-    // commented while Y/Z modems are not implemented
+    // commented as Y/Z modems are not implemented yet
 //    ui->transferYButton->setEnabled(true);
 //    ui->transferZButton->setEnabled(true);
 }
@@ -165,8 +165,8 @@ void MainWindow::handleTransferButtonClicked(int type)
     if (filename.isNull())
         return;
 
-    session_mgr->initFileTransfer(filename,
-                                  static_cast<SessionManager::FileTransfer>(type));
+    SessionManager::FileTransferMode ft_type = static_cast<SessionManager::FileTransferMode>(type);
+    session_mgr->initFileTransfer(filename, ft_type);
 }
 
 void MainWindow::handleNewInput(QString entry)
