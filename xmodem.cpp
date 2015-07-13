@@ -1,4 +1,4 @@
-/*	
+/*
  * Copyright 2001-2010 Georges Menie (www.menie.org)
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,6 @@
 #define MAXRETRANS 25
 #define TRANSMIT_XMODEM_1K
 
-// additions to the original file
 extern int _inbyte(unsigned short timeout); // msec timeout
 extern void _outbyte(int c);
 

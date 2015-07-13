@@ -12,14 +12,11 @@
 #ifndef SESSIONMANAGER_H
 #define SESSIONMANAGER_H
 
+#include "connectdialog.h"
+#include "transferthread.h"
+
 #include <QObject>
 #include <QSerialPort>
-
-#include "connectdialog.h"
-
-class OutputManager;
-
-
 
 /**
  * \brief manage serial port session
@@ -87,11 +84,6 @@ public:
 
 signals:
 
-    /* maybe we need other signals in case opening/closing a session takes time :
-     * - sessionOpening
-     * - sessionClosing
-     */
-
     /**
      * \brief signal emitted when a new session is opened
      */
@@ -124,6 +116,12 @@ private:
      * \brief handle serial port error
      */
     void handleError(QSerialPort::SerialPortError serialPortError);
+
+    /**
+     * \brief handle file transfer error
+     * \param error error code
+     */
+    void handleFileTransferError(FileTransfer::TransferError error);
 };
 
 #endif // SESSIONMANAGER_H

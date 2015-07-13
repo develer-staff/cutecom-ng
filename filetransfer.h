@@ -12,19 +12,16 @@
 #ifndef TRANSFERTHREAD_H
 #define TRANSFERTHREAD_H
 
-#include <QThread>
-#include <QMutex>
+#include <QObject>
 
 class QSerialPort;
 
 /**
- * \brief file transfer worker thread
+ * \brief serial port file transfer
  */
-class TransferThread : public QThread
+class FileTransfer : public QObject
 {
     Q_OBJECT
-
-//    Q_PROPERTY(TransferError error READ error RESET clearError NOTIFY error)
 
 public:
 
@@ -33,12 +30,20 @@ public:
      */
     enum TransferError
     {
-        /// transfer cancelled
-        CancelledError = -1,
         /// file successfully transferred
-        NoError = 0,
+        NoError                  = 0,
+        /// no synchronization
+        NoSyncError              = 1,
+        /// transmission error
+        TransmissionError        = 2,
         /// transfer timed out
-        TimeoutError = 1
+        TimeoutError             = 3,
+        /// cancelled by remote
+        RemoteCancelledError     = 4,
+        /// cancelled locally
+        LocalCancelledError      = 5,
+        /// unknown error
+        UnknownError             = 6
     };
 
 protected:
@@ -53,24 +58,24 @@ protected:
     int          wait_timeout;
 
     /// if true, indicates that the worker thread has to be stopped asap
-    bool         quit;
+    bool         should_quit;
+
+    /// buffer to transfer
+    QByteArray   buffer;
 
 public:
 
-    //*** REFINE THIS METHOD ***//
-    // TIMEOUT BEFORE WHAT??
-    // - between start and end of transfer? no..
-    // - before actual transfer (so would be handshaking timeout)
-    // is this setTimeout corresponding to the waitTimeout member value??
-
-    // maybe also define a number of retries
-
     /**
-     * \brief define timeout
+     * \brief define timeout value for first serial port response
      * \param ms miliseconds elapsed before issuing a timeout
      *           if ms is -1 then the transfer will wait indefnitely
      */
     void setTimeout(int ms = -1);
+
+    /**
+     * \brief start the file transfer
+     */
+    void startTransfer();
 
     /**
      * \brief cancel pending transfer, this results in the emission
@@ -85,27 +90,26 @@ protected:
      * \param serial   opened instance of QSerialPort
      * \param filename file to transfer
      */
-    TransferThread(QObject *parent, QSerialPort *serial, const QString &filename);
-    ~TransferThread();
-
-    /**
-     * \brief thread starting point
-     */
-    void run();
+    FileTransfer(QObject *parent, QSerialPort *serial, const QString &filename);
+    ~FileTransfer();
 
 private:
+
     /**
-     * \brief start the actual file transfer implemented in child class
+     * \brief perform the actual file transfer
      * \return transfer end code
      */
-    virtual TransferError startTransfer() = 0;
+    virtual TransferError performTransfer() = 0;
 
 signals:
+
     /**
      * \brief signal emitted when file transfer has ended
      * \param reason reason for transfer having ended
      */
-    void transferEnded(TransferError reason);
+    void transferError(TransferError reason);
+
+    void transferFinished();
 };
 
 #endif // TRANSFERTHREAD_H

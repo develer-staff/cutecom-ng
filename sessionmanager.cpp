@@ -11,15 +11,17 @@
 
 #include "sessionmanager.h"
 #include "outputmanager.h"
+#include "xmodemtransfer.h"
 
 #include <QMessageBox>
 #include <QSerialPortInfo>
 #include <QFile>
+#include <QThread>
 
-SessionManager::SessionManager(QObject *parent)
-    : QObject(parent)
+SessionManager::SessionManager(QObject *parent) :
+    QObject(parent)
 {
-    serial = new QSerialPort(this);
+    serial = new QSerialPort();
     in_progress = false;
 
     connect(serial, &QSerialPort::readyRead, this, &SessionManager::readData);
@@ -29,9 +31,13 @@ SessionManager::SessionManager(QObject *parent)
 
 SessionManager::~SessionManager()
 {
-    // closes connection if needed
-    if (serial->isOpen())
-        serial->close();
+    if (serial)
+    {
+        // closes connection if needed
+        if (serial->isOpen())
+            serial->close();
+        delete serial;
+    }
 }
 
 void SessionManager::handleError(QSerialPort::SerialPortError serialPortError)
@@ -184,9 +190,40 @@ void SessionManager::sendToSerial(const QByteArray &data)
     serial->write(data);
 }
 
-
 void SessionManager::initFileTransfer(const QString &filename, FileTransferMode type)
 {
-    if (type != XMODEM)
-        Q_ASSERT_X(false, "SessionManager::initFileTransfer", "protocol not implemented");
+    serial->disconnect();
+
+    QThread *thread = new QThread;
+    FileTransfer *file_transfer = 0;
+
+    switch (type)
+    {
+        case XMODEM:
+            file_transfer = new XModemTransfer(0, serial, filename);
+        break;
+        case YMODEM:
+        case ZMODEM:
+            Q_ASSERT_X(false, "SessionManager::initFileTransfer", "protocol not yet implemented");
+        break;
+    }
+
+    // move file_transfer worker and serialport instance to newly created thread
+    file_transfer->moveToThread(thread);
+    serial->moveToThread(thread);
+
+    connect(file_transfer, &FileTransfer::transferError, this, &SessionManager::handleFileTransferError);
+    connect(thread, &QThread::started, file_transfer, &FileTransfer::startTransfer);
+    connect(file_transfer, &FileTransfer::transferFinished, thread, &QThread::quit);
+    connect(file_transfer, &FileTransfer::transferFinished, file_transfer, &FileTransfer::deleteLater);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    thread->start();
+}
+
+// le mieux ca serait de ne gerer qu'un seul slot ici
+
+void SessionManager::handleFileTransferError(FileTransfer::TransferError error)
+{
+    qDebug() << "handleFileTransferError, err: " << error;
+    qDebug() << "handleFileTransferError slot thread : " << QThread::currentThread();
 }
