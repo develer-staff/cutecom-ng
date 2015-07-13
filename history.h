@@ -12,6 +12,7 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
+#include <QObject>
 #include <QStringList>
 
 /**
