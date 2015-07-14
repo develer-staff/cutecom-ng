@@ -60,7 +60,7 @@ void ConnectDialog::fillSettingsLists()
     for (int idx = 0; idx < ports.length(); ++idx)
     {
         const QSerialPortInfo& port_info = ports.at(idx);
-        ui->deviceList->addItem(port_info.portName());
+        ui->deviceList->addItem(port_info.systemLocation());
 
         // construct description tooltip
         QString tooltip;
