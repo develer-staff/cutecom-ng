@@ -18,9 +18,6 @@ FileTransfer::FileTransfer(QObject *parent, QSerialPort *serial, const QString &
     filename(filename),
     serial(serial)
 {
-    should_quit = false;
-    wait_timeout = -1;
-
     qRegisterMetaType<TransferError>("TransferError");
 }
 
@@ -46,7 +43,3 @@ void FileTransfer::startTransfer()
      emit transferFinished();
 }
 
-void FileTransfer::cancelTransfer()
-{
-    should_quit = true;
-}

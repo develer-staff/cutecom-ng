@@ -51,6 +51,7 @@
 
 extern int _inbyte(unsigned short timeout); // msec timeout
 extern void _outbyte(int c);
+extern bool _quit;
 
 static int check(int crc, const unsigned char *buf, int sz)
 {
@@ -90,7 +91,7 @@ int xmodemReceive(unsigned char *dest, int destsz)
 	int retry, retrans = MAXRETRANS;
 
 	for(;;) {
-		for( retry = 0; retry < 16; ++retry) {
+        for( retry = 0; retry < 16; ++retry) {
 			if (trychar) _outbyte(trychar);
 			if ((c = _inbyte((DLY_1S)<<1)) >= 0) {
 				switch (c) {
@@ -172,6 +173,11 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 
 	for(;;) {
 		for( retry = 0; retry < 16; ++retry) {
+
+            // quit before end of sync session
+            if (_quit)
+                break;
+
 			if ((c = _inbyte((DLY_1S)<<1)) >= 0) {
 				switch (c) {
 				case 'C':
@@ -196,6 +202,8 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 		_outbyte(CAN);
 		_outbyte(CAN);
 		flushinput();
+        if (_quit)
+            return -6; /* local cancel */
 		return -2; /* no sync */
 
 		for(;;) {
@@ -226,6 +234,8 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 					xbuff[bufsz+3] = ccks;
 				}
 				for (retry = 0; retry < MAXRETRANS; ++retry) {
+                    if (_quit)
+                        break;
 					for (i = 0; i < bufsz+4+(crc?1:0); ++i) {
 						_outbyte(xbuff[i]);
 					}
@@ -252,7 +262,9 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 				_outbyte(CAN);
 				_outbyte(CAN);
 				flushinput();
-				return -4; /* xmit error */
+                if (_quit)
+                    return -6; /* local cancel */
+                return -4; /* xmit error */
 			}
 			else {
 				for (retry = 0; retry < 10; ++retry) {

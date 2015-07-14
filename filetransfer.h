@@ -54,12 +54,6 @@ protected:
     /// serial port instance to use for the transfer
     QSerialPort *serial;
 
-    /// timeout
-    int          wait_timeout;
-
-    /// if true, indicates that the worker thread has to be stopped asap
-    bool         should_quit;
-
     /// buffer to transfer
     QByteArray   buffer;
 
@@ -78,10 +72,9 @@ public:
     void startTransfer();
 
     /**
-     * \brief cancel pending transfer, this results in the emission
-     * of the transferEnded signal(TransferError::CancelledError)
+     * \brief cancel current transfer
      */
-    void cancelTransfer();
+    virtual void cancelTransfer() = 0;
 
 protected:
     /**
