@@ -56,8 +56,10 @@ public:
         RemoteCancelledError     = 4,
         /// cancelled locally
         LocalCancelledError      = 5,
+        /// source file error
+        InputFileError           = 6,
         /// unknown error
-        UnknownError             = 6
+        UnknownError             = 7
     };
 
 protected:

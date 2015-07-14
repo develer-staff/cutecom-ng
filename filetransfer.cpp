@@ -26,20 +26,20 @@ FileTransfer::FileTransfer(QObject *parent, QSerialPort *serial, const QString &
 
 void FileTransfer::startTransfer()
 {
-    // fill buffer with file content
-    buffer.clear();
+    TransferError ret = InputFileError;
 
+    // fill buffer with file content
+    QFile file(filename);
+    if (file.open(QIODevice::ReadOnly))
     {
-        QFile file(filename);
-        if (file.open(QIODevice::ReadOnly))
-        {
-            buffer = file.readAll();
-            total_size = file.size();
-        }
+        buffer = file.readAll();
+        total_size = file.size();
+        file.close();
+
+        // call child class file transfer protocol implementation
+        ret = this->performTransfer();
     }
 
-    // call child class file transfer protocol implementation
-    TransferError ret = this->performTransfer();
     emit transferEnded(ret);
 
     // move serial instance back to main thread
@@ -74,6 +74,8 @@ QString FileTransfer::errorString(TransferError error)
         case LocalCancelledError:
             // should not be treated as an error
             return QStringLiteral("Transfer cancelled locally");
+        case InputFileError:
+            return QStringLiteral("Can't open input file");
         case UnknownError:
         default:
             return QStringLiteral("Unknown Error");
