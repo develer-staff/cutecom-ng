@@ -17,7 +17,22 @@
 class QSerialPort;
 
 /**
- * \brief serial port file transfer
+ * \brief serial port file transfer abstract class
+ *
+ * child classes implementing a specific file transfer protocol must
+ * implement these pure virtual methods :
+ *
+ *  - TransferError performTransfer() : this is where the actual file
+ *      transfer should take place. At this point 'buffer' and
+ *      'total_size' have already been set
+ *
+ *  - void cancelTransfer() : cancel the current transfer, this method
+ *      can be called at any moment during the transfer
+ *
+ *  - void updateProgress() : this method serves the purpose of updating
+ *      a progress indicator for the user. updateProgress implementation
+ *      must call FileTransfer::setSentBytes with the amount of bytes
+ *      already transferred
  */
 class FileTransfer : public QObject
 {
@@ -53,7 +68,7 @@ protected:
     /// serial port instance to use for the transfer
     QSerialPort *serial;
 
-    /// buffer to transfer
+    /// full content of file to transfer
     QByteArray   buffer;
 
     /// transferred file total size
