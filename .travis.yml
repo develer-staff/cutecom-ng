@@ -4,7 +4,12 @@ before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq qt54base qt54serialport qt54tools
     - source /opt/qt54/bin/qt54-env.sh
+    - gem install fpm
 script:
     - qmake -v
     - qmake
     - make
+    - ldd bin/cutecom-ng
+    - cp deploy/linux/* bin/
+    - cp /opt/qt54/lib/libQt5{SerialPort,Widgets,Gui,Core}.so.5 bin/
+    - ls -l bin/
