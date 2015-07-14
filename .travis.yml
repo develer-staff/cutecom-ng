@@ -13,3 +13,5 @@ script:
     - cp deploy/linux/* bin/
     - cp /opt/qt54/lib/libQt5{SerialPort,Widgets,Gui,Core}.so.5 bin/
     - ls -l bin/
+    - fpm -s dir -t deb -n cutecom-ng -v 0.1 --prefix /opt/cutecom-ng bin/
+    - dpkg --contents *.deb
