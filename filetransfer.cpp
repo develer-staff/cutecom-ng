@@ -10,6 +10,7 @@
  */
 
 #include "filetransfer.h"
+#include <QApplication>
 #include <QtSerialPort>
 #include <QFile>
 
@@ -43,19 +44,13 @@ void FileTransfer::startTransfer()
 
     // call child class file transfer protocol implementation
     TransferError ret = this->performTransfer();
-    if (ret != NoError)
-        emit transferError(ret);
-     emit transferFinished();
+    emit transferEnded(ret);
+
+    // move serial instance back to main thread
+    serial->moveToThread(QApplication::instance()->thread());
 }
 
-
-/**
- * \brief called from child class to indicate that current file transfer
- *        has already sent 'bytes_sent' total bytes
- *        transferProgressed signal will be emitted if necessary
- * \param bytes_sent total amount of bytes sent since transfer start
- */
-void FileTransfer::updateTransfered(int bytes_sent)
+void FileTransfer::setSentBytes(int bytes_sent)
 {
     int percent = 100 * bytes_sent / total_size;
     if (percent > cur_progress)
@@ -63,5 +58,28 @@ void FileTransfer::updateTransfered(int bytes_sent)
         // emit transferProgressed if we progressed of at least 1%
         cur_progress = percent;
         transferProgressed(cur_progress);
+    }
+}
+
+QString FileTransfer::errorString(TransferError error)
+{
+    switch(error)
+    {
+        case NoError :
+            return QStringLiteral("Success");
+        case NoSyncError:
+            return QStringLiteral("Synchronization error");
+        case TransmissionError:
+            return QStringLiteral("Transmission error");
+        case TimeoutError:
+            return QStringLiteral("Transfer timeout");
+        case RemoteCancelledError:
+            return QStringLiteral("Transfer cancelled by remote");
+        case LocalCancelledError:
+            // should not be treated as an error
+            return QStringLiteral("Transfer cancelled locally");
+        case UnknownError:
+        default:
+            return QStringLiteral("Unknown Error");
     }
 }

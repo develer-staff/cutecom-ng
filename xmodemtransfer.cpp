@@ -78,8 +78,6 @@ XModemTransfer::XModemTransfer(QObject *parent, QSerialPort *serial, const QStri
 
 XModemTransfer::~XModemTransfer()
 {
-    // TODO???
-    wait();
 }
 
 FileTransfer::TransferError XModemTransfer::performTransfer()
@@ -113,7 +111,7 @@ void XModemTransfer::cancelTransfer()
     _quit = true;
 }
 
-void XModemTransfer::handleTimer()
+void XModemTransfer::updateProgress()
 {
-    this->updateTransfered(_byte_sent);
+    this->setSentBytes(_byte_sent);
 }

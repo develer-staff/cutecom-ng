@@ -82,24 +82,6 @@ public:
      */
     void initFileTransfer(const QString &filename, FileTransferMode type);
 
-signals:
-
-    /**
-     * \brief signal emitted when a new session is opened
-     */
-    void sessionOpened();
-
-    /**
-     * \brief signal emitted when current has been closed
-     */
-    void sessionClosed();
-
-    /**
-     * \brief signal emitted when new data has been received from the serial port
-     * \param data    byte array data
-     */
-    void dataReceived(const QByteArray &data);
-
 private:
 
     /**
@@ -118,10 +100,28 @@ private:
     void handleError(QSerialPort::SerialPortError serialPortError);
 
     /**
-     * \brief handle file transfer error
-     * \param error error code
+     * \brief handle FileTransfer::transferEnded signal
+     * \param error transfer end error code
      */
-    void handleFileTransferError(FileTransfer::TransferError error);
+    void handleTransferEnded(FileTransfer::TransferError error);
+
+signals:
+
+    /**
+     * \brief signal emitted when a new session is opened
+     */
+    void sessionOpened();
+
+    /**
+     * \brief signal emitted when current has been closed
+     */
+    void sessionClosed();
+
+    /**
+     * \brief signal emitted when new data has been received from the serial port
+     * \param data    byte array data
+     */
+    void dataReceived(const QByteArray &data);
 };
 
 #endif // SESSIONMANAGER_H

@@ -162,11 +162,12 @@ void MainWindow::handleTransferButtonClicked(int type)
 {
     QString filename = QFileDialog::getOpenFileName(
                 this, QStringLiteral("Select file for transfer"));
+
     if (filename.isNull())
         return;
 
-    SessionManager::FileTransferMode ft_type = static_cast<SessionManager::FileTransferMode>(type);
-    session_mgr->initFileTransfer(filename, ft_type);
+    session_mgr->initFileTransfer(filename,
+        static_cast<SessionManager::FileTransferMode>(type));
 }
 
 void MainWindow::handleNewInput(QString entry)

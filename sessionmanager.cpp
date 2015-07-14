@@ -189,10 +189,10 @@ void SessionManager::sendToSerial(const QByteArray &data)
 
 void SessionManager::initFileTransfer(const QString &filename, FileTransferMode type)
 {
-    serial->disconnect();
+//    serial->disconnect();
 
     QThread *thread = new QThread;
-    /*FileTransfer*/ XModemTransfer *file_transfer = 0;
+    FileTransfer *file_transfer = 0;
 
     switch (type)
     {
@@ -207,7 +207,7 @@ void SessionManager::initFileTransfer(const QString &filename, FileTransferMode 
 
     // create a timer to update progress
     QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, file_transfer, &XModemTransfer::handleTimer, Qt::DirectConnection);
+    connect(timer, &QTimer::timeout, file_transfer, &FileTransfer::updateProgress, Qt::DirectConnection);
     timer->start(250);
 
     QProgressDialog *progress_dlg = new QProgressDialog();
@@ -219,20 +219,31 @@ void SessionManager::initFileTransfer(const QString &filename, FileTransferMode 
     file_transfer->moveToThread(thread);
     serial->moveToThread(thread);
 
-    connect(file_transfer, &FileTransfer::transferError, this, &SessionManager::handleFileTransferError);
+    connect(file_transfer, &FileTransfer::transferEnded, this, &SessionManager::handleTransferEnded);
     connect(thread, &QThread::started, file_transfer, &FileTransfer::startTransfer);
     connect(file_transfer, &FileTransfer::transferProgressed, progress_dlg, &QProgressDialog::setValue);
-    connect(file_transfer, &FileTransfer::transferFinished, thread, &QThread::quit);
-    connect(file_transfer, &FileTransfer::transferFinished, file_transfer, &FileTransfer::deleteLater);
-    connect(file_transfer, &FileTransfer::transferFinished, progress_dlg, &QProgressDialog::close);
-    connect(file_transfer, &FileTransfer::transferFinished, progress_dlg, &QProgressDialog::deleteLater);
-    connect(file_transfer, &FileTransfer::transferFinished, timer, &QTimer::stop);
-    connect(file_transfer, &FileTransfer::transferFinished, timer, &QTimer::deleteLater);
+    connect(file_transfer, &FileTransfer::transferEnded, thread, &QThread::quit);
+    connect(file_transfer, &FileTransfer::transferEnded, file_transfer, &FileTransfer::deleteLater);
+    connect(file_transfer, &FileTransfer::transferEnded, progress_dlg, &QProgressDialog::close);
+    connect(file_transfer, &FileTransfer::transferEnded, progress_dlg, &QProgressDialog::deleteLater);
+    connect(file_transfer, &FileTransfer::transferEnded, timer, &QTimer::stop);
+    connect(file_transfer, &FileTransfer::transferEnded, timer, &QTimer::deleteLater);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     thread->start();
     progress_dlg->exec();
 }
 
-void SessionManager::handleFileTransferError(FileTransfer::TransferError error)
+void SessionManager::handleTransferEnded(FileTransfer::TransferError error)
 {
+    switch (error)
+    {
+        case FileTransfer::LocalCancelledError:
+            return;
+        case FileTransfer::NoError:
+            QMessageBox::information(NULL, tr("Cutecom-ng"), QStringLiteral("File transferred succesfully"));
+            break;
+        default:
+            QMessageBox::warning(NULL, tr("Cutecom-ng"), FileTransfer::errorString(error));
+            break;
+    }
 }

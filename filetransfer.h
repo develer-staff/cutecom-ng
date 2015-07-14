@@ -80,6 +80,18 @@ public:
      */
     virtual void cancelTransfer() = 0;
 
+    /**
+     * \brief ask for cur_progress to be updated
+     */
+    virtual void updateProgress() = 0;
+
+    /**
+     * \brief return a string corresponding to given TransferError
+     * \param error error code
+     * \return error string
+     */
+    static QString errorString(TransferError error);
+
 protected:
     /**
      * \brief TransferThread constructor
@@ -91,12 +103,10 @@ protected:
     ~FileTransfer();
 
     /**
-     * \brief called from child class to indicate that current file transfer
-     *        has already sent 'bytes_sent' total bytes
-     *        transferProgressed signal will be emitted if necessary
-     * \param bytes_sent total amount of bytes sent since transfer start
+     * \brief set amount of bytes that have been set
+     * \param sent_bytes total bytes sent since transfer start
      */
-    void updateTransfered(int bytes_sent);
+    void setSentBytes(int sent_bytes);
 
 private:
 
@@ -109,18 +119,14 @@ private:
 signals:
     /**
      * \brief signal emitted when file transfer has ended
-     * \param reason reason for transfer having ended
+     * \param code transfer end error code
      */
-    void transferError(TransferError reason);
+    void transferEnded(TransferError code);
 
     /**
-     * \brief signal emitted when the transfer is finished
-     */
-    void transferFinished();
-
-    /**
-     * \brief signal emitted each time the transfer has progressed
-     * \percent new percentage of file that is transfered
+     * \brief signal emitted each time tha file transfer progresses
+     * (minimum amount to emit is 1% progress)
+     * \percent percentage of file transfered
      */
     void transferProgressed(int percent);
 };

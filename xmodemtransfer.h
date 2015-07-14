@@ -37,8 +37,10 @@ public:
      */
     void cancelTransfer();
 
-    void handleTimer();
-
+    /**
+     * \brief ask for cur_progress to be updated
+     */
+    void updateProgress();
 
 private:
 
