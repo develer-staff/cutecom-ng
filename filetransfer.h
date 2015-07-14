@@ -24,7 +24,6 @@ class FileTransfer : public QObject
     Q_OBJECT
 
 public:
-
     /**
      * \brief The TransferError enum
      */
@@ -57,8 +56,13 @@ protected:
     /// buffer to transfer
     QByteArray   buffer;
 
-public:
+    /// transferred file total size
+    qint64       total_size;
 
+    /// current transfer progress in percent
+    int          cur_progress;
+
+public:
     /**
      * \brief define timeout value for first serial port response
      * \param ms miliseconds elapsed before issuing a timeout
@@ -86,6 +90,14 @@ protected:
     FileTransfer(QObject *parent, QSerialPort *serial, const QString &filename);
     ~FileTransfer();
 
+    /**
+     * \brief called from child class to indicate that current file transfer
+     *        has already sent 'bytes_sent' total bytes
+     *        transferProgressed signal will be emitted if necessary
+     * \param bytes_sent total amount of bytes sent since transfer start
+     */
+    void updateTransfered(int bytes_sent);
+
 private:
 
     /**
@@ -95,14 +107,22 @@ private:
     virtual TransferError performTransfer() = 0;
 
 signals:
-
     /**
      * \brief signal emitted when file transfer has ended
      * \param reason reason for transfer having ended
      */
     void transferError(TransferError reason);
 
+    /**
+     * \brief signal emitted when the transfer is finished
+     */
     void transferFinished();
+
+    /**
+     * \brief signal emitted each time the transfer has progressed
+     * \percent new percentage of file that is transfered
+     */
+    void transferProgressed(int percent);
 };
 
 #endif // TRANSFERTHREAD_H

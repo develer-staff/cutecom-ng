@@ -37,6 +37,9 @@ public:
      */
     void cancelTransfer();
 
+    void handleTimer();
+
+
 private:
 
     /**

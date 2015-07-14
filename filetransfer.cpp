@@ -16,8 +16,10 @@
 FileTransfer::FileTransfer(QObject *parent, QSerialPort *serial, const QString &filename) :
     QObject(parent),
     filename(filename),
-    serial(serial)
+    serial(serial)  
 {
+    total_size = 0;
+    cur_progress = 0;
     qRegisterMetaType<TransferError>("TransferError");
 }
 
@@ -33,7 +35,10 @@ void FileTransfer::startTransfer()
     {
         QFile file(filename);
         if (file.open(QIODevice::ReadOnly))
+        {
             buffer = file.readAll();
+            total_size = file.size();
+        }
     }
 
     // call child class file transfer protocol implementation
@@ -43,3 +48,20 @@ void FileTransfer::startTransfer()
      emit transferFinished();
 }
 
+
+/**
+ * \brief called from child class to indicate that current file transfer
+ *        has already sent 'bytes_sent' total bytes
+ *        transferProgressed signal will be emitted if necessary
+ * \param bytes_sent total amount of bytes sent since transfer start
+ */
+void FileTransfer::updateTransfered(int bytes_sent)
+{
+    int percent = 100 * bytes_sent / total_size;
+    if (percent > cur_progress)
+    {
+        // emit transferProgressed if we progressed of at least 1%
+        cur_progress = percent;
+        transferProgressed(cur_progress);
+    }
+}

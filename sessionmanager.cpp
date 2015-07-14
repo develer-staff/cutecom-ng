@@ -13,10 +13,12 @@
 #include "outputmanager.h"
 #include "xmodemtransfer.h"
 
-#include <QMessageBox>
 #include <QSerialPortInfo>
-#include <QFile>
+#include <QProgressDialog>
+#include <QMessageBox>
 #include <QThread>
+#include <QFile>
+#include <QTimer>
 
 SessionManager::SessionManager(QObject *parent) :
     QObject(parent)
@@ -107,11 +109,6 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     // a conversion didn't make it
     Q_ASSERT_X(cfg_ok, "SessionManager::openSession", "a conversion didn't make it");
 
-    // closes connection if needed
-    // just commented: normally this is not needed any more
-//    if (serial->isOpen())
-//        serial->close();
-
     // configure port
 #if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0)) && defined(Q_OS_MAC)
     // connection error on MacOsX if port name is set with setPortName instead
@@ -195,7 +192,7 @@ void SessionManager::initFileTransfer(const QString &filename, FileTransferMode 
     serial->disconnect();
 
     QThread *thread = new QThread;
-    FileTransfer *file_transfer = 0;
+    /*FileTransfer*/ XModemTransfer *file_transfer = 0;
 
     switch (type)
     {
@@ -208,20 +205,34 @@ void SessionManager::initFileTransfer(const QString &filename, FileTransferMode 
         break;
     }
 
+    // create a timer to update progress
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, file_transfer, &XModemTransfer::handleTimer, Qt::DirectConnection);
+    timer->start(250);
+
+    QProgressDialog *progress_dlg = new QProgressDialog();
+    connect(progress_dlg, &QProgressDialog::canceled, file_transfer, &FileTransfer::cancelTransfer);
+    progress_dlg->setRange(0, 100);
+    progress_dlg->setWindowModality(Qt::ApplicationModal);
+
     // move file_transfer worker and serialport instance to newly created thread
     file_transfer->moveToThread(thread);
     serial->moveToThread(thread);
 
     connect(file_transfer, &FileTransfer::transferError, this, &SessionManager::handleFileTransferError);
     connect(thread, &QThread::started, file_transfer, &FileTransfer::startTransfer);
+    connect(file_transfer, &FileTransfer::transferProgressed, progress_dlg, &QProgressDialog::setValue);
     connect(file_transfer, &FileTransfer::transferFinished, thread, &QThread::quit);
     connect(file_transfer, &FileTransfer::transferFinished, file_transfer, &FileTransfer::deleteLater);
+    connect(file_transfer, &FileTransfer::transferFinished, progress_dlg, &QProgressDialog::close);
+    connect(file_transfer, &FileTransfer::transferFinished, progress_dlg, &QProgressDialog::deleteLater);
+    connect(file_transfer, &FileTransfer::transferFinished, timer, &QTimer::stop);
+    connect(file_transfer, &FileTransfer::transferFinished, timer, &QTimer::deleteLater);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     thread->start();
+    progress_dlg->exec();
 }
 
 void SessionManager::handleFileTransferError(FileTransfer::TransferError error)
 {
-    qDebug() << "handleFileTransferError, err: " << error;
-    qDebug() << "handleFileTransferError slot thread : " << QThread::currentThread();
 }

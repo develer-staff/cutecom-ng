@@ -24,6 +24,17 @@
 QSerialPort *g_serial = 0;
 
 /**
+ * \brief _quit global variable used to indicate to the xmodem library that
+ *              current transfer has to be stopped prematurily
+ */
+bool _quit = false;
+
+/**
+ * \brief _progress global variable representing total bytes sent
+ */
+qint64 _byte_sent = 0;
+
+/**
  * \brief _inbyte consume 1 byte from serial port
  * \param timeout timeout in miliseconds
  * \return consumed byte or -1 in case of error
@@ -42,11 +53,6 @@ int _inbyte(unsigned short timeout)
     return -1;
 }
 
-/**
- * \brief _quit this global variable used to indicate to the xmodem library that
- *              current transfer has to be stopped prematurily
- */
-bool _quit = false;
 
 /**
  * \brief _outbyte write 1 byte to the serial port
@@ -56,7 +62,10 @@ void _outbyte(int c)
 {
     QByteArray data(1, (char)c);
     if (g_serial->isOpen())
+    {
         g_serial->write(data);
+        ++_byte_sent;
+    }
 }
 
 
@@ -64,6 +73,7 @@ XModemTransfer::XModemTransfer(QObject *parent, QSerialPort *serial, const QStri
     : FileTransfer(parent, serial, filename)
 {
     _quit = false;
+    _byte_sent = 0;
 }
 
 XModemTransfer::~XModemTransfer()
@@ -77,7 +87,9 @@ FileTransfer::TransferError XModemTransfer::performTransfer()
     // set global serialport pointer for xmodem library
     g_serial = serial;
 
-    switch (xmodemTransmit((unsigned char*)buffer.data(), buffer.size()))
+    // perform transmission
+    int ret = xmodemTransmit((unsigned char*)buffer.data(), buffer.size());
+    switch (ret)
     {
         case -5:
             return UnknownError;
@@ -99,4 +111,9 @@ FileTransfer::TransferError XModemTransfer::performTransfer()
 void XModemTransfer::cancelTransfer()
 {
     _quit = true;
+}
+
+void XModemTransfer::handleTimer()
+{
+    this->updateTransfered(_byte_sent);
 }
