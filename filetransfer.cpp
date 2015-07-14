@@ -37,7 +37,7 @@ void FileTransfer::startTransfer()
         file.close();
 
         // call child class file transfer protocol implementation
-        ret = this->performTransfer();
+        ret = performTransfer();
     }
 
     emit transferEnded(ret);
