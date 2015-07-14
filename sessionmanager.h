@@ -13,7 +13,7 @@
 #define SESSIONMANAGER_H
 
 #include "connectdialog.h"
-#include "transferthread.h"
+#include "filetransfer.h"
 
 #include <QObject>
 #include <QSerialPort>

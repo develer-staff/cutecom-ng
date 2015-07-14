@@ -12,7 +12,7 @@
 #ifndef XMODEMTRANSFER_H
 #define XMODEMTRANSFER_H
 
-#include "transferthread.h"
+#include "filetransfer.h"
 
 /**
  * \brief xmodem protocol implementation of TransferThread

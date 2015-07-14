@@ -220,8 +220,6 @@ void SessionManager::initFileTransfer(const QString &filename, FileTransferMode 
     thread->start();
 }
 
-// le mieux ca serait de ne gerer qu'un seul slot ici
-
 void SessionManager::handleFileTransferError(FileTransfer::TransferError error)
 {
     qDebug() << "handleFileTransferError, err: " << error;

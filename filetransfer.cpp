@@ -9,7 +9,7 @@
  * \author Aurelien Rainone <aurelien@develer.org>
  */
 
-#include "transferthread.h"
+#include "filetransfer.h"
 #include <QtSerialPort>
 #include <QFile>
 
