@@ -100,7 +100,6 @@ protected:
      * \param filename file to transfer
      */
     FileTransfer(QObject *parent, QSerialPort *serial, const QString &filename);
-    ~FileTransfer();
 
     /**
      * \brief set amount of bytes that have been set

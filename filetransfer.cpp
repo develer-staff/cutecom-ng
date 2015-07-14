@@ -24,10 +24,6 @@ FileTransfer::FileTransfer(QObject *parent, QSerialPort *serial, const QString &
     qRegisterMetaType<TransferError>("TransferError");
 }
 
-FileTransfer::~FileTransfer()
-{
-}
-
 void FileTransfer::startTransfer()
 {
     // fill buffer with file content
