@@ -53,7 +53,7 @@ void FileTransfer::setSentBytes(int bytes_sent)
     {
         // emit transferProgressed if we progressed of at least 1%
         cur_progress = percent;
-        transferProgressed(cur_progress);
+        emit transferProgressed(cur_progress);
     }
 }
 
