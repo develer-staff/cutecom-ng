@@ -80,7 +80,7 @@ public:
      * \param filename  file to transfer
      * \param type      protocol to use
      */
-    void initFileTransfer(const QString &filename, Protocol type);
+    void transferFile(const QString &filename, Protocol type);
 
 private:
 

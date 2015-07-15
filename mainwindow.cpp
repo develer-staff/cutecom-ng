@@ -158,7 +158,7 @@ void MainWindow::handleFileTransfer()
         return;
 
     int protocol = ui->protocolCombo->currentData().toInt();
-    session_mgr->initFileTransfer(filename,
+    session_mgr->transferFile(filename,
         static_cast<SessionManager::Protocol>(protocol));
 }
 

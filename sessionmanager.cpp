@@ -187,7 +187,7 @@ void SessionManager::sendToSerial(const QByteArray &data)
     serial->write(data);
 }
 
-void SessionManager::initFileTransfer(const QString &filename, Protocol type)
+void SessionManager::transferFile(const QString &filename, Protocol type)
 {
     QThread *thread = new QThread;
     FileTransfer *file_transfer = 0;
@@ -199,7 +199,7 @@ void SessionManager::initFileTransfer(const QString &filename, Protocol type)
         break;
         case YMODEM:
         case ZMODEM:
-            Q_ASSERT_X(false, "SessionManager::initFileTransfer", "protocol not yet implemented");
+            Q_ASSERT_X(false, "SessionManager::transferFile", "protocol not yet implemented");
         break;
     }
 
