@@ -107,5 +107,5 @@ void XModemTransfer::cancelTransfer()
 
 void XModemTransfer::updateProgress()
 {
-    this->setSentBytes(_byte_sent);
+    setSentBytes(_byte_sent);
 }

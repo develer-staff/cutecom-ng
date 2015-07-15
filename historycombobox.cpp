@@ -40,18 +40,18 @@ void HistoryComboBox::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Up:
             setCurrentIndex(0);
             setItemText(0, history->previous());
-            fillList(this->lineEdit()->text());
+            fillList(lineEdit()->text());
             break;
 
         case Qt::Key_Down:
             setCurrentIndex(0);
             setItemText(0, history->next());
-            fillList(this->lineEdit()->text());
+            fillList(lineEdit()->text());
             break;
         case Qt::Key_Return:
         case Qt::Key_Enter:
         {
-            QString line = this->lineEdit()->text();
+            QString line = lineEdit()->text();
             if (line.length() > 0)
             {
                 // don't treat empty input
