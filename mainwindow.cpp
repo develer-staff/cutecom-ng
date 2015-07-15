@@ -105,15 +105,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->bottomOutput->hide();
     ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
 
-
-    // x/y/zmodem buttons
-    QButtonGroup *xyz_group = new QButtonGroup(this);
-    xyz_group->addButton(ui->transferXButton, SessionManager::XMODEM);
-    xyz_group->addButton(ui->transferYButton, SessionManager::YMODEM);
-    xyz_group->addButton(ui->transferZButton, SessionManager::ZMODEM);
-
-    connect(xyz_group, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked),
-            this, &MainWindow::handleTransferButtonClicked);
+    // populate file transfer protocol combobox
+    ui->protocolCombo->addItem("XModem", SessionManager::XMODEM);
+    ui->protocolCombo->addItem("YModem", SessionManager::YMODEM);
+    ui->protocolCombo->addItem("ZModem", SessionManager::ZMODEM);
+//    Transfer file over XModem protocol
+    connect(ui->fileTransferButton, &QToolButton::clicked, this, &MainWindow::handleFileTransfer);
 
     // install event filters
     ui->mainOutput->viewport()->installEventFilter(this);
@@ -140,11 +137,7 @@ void MainWindow::handleSessionOpened()
     ui->disconnectButton->setEnabled(true);
 
     // enable file transfer
-    ui->transferXButton->setEnabled(true);
-
-    // commented as Y/Z modems are not implemented yet
-//    ui->transferYButton->setEnabled(true);
-//    ui->transferZButton->setEnabled(true);
+    ui->fileTransferButton->setEnabled(true);
 }
 
 void MainWindow::handleSessionClosed()
@@ -153,21 +146,20 @@ void MainWindow::handleSessionClosed()
     ui->disconnectButton->setDisabled(true);
 
     // disable file transfer
-    ui->transferXButton->setDisabled(true);
-    ui->transferYButton->setDisabled(true);
-    ui->transferZButton->setDisabled(true);
+    ui->fileTransferButton->setDisabled(true);
 }
 
-void MainWindow::handleTransferButtonClicked(int type)
+void MainWindow::handleFileTransfer()
 {
     QString filename = QFileDialog::getOpenFileName(
-                this, QStringLiteral("Select file for transfer"));
+                this, QStringLiteral("Select file to send transfer"));
 
     if (filename.isNull())
         return;
 
+    int protocol = ui->protocolCombo->currentData().toInt();
     session_mgr->initFileTransfer(filename,
-        static_cast<SessionManager::FileTransferMode>(type));
+        static_cast<SessionManager::FileTransferMode>(protocol));
 }
 
 void MainWindow::handleNewInput(QString entry)

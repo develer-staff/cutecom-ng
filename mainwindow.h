@@ -61,7 +61,7 @@ private:
      * \brief handle buttonClicked on the x/y/zmodem buttons
      * \param type
      */
-    void handleTransferButtonClicked(int type);
+    void handleFileTransfer();
 
     /**
      * \brief handle new input
