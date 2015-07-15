@@ -30,7 +30,7 @@ public:
     /**
      * \brief file transfer protocols and variants
      */
-    enum FileTransferMode
+    enum Protocol
     {
         XMODEM = 1,
         YMODEM = 10,
@@ -80,7 +80,7 @@ public:
      * \param filename  file to transfer
      * \param type      protocol to use
      */
-    void initFileTransfer(const QString &filename, FileTransferMode type);
+    void initFileTransfer(const QString &filename, Protocol type);
 
 private:
 

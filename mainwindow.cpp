@@ -159,7 +159,7 @@ void MainWindow::handleFileTransfer()
 
     int protocol = ui->protocolCombo->currentData().toInt();
     session_mgr->initFileTransfer(filename,
-        static_cast<SessionManager::FileTransferMode>(protocol));
+        static_cast<SessionManager::Protocol>(protocol));
 }
 
 void MainWindow::handleNewInput(QString entry)

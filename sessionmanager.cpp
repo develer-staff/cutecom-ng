@@ -187,7 +187,7 @@ void SessionManager::sendToSerial(const QByteArray &data)
     serial->write(data);
 }
 
-void SessionManager::initFileTransfer(const QString &filename, FileTransferMode type)
+void SessionManager::initFileTransfer(const QString &filename, Protocol type)
 {
     QThread *thread = new QThread;
     FileTransfer *file_transfer = 0;
