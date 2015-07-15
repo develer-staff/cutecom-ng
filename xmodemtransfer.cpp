@@ -10,8 +10,6 @@
  */
 
 #include <QtSerialPort>
-#include <QMutex>
-#include <QTime>
 
 #include "xmodemtransfer.h"
 #include "xmodem.h"
