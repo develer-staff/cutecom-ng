@@ -6,7 +6,7 @@
  *
  * \brief main cutecom-ng window
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #include <algorithm>

@@ -6,7 +6,7 @@
  *
  * \brief History class implementation
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #include "history.h"

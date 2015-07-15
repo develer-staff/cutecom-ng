@@ -6,7 +6,7 @@
  *
  * \brief cutecom-ng search result highlighter implementation
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #include "searchhighlighter.h"

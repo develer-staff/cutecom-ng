@@ -7,7 +7,7 @@
  * \brief xmodem header (this is not part of Georges Menie
  *  xmodem implementation
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #ifndef XMODEM_H

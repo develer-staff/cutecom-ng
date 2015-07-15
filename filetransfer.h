@@ -6,7 +6,7 @@
  *
  * \brief FileTransfer class header
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #ifndef FILETRANSFER_H

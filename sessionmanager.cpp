@@ -6,7 +6,7 @@
  *
  * \brief SessionManager class implementation
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #include "sessionmanager.h"

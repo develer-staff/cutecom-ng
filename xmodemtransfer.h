@@ -6,7 +6,7 @@
  *
  * \brief XModemTransfer class header
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #ifndef XMODEMTRANSFER_H

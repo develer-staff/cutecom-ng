@@ -6,7 +6,7 @@
  *
  * \brief SessionManager class header
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #ifndef SESSIONMANAGER_H
