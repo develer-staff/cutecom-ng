@@ -15,7 +15,7 @@
 #include "filetransfer.h"
 
 /**
- * \brief xmodem protocol implementation of TransferThread
+ * \brief xmodem protocol implementation of FileTransfer
  */
 class XModemTransfer : public FileTransfer
 {

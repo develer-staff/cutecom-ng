@@ -4,13 +4,13 @@
  * Copyright 2015 Develer S.r.l. (http://www.develer.com/)
  * -->
  *
- * \brief TransferThread class header
+ * \brief FileTransfer class header
  *
  * \author Aurelien Rainone <aurelien@develer.org>
  */
 
-#ifndef TRANSFERTHREAD_H
-#define TRANSFERTHREAD_H
+#ifndef FILETRANSFER_H
+#define FILETRANSFER_H
 
 #include <QObject>
 
@@ -111,7 +111,7 @@ public:
 
 protected:
     /**
-     * \brief TransferThread constructor
+     * \brief FileTransfer constructor
      * \param parent   object taking ownership
      * \param serial   opened instance of QSerialPort
      * \param filename file to transfer
@@ -147,4 +147,4 @@ signals:
     void transferProgressed(int percent);
 };
 
-#endif // TRANSFERTHREAD_H
+#endif // FILETRANSFER_H

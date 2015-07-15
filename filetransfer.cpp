@@ -4,7 +4,7 @@
  * Copyright 2015 Develer S.r.l. (http://www.develer.com/)
  * -->
  *
- * \brief TransferThread class implementation
+ * \brief FileTransfer class implementation
  *
  * \author Aurelien Rainone <aurelien@develer.org>
  */
