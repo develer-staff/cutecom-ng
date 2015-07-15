@@ -40,10 +40,10 @@ void FileTransfer::startTransfer()
         ret = performTransfer();
     }
 
-    emit transferEnded(ret);
-
     // move serial instance back to main thread
     serial->moveToThread(QApplication::instance()->thread());
+
+    emit transferEnded(ret);
 }
 
 void FileTransfer::setSentBytes(int bytes_sent)
@@ -73,7 +73,7 @@ QString FileTransfer::errorString(TransferError error)
             return QStringLiteral("Transfer cancelled by remote");
         case LocalCancelledError:
             // should not be treated as an error
-            return QStringLiteral("Transfer cancelled locally");
+            return QStringLiteral("Transfer cancelled");
         case InputFileError:
             return QStringLiteral("Can't open input file");
         case UnknownError:

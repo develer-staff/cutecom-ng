@@ -209,7 +209,7 @@ void SessionManager::initFileTransfer(const QString &filename, Protocol type)
     timer->start(250);
 
     QProgressDialog *progress_dlg = new QProgressDialog();
-    connect(progress_dlg, &QProgressDialog::canceled, file_transfer, &FileTransfer::cancelTransfer);
+    connect(progress_dlg, &QProgressDialog::canceled, file_transfer, &FileTransfer::cancelTransfer, Qt::DirectConnection);
     progress_dlg->setRange(0, 100);
     progress_dlg->setWindowModality(Qt::ApplicationModal);
 

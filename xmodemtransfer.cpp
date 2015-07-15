@@ -89,18 +89,16 @@ FileTransfer::TransferError XModemTransfer::performTransfer()
     int ret = xmodemTransmit((unsigned char*)buffer.data(), buffer.size());
     switch (ret)
     {
+        case -6:
+            return LocalCancelledError;
         case -5:
             return UnknownError;
-            break;
         case -4:
             return TransmissionError;
-            break;
         case -2:
             return NoSyncError;
-            break;
         case -1:
             return RemoteCancelledError;
-            break;
     }
 
     return NoError;
