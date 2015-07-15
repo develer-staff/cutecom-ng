@@ -30,7 +30,6 @@ public:
      * \param filename file to transfer
      */
     XModemTransfer(QObject *parent, QSerialPort *serial, const QString &filename);
-    ~XModemTransfer();
 
     /**
      * \brief cancel current transfer

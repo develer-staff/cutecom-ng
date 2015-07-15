@@ -76,10 +76,6 @@ XModemTransfer::XModemTransfer(QObject *parent, QSerialPort *serial, const QStri
     _byte_sent = 0;
 }
 
-XModemTransfer::~XModemTransfer()
-{
-}
-
 FileTransfer::TransferError XModemTransfer::performTransfer()
 {
     // set global serialport pointer for xmodem library
