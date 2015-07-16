@@ -88,7 +88,7 @@ public:
     /**
      * \brief file transfer destructor
      */
-    ~FileTransfer();
+    virtual ~FileTransfer();
 
     /**
      * \brief define timeout value for first serial port response
@@ -143,15 +143,17 @@ private:
      */
     virtual void performTransfer() = 0;
 
+    void handleTransferEnded(TransferError error);
+
 signals:
     /**
      * \brief signal emitted when file transfer has ended
      * \param code transfer end error code
      */
     void transferEnded(TransferError code);
-
+    void transferFinished();
     /**
-     * \brief signal emitted each time tha file transfer progresses
+     * \brief signal emitted each time the file transfer progresses
      * (minimum amount to emit is 1% progress)
      * \percent percentage of file transfered
      */

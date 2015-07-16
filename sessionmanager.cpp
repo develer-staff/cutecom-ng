@@ -203,63 +203,20 @@ void SessionManager::transferFile(const QString &filename, Protocol type)
             return;
     }
 
+    // forward FileTransfer::transferEnded signal
     connect(file_transfer, &FileTransfer::transferEnded,
-            this, &SessionManager::handleTransferEnded);
-    connect(file_transfer, &FileTransfer::transferEnded,
-            file_transfer, &FileTransfer::deleteLater);
+            this, &SessionManager::fileTransferEnded);
+    // forward FileTransfer::transferProgressed signal
+    connect(file_transfer, &FileTransfer::transferProgressed,
+            this, &SessionManager::fileTransferProgressed);
 
-    if (file_transfer->startTransfer())
-    {
-        // display a progress dialog when we know file transfer has started
-        QProgressDialog *progress_dlg = new QProgressDialog;
-        connect(progress_dlg, &QProgressDialog::canceled,
-                file_transfer, &FileTransfer::cancelTransfer, Qt::DirectConnection);
-        progress_dlg->setRange(0, 100);
-        progress_dlg->setWindowModality(Qt::ApplicationModal);
-        progress_dlg->setLabelText(
-                    QStringLiteral("Initiating connection with receiver"));
+    // forward FileTransfer::transferProgressed signal
+    connect(this, &SessionManager::progressDialogCancelled,
+            file_transfer, &FileTransfer::cancelTransfer, Qt::DirectConnection);
 
-        // dialog is updated when transfer progresses
-        connect(file_transfer, &FileTransfer::transferProgressed,
-                progress_dlg, &QProgressDialog::setValue);
-        connect(file_transfer, &FileTransfer::transferEnded,
-                progress_dlg, &QProgressDialog::close);
-        connect(file_transfer, &FileTransfer::transferEnded,
-                progress_dlg, &QProgressDialog::deleteLater);
-
-        // create a timer to update progress
-        QTimer *timer = new QTimer(this);
-        connect(timer, &QTimer::timeout, file_transfer,
-                &FileTransfer::updateProgress, Qt::DirectConnection);
-        timer->start(250);
-
-        connect(file_transfer, &FileTransfer::transferEnded,
-                timer, &QTimer::stop);
-        connect(file_transfer, &FileTransfer::transferEnded,
-                timer, &QTimer::deleteLater);
-        connect(file_transfer, &FileTransfer::transferEnded,
-                file_transfer, &FileTransfer::deleteLater);
-
-        progress_dlg->exec();
-    }
-    else
-    {
-        // file transfer never started, manually delete filetransfer instance
+    if (!file_transfer->startTransfer())
+        // file transfer never started, manually delete FileTransfer instance
         delete file_transfer;
-    }
 }
 
-void SessionManager::handleTransferEnded(FileTransfer::TransferError error)
-{
-    switch (error)
-    {
-        case FileTransfer::LocalCancelledError:
-            return;
-        case FileTransfer::NoError:
-            QMessageBox::information(NULL, tr("Cutecom-ng"), QStringLiteral("File transferred succesfully"));
-            break;
-        default:
-            QMessageBox::warning(NULL, tr("Cutecom-ng"), FileTransfer::errorString(error));
-            break;
-    }
-}
+

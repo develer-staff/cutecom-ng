@@ -13,6 +13,8 @@
 #include <QApplication>
 #include <QtSerialPort>
 #include <QFile>
+#include <QTimer>
+#include <QDebug>
 
 FileTransfer::FileTransfer(QObject *parent, QSerialPort *serial, const QString &filename) :
     QObject(parent),
@@ -27,8 +29,10 @@ FileTransfer::FileTransfer(QObject *parent, QSerialPort *serial, const QString &
 
 FileTransfer::~FileTransfer()
 {
-    // move serial instance back to main thread
-    serial->moveToThread(QApplication::instance()->thread());
+    qDebug() << "FileTransfer::~FileTransfer(), progress_timer: " << progress_timer;
+
+    if (progress_timer)
+        delete progress_timer;
 }
 
 bool FileTransfer::startTransfer()
@@ -41,29 +45,53 @@ bool FileTransfer::startTransfer()
         total_size = file.size();
         file.close();
 
-        // create a new thread...
         thread = new QThread;
         moveToThread(thread);
+
+        progress_timer = new QTimer;
 
         // and move both serialport and filetransfer (this) instance
         serial->moveToThread(thread);
 
-        // call child class performTransfer() when tread starts
+        // call child class performTransfer() when thread starts
         connect(thread, &QThread::started, this, &FileTransfer::performTransfer);
 
-        // stop and clean thread when file transfer has ended
-        connect(this, &FileTransfer::transferEnded, thread, &QThread::quit);
+        connect(progress_timer, &QTimer::timeout, this,
+                &FileTransfer::updateProgress);
+        progress_timer->start(250);
+
+        connect(this, &FileTransfer::transferFinished,
+                progress_timer, &QTimer::stop);
+
+        connect(this, &FileTransfer::transferEnded,
+                this, &FileTransfer::handleTransferEnded);
+
+        connect(this, &FileTransfer::transferFinished, this, &FileTransfer::deleteLater);
         connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+
         thread->start();
         return true;
     }
     else
     {
         emit transferEnded(InputFileError);
+        emit transferFinished();
     }
 
     return false;
 }
+
+void FileTransfer::handleTransferEnded(TransferError error)
+{
+    // be sure that
+    if (error == NoError)
+        setSentBytes(total_size);
+
+    // move serial instance back to main thread
+    serial->moveToThread(QApplication::instance()->thread());
+    thread->quit();
+}
+
 
 void FileTransfer::setSentBytes(int bytes_sent)
 {

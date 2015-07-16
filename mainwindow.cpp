@@ -17,6 +17,9 @@
 #include <QPropertyAnimation>
 #include <QShortcut>
 #include <QFileDialog>
+#include <QProgressDialog>
+#include <QMessageBox>
+#include <QDebug>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -157,10 +160,49 @@ void MainWindow::handleFileTransfer()
     if (filename.isNull())
         return;
 
+
+    // display a progress dialog
+    QProgressDialog *progress_dlg = new QProgressDialog(this);
+    connect(progress_dlg, &QProgressDialog::canceled,
+            session_mgr, &SessionManager::progressDialogCancelled, Qt::DirectConnection);
+
+    progress_dlg->setRange(0, 100);
+    progress_dlg->setWindowModality(Qt::ApplicationModal);
+    progress_dlg->setLabelText(
+                QStringLiteral("Initiating connection with receiver"));
+
+    // dialog is updated when transfer progresses
+    connect(session_mgr, &SessionManager::fileTransferProgressed,
+            progress_dlg, &QProgressDialog::setValue,Qt::DirectConnection);
+
+    connect(session_mgr, &SessionManager::fileTransferEnded, this, &MainWindow::handleFileTransferEnded);
+
     int protocol = ui->protocolCombo->currentData().toInt();
     session_mgr->transferFile(filename,
         static_cast<SessionManager::Protocol>(protocol));
+
+    ui->fileTransferButton->setEnabled(false);
+    progress_dlg->exec();
 }
+
+void MainWindow::handleFileTransferEnded(FileTransfer::TransferError error)
+{
+    ui->fileTransferButton->setEnabled(true);
+
+    qDebug() << "MainWindow::handleFileTransferEnded(error: " << error << ")";
+    switch (error)
+    {
+        case FileTransfer::LocalCancelledError:
+            return;
+        case FileTransfer::NoError:
+            QMessageBox::information(NULL, tr("Cutecom-ng"), QStringLiteral("File transferred succesfully"));
+            break;
+        default:
+            QMessageBox::warning(NULL, tr("Cutecom-ng"), FileTransfer::errorString(error));
+            break;
+    }  
+}
+
 
 void MainWindow::handleNewInput(QString entry)
 {

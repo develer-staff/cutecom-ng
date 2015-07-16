@@ -122,6 +122,23 @@ signals:
      * \param data    byte array data
      */
     void dataReceived(const QByteArray &data);
+
+    /**
+     * \brief signal emitted when file transfer has ended
+     * \param code transfer end error code
+     */
+    void fileTransferEnded(FileTransfer::TransferError code);
+
+
+    /**
+     * \brief signal emitted each time the file transfer progresses
+     * (minimum amount to emit is 1% progress)
+     * \percent percentage of file transfered
+     */
+    void fileTransferProgressed(int percent);
+
+
+    void progressDialogCancelled();
 };
 
 #endif // SESSIONMANAGER_H

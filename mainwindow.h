@@ -12,6 +12,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "filetransfer.h"
+
 #include <QMainWindow>
 
 namespace Ui {
@@ -106,6 +108,11 @@ private:
      */
     void handleTotalOccurencesChanged(int total_occurences);
 
+    /**
+     * \brief handle end of file transfer
+     * \param error transfer error code
+     */
+    void handleFileTransferEnded(FileTransfer::TransferError error);
 };
 
 #endif // MAINWINDOW_H

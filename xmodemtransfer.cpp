@@ -10,6 +10,7 @@
  */
 
 #include <QtSerialPort>
+#include <QDebug>
 
 #include "xmodemtransfer.h"
 #include "xmodem.h"
@@ -112,6 +113,7 @@ void XModemTransfer::performTransfer()
     }
 
     emit transferEnded(ret);
+    emit transferFinished();
 }
 
 void XModemTransfer::cancelTransfer()
@@ -121,5 +123,6 @@ void XModemTransfer::cancelTransfer()
 
 void XModemTransfer::updateProgress()
 {
+    qDebug() << "XModemTransfer::updateProgress()";
     setSentBytes(_byte_sent);
 }
