@@ -74,28 +74,44 @@ XModemTransfer::XModemTransfer(QObject *parent, QSerialPort *serial, const QStri
     _byte_sent = 0;
 }
 
-FileTransfer::TransferError XModemTransfer::performTransfer()
+void XModemTransfer::performTransfer()
 {
-    // set global serialport pointer for xmodem library
+    // set global QSerialPort pointer used by _inbyte/_outbyte
     g_serial = serial;
 
-    // perform transmission
-    int ret = xmodemTransmit((unsigned char*)buffer.data(), buffer.size());
-    switch (ret)
+    TransferError ret;
+
+    // call xmodem transmission routine
+    int errcode = xmodemTransmit((unsigned char*)buffer.data(), buffer.size());
+
+    switch (errcode)
     {
         case -6:
-            return LocalCancelledError;
+            ret = LocalCancelledError;
+            break;
         case -5:
-            return UnknownError;
+            ret = UnknownError;
+            break;
         case -4:
-            return TransmissionError;
+            ret = TransmissionError;
+            break;
         case -2:
-            return NoSyncError;
+            ret = NoSyncError;
+            break;
         case -1:
-            return RemoteCancelledError;
+            ret = RemoteCancelledError;
+            break;
+        default:
+        {
+            if (errcode >= 0)
+                ret = NoError;      // success
+            else
+                ret = UnknownError; // shouldn't be here
+            break;
+        }
     }
 
-    return NoError;
+    emit transferEnded(ret);
 }
 
 void XModemTransfer::cancelTransfer()

@@ -17,17 +17,22 @@
 FileTransfer::FileTransfer(QObject *parent, QSerialPort *serial, const QString &filename) :
     QObject(parent),
     filename(filename),
-    serial(serial)  
+    serial(serial),
+    thread(0)
 {
     total_size = 0;
     cur_progress = 0;
     qRegisterMetaType<TransferError>("TransferError");
 }
 
-void FileTransfer::startTransfer()
+FileTransfer::~FileTransfer()
 {
-    TransferError ret = InputFileError;
+    // move serial instance back to main thread
+    serial->moveToThread(QApplication::instance()->thread());
+}
 
+bool FileTransfer::startTransfer()
+{   
     // fill buffer with file content
     QFile file(filename);
     if (file.open(QIODevice::ReadOnly))
@@ -36,24 +41,41 @@ void FileTransfer::startTransfer()
         total_size = file.size();
         file.close();
 
-        // call child class file transfer protocol implementation
-        ret = performTransfer();
+        // create a new thread...
+        thread = new QThread;
+        moveToThread(thread);
+
+        // and move both serialport and filetransfer (this) instance
+        serial->moveToThread(thread);
+
+        // call child class performTransfer() when tread starts
+        connect(thread, &QThread::started, this, &FileTransfer::performTransfer);
+
+        // stop and clean thread when file transfer has ended
+        connect(this, &FileTransfer::transferEnded, thread, &QThread::quit);
+        connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+        thread->start();
+        return true;
+    }
+    else
+    {
+        emit transferEnded(InputFileError);
     }
 
-    // move serial instance back to main thread
-    serial->moveToThread(QApplication::instance()->thread());
-
-    emit transferEnded(ret);
+    return false;
 }
 
 void FileTransfer::setSentBytes(int bytes_sent)
 {
-    int percent = 100 * bytes_sent / total_size;
-    if (percent > cur_progress)
+    if (total_size)
     {
-        // emit transferProgressed if we progressed of at least 1%
-        cur_progress = percent;
-        emit transferProgressed(cur_progress);
+        int percent = 100 * bytes_sent / total_size;
+        if (percent > cur_progress)
+        {
+            // emit transferProgressed if we progressed of at least 1%
+            cur_progress = percent;
+            emit transferProgressed(cur_progress);
+        }
     }
 }
 

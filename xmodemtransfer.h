@@ -47,7 +47,7 @@ private:
      * \brief initiate an XMODEM protocol file transfer
      * \return transfer end code
      */
-    TransferError performTransfer();
+    void performTransfer();
 };
 
 #endif // XMODEMTRANSFER_H

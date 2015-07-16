@@ -16,7 +16,6 @@
 #include <QSerialPortInfo>
 #include <QProgressDialog>
 #include <QMessageBox>
-#include <QThread>
 #include <QFile>
 #include <QTimer>
 
@@ -189,7 +188,6 @@ void SessionManager::sendToSerial(const QByteArray &data)
 
 void SessionManager::transferFile(const QString &filename, Protocol type)
 {
-    QThread *thread = new QThread;
     FileTransfer *file_transfer = 0;
 
     switch (type)
@@ -199,36 +197,56 @@ void SessionManager::transferFile(const QString &filename, Protocol type)
         break;
         case YMODEM:
         case ZMODEM:
-            Q_ASSERT_X(false, "SessionManager::transferFile", "protocol not yet implemented");
+            Q_ASSERT_X(false, "SessionManager::transferFile", "not implemented");
         break;
+        default:
+            return;
     }
 
-    // create a timer to update progress
-    QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, file_transfer, &FileTransfer::updateProgress, Qt::DirectConnection);
-    timer->start(250);
+    connect(file_transfer, &FileTransfer::transferEnded,
+            this, &SessionManager::handleTransferEnded);
+    connect(file_transfer, &FileTransfer::transferEnded,
+            file_transfer, &FileTransfer::deleteLater);
 
-    QProgressDialog *progress_dlg = new QProgressDialog();
-    connect(progress_dlg, &QProgressDialog::canceled, file_transfer, &FileTransfer::cancelTransfer, Qt::DirectConnection);
-    progress_dlg->setRange(0, 100);
-    progress_dlg->setWindowModality(Qt::ApplicationModal);
+    if (file_transfer->startTransfer())
+    {
+        // display a progress dialog when we know file transfer has started
+        QProgressDialog *progress_dlg = new QProgressDialog;
+        connect(progress_dlg, &QProgressDialog::canceled,
+                file_transfer, &FileTransfer::cancelTransfer, Qt::DirectConnection);
+        progress_dlg->setRange(0, 100);
+        progress_dlg->setWindowModality(Qt::ApplicationModal);
+        progress_dlg->setLabelText(
+                    QStringLiteral("Initiating connection with receiver"));
 
-    // move file_transfer worker and serialport instance to newly created thread
-    file_transfer->moveToThread(thread);
-    serial->moveToThread(thread);
+        // dialog is updated when transfer progresses
+        connect(file_transfer, &FileTransfer::transferProgressed,
+                progress_dlg, &QProgressDialog::setValue);
+        connect(file_transfer, &FileTransfer::transferEnded,
+                progress_dlg, &QProgressDialog::close);
+        connect(file_transfer, &FileTransfer::transferEnded,
+                progress_dlg, &QProgressDialog::deleteLater);
 
-    connect(file_transfer, &FileTransfer::transferEnded, this, &SessionManager::handleTransferEnded);
-    connect(thread, &QThread::started, file_transfer, &FileTransfer::startTransfer);
-    connect(file_transfer, &FileTransfer::transferProgressed, progress_dlg, &QProgressDialog::setValue);
-    connect(file_transfer, &FileTransfer::transferEnded, thread, &QThread::quit);
-    connect(file_transfer, &FileTransfer::transferEnded, file_transfer, &FileTransfer::deleteLater);
-    connect(file_transfer, &FileTransfer::transferEnded, progress_dlg, &QProgressDialog::close);
-    connect(file_transfer, &FileTransfer::transferEnded, progress_dlg, &QProgressDialog::deleteLater);
-    connect(file_transfer, &FileTransfer::transferEnded, timer, &QTimer::stop);
-    connect(file_transfer, &FileTransfer::transferEnded, timer, &QTimer::deleteLater);
-    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-    thread->start();
-    progress_dlg->exec();
+        // create a timer to update progress
+        QTimer *timer = new QTimer(this);
+        connect(timer, &QTimer::timeout, file_transfer,
+                &FileTransfer::updateProgress, Qt::DirectConnection);
+        timer->start(250);
+
+        connect(file_transfer, &FileTransfer::transferEnded,
+                timer, &QTimer::stop);
+        connect(file_transfer, &FileTransfer::transferEnded,
+                timer, &QTimer::deleteLater);
+        connect(file_transfer, &FileTransfer::transferEnded,
+                file_transfer, &FileTransfer::deleteLater);
+
+        progress_dlg->exec();
+    }
+    else
+    {
+        // file transfer never started, manually delete filetransfer instance
+        delete file_transfer;
+    }
 }
 
 void SessionManager::handleTransferEnded(FileTransfer::TransferError error)

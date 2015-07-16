@@ -15,6 +15,7 @@
 #include <QObject>
 
 class QSerialPort;
+class QTimer;
 
 /**
  * \brief serial port file transfer abstract class
@@ -79,7 +80,16 @@ protected:
     /// current transfer progress in percent
     int          cur_progress;
 
+    QTimer      *progress_timer;
+    QThread     *thread;
+
 public:
+
+    /**
+     * \brief file transfer destructor
+     */
+    ~FileTransfer();
+
     /**
      * \brief define timeout value for first serial port response
      * \param ms miliseconds elapsed before issuing a timeout
@@ -89,8 +99,9 @@ public:
 
     /**
      * \brief start the file transfer
+     * \return boolean indicating wether transfer has started or not
      */
-    void startTransfer();
+    bool startTransfer();
 
     /**
      * \brief cancel current transfer
@@ -130,7 +141,7 @@ private:
      * \brief perform the actual file transfer
      * \return transfer end code
      */
-    virtual TransferError performTransfer() = 0;
+    virtual void performTransfer() = 0;
 
 signals:
     /**
