@@ -23,16 +23,17 @@ class QSerialPort;
  * implement these pure virtual methods :
  *
  *  - TransferError performTransfer() : this is where the actual file
- *      transfer should take place. At this point 'buffer' and
- *      'total_size' have already been set
+ *      transfer must take place. At this point 'buffer' and
+ *      'total_size' have been set
  *
  *  - void cancelTransfer() : cancel the current transfer, this method
  *      can be called at any moment during the transfer
  *
- *  Furthermore, child class implementation should emit transferProgressed()
- *  signal so that the application can periodically inform the user about
- *  the transfer progression. transferProgressed() expects an integer
- *  representing current transfer percentage
+ *  Furthermore, child class implementation must emit transferProgressed()
+ *  signal frequently enough, so that the application can inform the user
+ *  about the current state of the transfer. the integer parameter of
+ *  transferProgressed() should represents the percentage of current
+ *  transfer that has already been performed
  */
 class FileTransfer : public QObject
 {
@@ -46,17 +47,17 @@ public:
     {
         /// file successfully transferred
         NoError                  = 0,
-        /// no synchronization
+        /// no synchronization between local and remote
         NoSyncError              = 1,
         /// transmission error
         TransmissionError        = 2,
         /// transfer timed out
         TimeoutError             = 3,
-        /// cancelled by remote
+        /// transfer cancelled by remote
         RemoteCancelledError     = 4,
-        /// cancelled locally
+        /// transfer cancelled locally
         LocalCancelledError      = 5,
-        /// source file error
+        /// local file error (size, permission)
         InputFileError           = 6,
         /// unknown error
         UnknownError             = 7
@@ -67,29 +68,19 @@ protected:
     /// file to transfer
     QString      filename;
 
-    /// serial port instance to use for the transfer
+    /// serial port instance used for the transfer
     QSerialPort *serial;
 
     /// full content of file to transfer
     QByteArray   buffer;
 
-    /// transferred file total size
+    /// total size in bytes of buffer
     qint64       total_size;
 
-    /// current transfer progress in percent
-    int          cur_progress;
-
-    /// worker thread in which transfer is processed
+    /// thread in which the transfer is performed
     QThread     *thread;
 
 public:
-
-    /**
-     * \brief define timeout value for first serial port response
-     * \param ms miliseconds elapsed before issuing a timeout
-     *           if ms is -1 then the transfer will wait indefnitely
-     */
-    void setTimeout(int ms = -1);
 
     /**
      * \brief start the file transfer
@@ -105,7 +96,7 @@ public:
     /**
      * \brief return a string corresponding to given TransferError
      * \param error error code
-     * \return error string
+     * \return error error string
      */
     static QString errorString(TransferError error);
 

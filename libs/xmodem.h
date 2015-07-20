@@ -4,8 +4,9 @@
  * Copyright 2015 Develer S.r.l. (http://www.develer.com/)
  * -->
  *
- * \brief xmodem header (this is not part of Georges Menie
- *  xmodem implementation
+ * \brief xmodem header
+ *
+ *  this file is not part of Georges Menie xmodem implementation
  *
  * \author Aurelien Rainone <aurelien@develer.com>
  */

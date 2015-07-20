@@ -13,7 +13,6 @@
 #include <QApplication>
 #include <QtSerialPort>
 #include <QFile>
-#include <QTimer>
 
 FileTransfer::FileTransfer(QObject *parent, QSerialPort *serial, const QString &filename) :
     QObject(parent),
@@ -22,7 +21,6 @@ FileTransfer::FileTransfer(QObject *parent, QSerialPort *serial, const QString &
     thread(0)
 {
     total_size = 0;
-    cur_progress = 0;
     qRegisterMetaType<TransferError>("TransferError");
 }
 
@@ -38,9 +36,9 @@ bool FileTransfer::startTransfer()
         if (total_size > 0)
         {
             thread = new QThread;
-            moveToThread(thread);
 
             // and move both serialport and filetransfer (this) instance
+            moveToThread(thread);
             serial->moveToThread(thread);
 
             // call child class performTransfer() when thread starts
@@ -63,11 +61,11 @@ bool FileTransfer::startTransfer()
 void FileTransfer::handleTransferEnded(TransferError error)
 {
     Q_UNUSED(error)
-    this->deleteLater();
 
     // move serial instance back to main thread
     serial->moveToThread(QApplication::instance()->thread());
     thread->quit();
+    this->deleteLater();
 }
 
 QString FileTransfer::errorString(TransferError error)
