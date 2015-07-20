@@ -100,10 +100,9 @@ private:
     void handleError(QSerialPort::SerialPortError serialPortError);
 
     /**
-     * \brief handle FileTransfer::transferEnded signal
-     * \param error transfer end error code
+     * \brief handle FileTransfer::destroyed signal
      */
-    void handleTransferEnded(FileTransfer::TransferError error);
+    void handleFileTransferDestroyed();
 
 signals:
 
@@ -128,7 +127,6 @@ signals:
      * \param error transfer end error code
      */
     void fileTransferEnded(FileTransfer::TransferError error);
-
 
     /**
      * \brief signal emitted each time the file transfer progresses

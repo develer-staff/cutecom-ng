@@ -87,7 +87,6 @@ XModemTransfer::XModemTransfer(QObject *parent, QSerialPort *serial, const QStri
     _g_transfer = this;
 }
 
-
 void XModemTransfer::performTransfer()
 {
     // set global QSerialPort pointer used by _inbyte/_outbyte

@@ -49,7 +49,6 @@ bool FileTransfer::startTransfer()
             connect(this, &FileTransfer::transferEnded,
                     this, &FileTransfer::handleTransferEnded);
 
-//            connect(this, &FileTransfer::transferFinished, this, &FileTransfer::deleteLater);
             connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 
             thread->start();
@@ -57,8 +56,7 @@ bool FileTransfer::startTransfer()
         }
     }
 
-    emit transferEnded(InputFileError);
-//    emit transferFinished();
+    handleTransferEnded(InputFileError);
     return false;
 }
 
