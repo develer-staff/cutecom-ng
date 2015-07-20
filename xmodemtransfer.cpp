@@ -29,10 +29,19 @@ XModemTransfer *_g_transfer = 0;
 bool _quit = false;
 
 /**
- * \brief _progress global variable representing total bytes sent
+ * \brief global variable representing the total size of file transferred
+ */
+qint64 _total_bytes = 0;
+
+/**
+ * \brief global variable used to represent the amount of bytes already
+ * transferred
  */
 qint64 _byte_sent = 0;
-qint64 _total_bytes = 0;
+
+/**
+ * \brief global variable representing the last transfer percentage emitted
+ */
 int _last_progress = 0;
 
 /**
@@ -53,7 +62,6 @@ int _inbyte(unsigned short timeout)
     }
     return -1;
 }
-
 
 /**
  * \brief _outbyte write 1 byte to the serial port
@@ -116,13 +124,13 @@ void XModemTransfer::performTransfer()
             ret = RemoteCancelledError;
             break;
         default:
-        {
             if (errcode >= 0)
-                ret = NoError;      // success
+                // success
+                ret = NoError;
             else
-                ret = UnknownError; // shouldn't be here
+                // shouldn't be here
+                ret = UnknownError;
             break;
-        }
     }
 
     emit transferEnded(ret);
@@ -132,4 +140,3 @@ void XModemTransfer::cancelTransfer()
 {
     _quit = true;
 }
-

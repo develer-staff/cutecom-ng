@@ -167,7 +167,7 @@ void MainWindow::handleFileTransfer()
     // display a progress dialog
     progress_dialog = new QProgressDialog(this);
     connect(progress_dialog, &QProgressDialog::canceled,
-            session_mgr, &SessionManager::progressDialogCancelled);
+            session_mgr, &SessionManager::transferRequestedByUser);
 
     progress_dialog->setRange(0, 100);
     progress_dialog->setWindowModality(Qt::ApplicationModal);
@@ -182,9 +182,12 @@ void MainWindow::handleFileTransfer()
     session_mgr->transferFile(filename,
         static_cast<SessionManager::Protocol>(protocol));
 
-    // during the transfer, disable UI elements acting on QSerialPort instance
+    // disable UI elements acting on QSerialPort instance, as long as
+    // objectds involved in FileTransferred are not destroyed or back
+    // to their pre-file-transfer state
     ui->fileTransferButton->setEnabled(false);
     ui->disconnectButton->setEnabled(false);
+    ui->inputBox->setEnabled(false);
 
     // progress dialog event loop
     progress_dialog->exec();
@@ -219,6 +222,7 @@ void MainWindow::handleFileTransferEnded(FileTransfer::TransferError error)
     // re-enable UI elements acting on QSerialPort instance
     ui->fileTransferButton->setEnabled(true);
     ui->disconnectButton->setEnabled(true);
+    ui->inputBox->setEnabled(true);
 }
 
 void MainWindow::handleNewInput(QString entry)

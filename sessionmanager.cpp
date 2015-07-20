@@ -216,9 +216,8 @@ void SessionManager::transferFile(const QString &filename, Protocol type)
             this, &SessionManager::fileTransferProgressed);
 
     // forward progressDialogCancelled signal from outside to FileTransfer
-    connect(this, &SessionManager::progressDialogCancelled,
+    connect(this, &SessionManager::transferRequestedByUser,
             file_transfer, &FileTransfer::cancelTransfer, Qt::DirectConnection);
-
 
     disconnect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>
                 (&QSerialPort::error), this, &SessionManager::handleError);

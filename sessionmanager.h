@@ -135,8 +135,11 @@ signals:
      */
     void fileTransferProgressed(int percent);
 
-
-    void progressDialogCancelled();
+    /**
+     * \brief signal forwarded from outside to indicate that current
+     * file transfer should be cancelled
+     */
+    void transferRequestedByUser();
 };
 
 #endif // SESSIONMANAGER_H
