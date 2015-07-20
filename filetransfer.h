@@ -15,7 +15,6 @@
 #include <QObject>
 
 class QSerialPort;
-class QTimer;
 
 /**
  * \brief serial port file transfer abstract class
@@ -30,10 +29,10 @@ class QTimer;
  *  - void cancelTransfer() : cancel the current transfer, this method
  *      can be called at any moment during the transfer
  *
- *  - void updateProgress() : this method serves the purpose of updating
- *      a progress indicator for the user. updateProgress implementation
- *      must call FileTransfer::setSentBytes with the amount of bytes
- *      already transferred
+ *  Furthermore, child class implementation should emit transferProgressed()
+ *  signal so that the application can periodically inform the user about
+ *  the transfer progression. transferProgressed() expects an integer
+ *  representing current transfer percentage
  */
 class FileTransfer : public QObject
 {
@@ -80,15 +79,10 @@ protected:
     /// current transfer progress in percent
     int          cur_progress;
 
-    QTimer      *progress_timer;
+    /// worker thread in which transfer is processed
     QThread     *thread;
 
 public:
-
-    /**
-     * \brief file transfer destructor
-     */
-    virtual ~FileTransfer();
 
     /**
      * \brief define timeout value for first serial port response
@@ -109,11 +103,6 @@ public:
     virtual void cancelTransfer() = 0;
 
     /**
-     * \brief ask for cur_progress to be updated
-     */
-    virtual void updateProgress() = 0;
-
-    /**
      * \brief return a string corresponding to given TransferError
      * \param error error code
      * \return error string
@@ -129,12 +118,6 @@ protected:
      */
     FileTransfer(QObject *parent, QSerialPort *serial, const QString &filename);
 
-    /**
-     * \brief set amount of bytes that have been set
-     * \param sent_bytes total bytes sent since transfer start
-     */
-    void setSentBytes(int sent_bytes);
-
 private:
 
     /**
@@ -143,15 +126,19 @@ private:
      */
     virtual void performTransfer() = 0;
 
+    /**
+     * \brief handle transferEnded signal
+     * \param error transfer end error code
+     */
     void handleTransferEnded(TransferError error);
 
 signals:
     /**
      * \brief signal emitted when file transfer has ended
-     * \param code transfer end error code
+     * \param error transfer end error code
      */
-    void transferEnded(TransferError code);
-    void transferFinished();
+    void transferEnded(TransferError error);
+
     /**
      * \brief signal emitted each time the file transfer progresses
      * (minimum amount to emit is 1% progress)

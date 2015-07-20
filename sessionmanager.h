@@ -125,9 +125,9 @@ signals:
 
     /**
      * \brief signal emitted when file transfer has ended
-     * \param code transfer end error code
+     * \param error transfer end error code
      */
-    void fileTransferEnded(FileTransfer::TransferError code);
+    void fileTransferEnded(FileTransfer::TransferError error);
 
 
     /**

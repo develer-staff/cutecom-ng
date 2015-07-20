@@ -19,7 +19,6 @@
 #include <QFileDialog>
 #include <QProgressDialog>
 #include <QMessageBox>
-#include <QDebug>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -38,7 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     search_widget(0),
-    search_input(0)
+    search_input(0),
+    progress_dialog(0)
 {
     ui->setupUi(this);
 
@@ -112,8 +112,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->protocolCombo->addItem("XModem", SessionManager::XMODEM);
     ui->protocolCombo->addItem("YModem", SessionManager::YMODEM);
     ui->protocolCombo->addItem("ZModem", SessionManager::ZMODEM);
-//    Transfer file over XModem protocol
+
+    // transfer file over XModem protocol
     connect(ui->fileTransferButton, &QToolButton::clicked, this, &MainWindow::handleFileTransfer);
+    connect(session_mgr, &SessionManager::fileTransferEnded, this, &MainWindow::handleFileTransferEnded);
 
     // install event filters
     ui->mainOutput->viewport()->installEventFilter(this);
@@ -160,47 +162,62 @@ void MainWindow::handleFileTransfer()
     if (filename.isNull())
         return;
 
+    Q_ASSERT_X(progress_dialog == 0, "MainWindow::handleFileTransfer()", "progress_dialog should be null");
 
     // display a progress dialog
-    QProgressDialog *progress_dlg = new QProgressDialog(this);
-    connect(progress_dlg, &QProgressDialog::canceled,
-            session_mgr, &SessionManager::progressDialogCancelled, Qt::DirectConnection);
+    progress_dialog = new QProgressDialog(this);
+    connect(progress_dialog, &QProgressDialog::canceled,
+            session_mgr, &SessionManager::progressDialogCancelled);
 
-    progress_dlg->setRange(0, 100);
-    progress_dlg->setWindowModality(Qt::ApplicationModal);
-    progress_dlg->setLabelText(
+    progress_dialog->setRange(0, 100);
+    progress_dialog->setWindowModality(Qt::ApplicationModal);
+    progress_dialog->setLabelText(
                 QStringLiteral("Initiating connection with receiver"));
 
-    // dialog is updated when transfer progresses
+    // update progress dialog
     connect(session_mgr, &SessionManager::fileTransferProgressed,
-            progress_dlg, &QProgressDialog::setValue,Qt::DirectConnection);
-
-    connect(session_mgr, &SessionManager::fileTransferEnded, this, &MainWindow::handleFileTransferEnded);
+            this, &MainWindow::handleFileTransferProgressed);
 
     int protocol = ui->protocolCombo->currentData().toInt();
     session_mgr->transferFile(filename,
         static_cast<SessionManager::Protocol>(protocol));
 
+    // during the transfer, disable UI elements acting on QSerialPort instance
     ui->fileTransferButton->setEnabled(false);
-    progress_dlg->exec();
+    ui->disconnectButton->setEnabled(false);
+
+    // progress dialog event loop
+    progress_dialog->exec();
+
+    delete progress_dialog;
+    progress_dialog = 0;
+}
+
+void MainWindow::handleFileTransferProgressed(int percent)
+{
+    Q_ASSERT_X(progress_dialog != 0, "MainWindow::handleFileTransferProgressed()", "progress_dialog should not be null");
+
+    progress_dialog->setValue(percent);
+    progress_dialog->setLabelText(QStringLiteral("Transferring file"));
 }
 
 void MainWindow::handleFileTransferEnded(FileTransfer::TransferError error)
 {
-    ui->fileTransferButton->setEnabled(true);
-
-    qDebug() << "MainWindow::handleFileTransferEnded(error: " << error << ")";
     switch (error)
     {
         case FileTransfer::LocalCancelledError:
             return;
         case FileTransfer::NoError:
-            QMessageBox::information(NULL, tr("Cutecom-ng"), QStringLiteral("File transferred succesfully"));
+            QMessageBox::information(NULL, tr("Cutecom-ng"), QStringLiteral("File transferred successfully"));
             break;
         default:
-            QMessageBox::warning(NULL, tr("Cutecom-ng"), FileTransfer::errorString(error));
+            progress_dialog->setLabelText(FileTransfer::errorString(error));
             break;
-    }  
+    }
+
+    // re-enable UI elements acting on QSerialPort instance
+    ui->fileTransferButton->setEnabled(true);
+    ui->disconnectButton->setEnabled(true);
 }
 
 

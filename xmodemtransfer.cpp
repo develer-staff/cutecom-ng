@@ -10,7 +10,6 @@
  */
 
 #include <QtSerialPort>
-#include <QDebug>
 
 #include "xmodemtransfer.h"
 #include "xmodem.h"
@@ -21,6 +20,7 @@
  *                 required by the xmodem library
  */
 QSerialPort *g_serial = 0;
+XModemTransfer *_g_transfer = 0;
 
 /**
  * \brief _quit global variable used to indicate to the xmodem library that
@@ -32,6 +32,8 @@ bool _quit = false;
  * \brief _progress global variable representing total bytes sent
  */
 qint64 _byte_sent = 0;
+qint64 _total_bytes = 0;
+int _last_progress = 0;
 
 /**
  * \brief _inbyte consume 1 byte from serial port
@@ -64,21 +66,33 @@ void _outbyte(int c)
     {
         g_serial->write(data);
         ++_byte_sent;
+
+        // update progress
+        int cur_progress = 100 * _byte_sent / _total_bytes;
+        if (cur_progress > _last_progress)
+        {
+            // emit transferProgressed if we progressed of at least 1%
+            _last_progress = cur_progress;
+            emit _g_transfer->transferProgressed(cur_progress);
+        }
     }
 }
-
 
 XModemTransfer::XModemTransfer(QObject *parent, QSerialPort *serial, const QString &filename)
     : FileTransfer(parent, serial, filename)
 {
     _quit = false;
     _byte_sent = 0;
+    _last_progress = 0;
+    _g_transfer = this;
 }
+
 
 void XModemTransfer::performTransfer()
 {
     // set global QSerialPort pointer used by _inbyte/_outbyte
     g_serial = serial;
+    _total_bytes = this->total_size;
 
     TransferError ret;
 
@@ -113,7 +127,6 @@ void XModemTransfer::performTransfer()
     }
 
     emit transferEnded(ret);
-    emit transferFinished();
 }
 
 void XModemTransfer::cancelTransfer()
@@ -121,8 +134,3 @@ void XModemTransfer::cancelTransfer()
     _quit = true;
 }
 
-void XModemTransfer::updateProgress()
-{
-    qDebug() << "XModemTransfer::updateProgress()";
-    setSentBytes(_byte_sent);
-}

@@ -209,13 +209,13 @@ void SessionManager::transferFile(const QString &filename, Protocol type)
     // forward FileTransfer::transferProgressed signal
     connect(file_transfer, &FileTransfer::transferProgressed,
             this, &SessionManager::fileTransferProgressed);
-
     // forward FileTransfer::transferProgressed signal
     connect(this, &SessionManager::progressDialogCancelled,
             file_transfer, &FileTransfer::cancelTransfer, Qt::DirectConnection);
 
+    // actual transfer
     if (!file_transfer->startTransfer())
-        // file transfer never started, manually delete FileTransfer instance
+        // transfer never started, manually delete FileTransfer instance
         delete file_transfer;
 }
 

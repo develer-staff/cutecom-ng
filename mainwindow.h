@@ -25,6 +25,7 @@ class OutputManager;
 class ConnectDialog;
 class QLineEdit;
 class QToolButton;
+class QProgressDialog;
 
 /**
  * \brief main cutecom-ng window
@@ -42,6 +43,7 @@ private:
     QLineEdit           *search_input;
     QToolButton         *search_prev_button;
     QToolButton         *search_next_button;
+    QProgressDialog     *progress_dialog;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -113,6 +115,12 @@ private:
      * \param error transfer error code
      */
     void handleFileTransferEnded(FileTransfer::TransferError error);
+
+    /**
+     * \brief handle fileTransferProgressed signal
+     * \param percent transfer current progression
+     */
+    void handleFileTransferProgressed(int percent);
 };
 
 #endif // MAINWINDOW_H
