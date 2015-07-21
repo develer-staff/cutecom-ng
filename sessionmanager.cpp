@@ -17,7 +17,6 @@
 #include <QProgressDialog>
 #include <QMessageBox>
 #include <QFile>
-#include <QTimer>
 
 SessionManager::SessionManager(QObject *parent) :
     QObject(parent)
