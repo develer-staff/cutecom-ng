@@ -167,7 +167,7 @@ void MainWindow::handleFileTransfer()
     // display a progress dialog
     progress_dialog = new QProgressDialog(this);
     connect(progress_dialog, &QProgressDialog::canceled,
-            session_mgr, &SessionManager::transferRequestedByUser);
+            session_mgr, &SessionManager::transferCancelledByUser);
 
     progress_dialog->setRange(0, 100);
     progress_dialog->setWindowModality(Qt::ApplicationModal);

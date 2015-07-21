@@ -139,7 +139,7 @@ signals:
      * \brief signal forwarded from outside to indicate that current
      * file transfer should be cancelled
      */
-    void transferRequestedByUser();
+    void transferCancelledByUser();
 };
 
 #endif // SESSIONMANAGER_H
