@@ -65,7 +65,6 @@ void FileTransfer::handleTransferEnded(TransferError error)
     // move serial instance back to main thread
     serial->moveToThread(QApplication::instance()->thread());
     thread->quit();
-    this->deleteLater();
 }
 
 QString FileTransfer::errorString(TransferError error)

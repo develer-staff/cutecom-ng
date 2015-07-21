@@ -24,6 +24,7 @@ SessionManager::SessionManager(QObject *parent) :
 {
     serial = new QSerialPort();
     in_progress = false;
+    file_transfer = 0;
 
     connect(serial, &QSerialPort::readyRead, this, &SessionManager::readData);
     connect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>
@@ -188,8 +189,6 @@ void SessionManager::sendToSerial(const QByteArray &data)
 
 void SessionManager::transferFile(const QString &filename, Protocol type)
 {
-    FileTransfer *file_transfer = 0;
-
     switch (type)
     {
         case XMODEM:
@@ -203,8 +202,8 @@ void SessionManager::transferFile(const QString &filename, Protocol type)
             return;
     }
 
-    connect(file_transfer, &FileTransfer::destroyed,
-            this, &SessionManager::handleFileTransferDestroyed);
+    connect(file_transfer, &FileTransfer::transferEnded,
+            this, &SessionManager::handleFileTransferEnded);
 
     // forward FileTransfer signals to outside
 
@@ -216,7 +215,7 @@ void SessionManager::transferFile(const QString &filename, Protocol type)
             this, &SessionManager::fileTransferProgressed);
 
     // forward progressDialogCancelled signal from outside to FileTransfer
-    connect(this, &SessionManager::transferRequestedByUser,
+    connect(this, &SessionManager::transferCancelledByUser,
             file_transfer, &FileTransfer::cancelTransfer, Qt::DirectConnection);
 
     disconnect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>
@@ -228,9 +227,12 @@ void SessionManager::transferFile(const QString &filename, Protocol type)
         delete file_transfer;
 }
 
-void SessionManager::handleFileTransferDestroyed()
+void SessionManager::handleFileTransferEnded(FileTransfer::TransferError error)
 {
     // re-connect serial port error handling for non-blocking use
     connect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>
                 (&QSerialPort::error), this, &SessionManager::handleError);
+
+    file_transfer->deleteLater();
+    emit fileTransferEnded(error);
 }

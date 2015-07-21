@@ -18,6 +18,8 @@
 #include <QObject>
 #include <QSerialPort>
 
+class FileTransfer;
+
 /**
  * \brief manage serial port session
  */
@@ -47,6 +49,9 @@ private:
 
     /// indicate that a connection has been initiated or is in progress
     bool        in_progress;
+
+    /// file transfer implementation
+    FileTransfer *file_transfer;
 
 public:
 
@@ -100,9 +105,10 @@ private:
     void handleError(QSerialPort::SerialPortError serialPortError);
 
     /**
-     * \brief handle FileTransfer::destroyed signal
+     * \brief handle FileTransfer::transferEnded signal
+     * \param error transfer end error code
      */
-    void handleFileTransferDestroyed();
+    void handleFileTransferEnded(FileTransfer::TransferError error);
 
 signals:
 
