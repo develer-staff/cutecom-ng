@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = cutecom-ng
 TEMPLATE = app
 
+INCLUDEPATH += libs
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -19,7 +20,11 @@ SOURCES += main.cpp\
     outputmanager.cpp \
     historycombobox.cpp \
     history.cpp \
-    searchhighlighter.cpp
+    searchhighlighter.cpp \
+    xmodemtransfer.cpp \
+    filetransfer.cpp \
+    libs/crc16.cpp \
+    libs/xmodem.cpp
 
 HEADERS  += mainwindow.h \
     connectdialog.h \
@@ -27,7 +32,11 @@ HEADERS  += mainwindow.h \
     outputmanager.h \
     historycombobox.h \
     history.h \
-    searchhighlighter.h
+    searchhighlighter.h \
+    xmodemtransfer.h \
+    filetransfer.h \
+    libs/crc16.h \
+    libs/xmodem.h
 
 FORMS    += mainwindow.ui \
     connectdialog.ui \

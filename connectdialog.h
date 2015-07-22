@@ -6,7 +6,7 @@
  *
  * \brief Serial port connection and settings dialog
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #ifndef CONNECTDIALOG_H

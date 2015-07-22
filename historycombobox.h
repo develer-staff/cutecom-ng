@@ -6,7 +6,7 @@
  *
  * \brief HistoryComboBox class header
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #ifndef HISTORYCOMBOBOX_H

@@ -6,7 +6,7 @@
  *
  * \brief main cutecom-ng window
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #include <algorithm>
@@ -16,6 +16,9 @@
 #include <QLineEdit>
 #include <QPropertyAnimation>
 #include <QShortcut>
+#include <QFileDialog>
+#include <QProgressDialog>
+#include <QMessageBox>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -34,7 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     search_widget(0),
-    search_input(0)
+    search_input(0),
+    progress_dialog(0)
 {
     ui->setupUi(this);
 
@@ -55,38 +59,30 @@ MainWindow::MainWindow(QWidget *parent) :
     // get data formatted for display and show it in output view
     connect(ui->inputBox, &HistoryComboBox::lineEntered, this, &MainWindow::handleNewInput);
 
-    // clear output manager buffer at session start
-    connect(session_mgr, &SessionManager::sessionStarted, output_mgr, &OutputManager::clear);
-
-    // clear both output text at session start
-    connect(session_mgr, &SessionManager::sessionStarted, ui->mainOutput, &QPlainTextEdit::clear);
-    connect(session_mgr, &SessionManager::sessionStarted, ui->bottomOutput, &QPlainTextEdit::clear);
+    // handle start/stop session
+    connect(session_mgr, &SessionManager::sessionOpened, this, &MainWindow::handleSessionOpened);
+    connect(session_mgr, &SessionManager::sessionClosed, this, &MainWindow::handleSessionClosed);
 
     // clear both output text when 'clear' is clicked
     connect(ui->clearButton, &QToolButton::clicked, ui->mainOutput, &QPlainTextEdit::clear);
     connect(ui->clearButton, &QToolButton::clicked, ui->bottomOutput, &QPlainTextEdit::clear);
 
-    // call openSession when user accepts/closes connection dialog
+    // connect open/close session slots
     connect(connect_dlg, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
+    connect(ui->disconnectButton, &QToolButton::clicked, session_mgr, &SessionManager::closeSession);
 
     connect(ui->splitOutputBtn, &QToolButton::clicked, this, &MainWindow::toggleOutputSplitter);
 
     // load search widget and hide it
     QUiLoader loader;
-    QFile file(":/searchwidget.ui");
-    file.open(QFile::ReadOnly);
-    search_widget = loader.load(&file, ui->mainOutput);
-    Q_ASSERT_X(search_widget, "MainWindow::MainWindow", "error while loading searchwidget.ui");
-
-    search_input = search_widget->findChild<QLineEdit*>("searchInput");
-    Q_ASSERT_X(search_input, "MainWindow::MainWindow", "didn't find searchInput");
-
-    search_prev_button = search_widget->findChild<QToolButton*>("previousButton");
-    search_next_button = search_widget->findChild<QToolButton*>("nextButton");
-    Q_ASSERT_X(search_prev_button, "MainWindow::MainWindow", "didn't find previousButton");
-    Q_ASSERT_X(search_next_button, "MainWindow::MainWindow", "didn't find nextButton");
-
-    file.close();
+    {
+        QFile file(":/searchwidget.ui");
+        file.open(QFile::ReadOnly);
+        search_widget = loader.load(&file, ui->mainOutput);
+        search_input = search_widget->findChild<QLineEdit*>("searchInput");
+        search_prev_button = search_widget->findChild<QToolButton*>("previousButton");
+        search_next_button = search_widget->findChild<QToolButton*>("nextButton");
+    }
     search_widget->hide();
 
     // create the search results highlighter for main output
@@ -98,26 +94,135 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(search_input, &QLineEdit::textChanged, search_highlighter_bottom, &SearchHighlighter::setSearchString);
 
     // connect search-related signals/slots
-    connect(search_prev_button, &QToolButton::clicked, search_highlighter_main, &SearchHighlighter::previousOccurence);
-    connect(search_next_button, &QToolButton::clicked, search_highlighter_main, &SearchHighlighter::nextOccurence);
-    connect(search_highlighter_main, &SearchHighlighter::cursorPosChanged, this, &MainWindow::handleCursosPosChanged);
-    connect(search_highlighter_main, &SearchHighlighter::totalOccurencesChanged, this, &MainWindow::handleTotalOccurencesChanged);
+    connect(search_prev_button, &QToolButton::clicked,
+	search_highlighter_main, &SearchHighlighter::previousOccurence);
+    connect(search_next_button, &QToolButton::clicked,
+	search_highlighter_main, &SearchHighlighter::nextOccurence);
+    connect(search_highlighter_main, &SearchHighlighter::cursorPosChanged,
+	this, &MainWindow::handleCursosPosChanged);
+    connect(search_highlighter_main, &SearchHighlighter::totalOccurencesChanged,
+	this, &MainWindow::handleTotalOccurencesChanged);
     connect(ui->searchButton, &QToolButton::toggled, this, &MainWindow::showSearchWidget);
 
     // additional configuration for bottom output
     ui->bottomOutput->hide();
     ui->bottomOutput->document()->setMaximumBlockCount(MAX_OUTPUT_LINES);
 
+    // populate file transfer protocol combobox
+    ui->protocolCombo->addItem("XModem", SessionManager::XMODEM);
+    ui->protocolCombo->addItem("YModem", SessionManager::YMODEM);
+    ui->protocolCombo->addItem("ZModem", SessionManager::ZMODEM);
+
+    // transfer file over XModem protocol
+    connect(ui->fileTransferButton, &QToolButton::clicked, this, &MainWindow::handleFileTransfer);
+    connect(session_mgr, &SessionManager::fileTransferEnded, this, &MainWindow::handleFileTransferEnded);
+
     // install event filters
+    ui->mainOutput->viewport()->installEventFilter(this);
     ui->bottomOutput->viewport()->installEventFilter(this);
     search_input->installEventFilter(this);
-    ui->mainOutput->viewport()->installEventFilter(this);
     installEventFilter(this);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::handleSessionOpened()
+{
+    // clear output buffer
+    output_mgr->clear();
+
+    // clear both output windows
+    ui->mainOutput->clear();
+    ui->bottomOutput->clear();
+
+    ui->connectButton->setDisabled(true);
+    ui->disconnectButton->setEnabled(true);
+
+    // enable file transfer
+    ui->fileTransferButton->setEnabled(true);
+}
+
+void MainWindow::handleSessionClosed()
+{
+    ui->connectButton->setEnabled(true);
+    ui->disconnectButton->setDisabled(true);
+
+    // disable file transfer
+    ui->fileTransferButton->setDisabled(true);
+}
+
+void MainWindow::handleFileTransfer()
+{
+    QString filename = QFileDialog::getOpenFileName(
+                this, QStringLiteral("Select file to send transfer"));
+
+    if (filename.isNull())
+        return;
+
+    Q_ASSERT_X(progress_dialog == 0, "MainWindow::handleFileTransfer()", "progress_dialog should be null");
+
+    // display a progress dialog
+    progress_dialog = new QProgressDialog(this);
+    connect(progress_dialog, &QProgressDialog::canceled,
+            session_mgr, &SessionManager::handleTransferCancelledByUser);
+
+    progress_dialog->setRange(0, 100);
+    progress_dialog->setWindowModality(Qt::ApplicationModal);
+    progress_dialog->setLabelText(
+                QStringLiteral("Initiating connection with receiver"));
+
+    // update progress dialog
+    connect(session_mgr, &SessionManager::fileTransferProgressed,
+            this, &MainWindow::handleFileTransferProgressed);
+
+    int protocol = ui->protocolCombo->currentData().toInt();
+    session_mgr->transferFile(filename,
+        static_cast<SessionManager::Protocol>(protocol));
+
+    // disable UI elements acting on QSerialPort instance, as long as
+    // objectds involved in FileTransferred are not destroyed or back
+    // to their pre-file-transfer state
+    ui->fileTransferButton->setEnabled(false);
+    ui->disconnectButton->setEnabled(false);
+    ui->inputBox->setEnabled(false);
+
+    // progress dialog event loop
+    progress_dialog->exec();
+
+    delete progress_dialog;
+    progress_dialog = 0;
+}
+
+void MainWindow::handleFileTransferProgressed(int percent)
+{
+    if (progress_dialog)
+    {
+        progress_dialog->setValue(percent);
+        progress_dialog->setLabelText(QStringLiteral("Transferring file"));
+    }
+}
+
+void MainWindow::handleFileTransferEnded(FileTransfer::TransferError error)
+{
+    switch (error)
+    {
+        case FileTransfer::LocalCancelledError:
+            break;
+        case FileTransfer::NoError:
+            QMessageBox::information(this, tr("Cutecom-ng"), QStringLiteral("File transferred successfully"));
+            break;
+        default:
+            progress_dialog->setLabelText(FileTransfer::errorString(error));
+            break;
+    }
+
+    // re-enable UI elements acting on QSerialPort instance
+    ui->fileTransferButton->setEnabled(true);
+    ui->disconnectButton->setEnabled(true);
+    ui->inputBox->setEnabled(true);
 }
 
 void MainWindow::handleNewInput(QString entry)

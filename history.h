@@ -6,7 +6,7 @@
  *
  * \brief History class header
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #ifndef HISTORY_H

@@ -6,11 +6,13 @@
  *
  * \brief main cutecom-ng window
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+
+#include "filetransfer.h"
 
 #include <QMainWindow>
 
@@ -23,6 +25,7 @@ class OutputManager;
 class ConnectDialog;
 class QLineEdit;
 class QToolButton;
+class QProgressDialog;
 
 /**
  * \brief main cutecom-ng window
@@ -40,12 +43,29 @@ private:
     QLineEdit           *search_input;
     QToolButton         *search_prev_button;
     QToolButton         *search_next_button;
+    QProgressDialog     *progress_dialog;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 private:
+
+    /**
+     * \brief handle sessionOpened signal
+     */
+    void handleSessionOpened();
+
+    /**
+     * \brief handle sessionClosed signal
+     */
+    void handleSessionClosed();
+
+    /**
+     * \brief handle buttonClicked on the x/y/zmodem buttons
+     * \param type
+     */
+    void handleFileTransfer();
 
     /**
      * \brief handle new input
@@ -90,6 +110,17 @@ private:
      */
     void handleTotalOccurencesChanged(int total_occurences);
 
+    /**
+     * \brief handle end of file transfer
+     * \param error transfer error code
+     */
+    void handleFileTransferEnded(FileTransfer::TransferError error);
+
+    /**
+     * \brief handle fileTransferProgressed signal
+     * \param percent transfer current progression
+     */
+    void handleFileTransferProgressed(int percent);
 };
 
 #endif // MAINWINDOW_H

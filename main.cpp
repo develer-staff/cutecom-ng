@@ -6,7 +6,7 @@
  *
  * \brief cutecom-ng entry point
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #include "mainwindow.h"

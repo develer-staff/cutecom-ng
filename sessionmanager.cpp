@@ -6,21 +6,25 @@
  *
  * \brief SessionManager class implementation
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #include "sessionmanager.h"
 #include "outputmanager.h"
+#include "xmodemtransfer.h"
 
-#include <QMessageBox>
+#include <QCoreApplication>
 #include <QSerialPortInfo>
+#include <QProgressDialog>
+#include <QMessageBox>
 #include <QFile>
 
-SessionManager::SessionManager(QObject *parent)
-    : QObject(parent)
+SessionManager::SessionManager(QObject *parent) :
+    QObject(parent)
 {
-    serial = new QSerialPort(this);
+    serial = new QSerialPort();
     in_progress = false;
+    file_transfer = 0;
 
     connect(serial, &QSerialPort::readyRead, this, &SessionManager::readData);
     connect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>
@@ -29,9 +33,13 @@ SessionManager::SessionManager(QObject *parent)
 
 SessionManager::~SessionManager()
 {
-    // closes connection if needed
-    if (serial->isOpen())
-        serial->close();
+    if (serial)
+    {
+        // closes connection if needed
+        if (serial->isOpen())
+            serial->close();
+        delete serial;
+    }
 }
 
 void SessionManager::handleError(QSerialPort::SerialPortError serialPortError)
@@ -65,7 +73,8 @@ void SessionManager::handleError(QSerialPort::SerialPortError serialPortError)
                 if (serial->isOpen())
                 {
                     serial->clearError();
-                    serial->close();
+
+                    closeSession();
                 }
             }
             break;
@@ -100,10 +109,6 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     // a conversion didn't make it
     Q_ASSERT_X(cfg_ok, "SessionManager::openSession", "a conversion didn't make it");
 
-    // closes connection if needed
-    if (serial->isOpen())
-        serial->close();
-
     // configure port
 #if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0)) && defined(Q_OS_MAC)
     // connection error on MacOsX if port name is set with setPortName instead
@@ -129,7 +134,21 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     if (serial->open(QIODevice::ReadWrite))
     {
         curr_cfg = port_cfg;
-        emit sessionStarted();
+        emit sessionOpened();
+    }
+    else
+    {
+        // here, stopped means 'no connection is in progress'
+        emit sessionClosed();
+    }
+}
+
+void SessionManager::closeSession()
+{
+    if (serial->isOpen())
+    {
+        serial->close();
+        emit sessionClosed();
     }
 }
 
@@ -168,3 +187,52 @@ void SessionManager::sendToSerial(const QByteArray &data)
     serial->write(data);
 }
 
+void SessionManager::transferFile(const QString &filename, Protocol type)
+{
+    switch (type)
+    {
+        case XMODEM:
+            file_transfer = new XModemTransfer(0, serial, filename);
+        break;
+        case YMODEM:
+        case ZMODEM:
+            Q_ASSERT_X(false, "SessionManager::transferFile", "not implemented");
+        break;
+        default:
+            return;
+    }
+
+    connect(file_transfer, &FileTransfer::transferEnded,
+            this, &SessionManager::handleFileTransferEnded);
+
+    // forward FileTransfer::transferProgressed signals
+    connect(file_transfer, &FileTransfer::transferProgressed,
+            this, &SessionManager::fileTransferProgressed);
+
+    disconnect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>
+                (&QSerialPort::error), this, &SessionManager::handleError);
+
+    // perform transfer
+    if (!file_transfer->startTransfer())
+        // transfer never started, manually delete FileTransfer instance
+        delete file_transfer;
+}
+
+void SessionManager::handleFileTransferEnded(FileTransfer::TransferError error)
+{
+    // re-connect serial port error handling for non-blocking use
+    connect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>
+                (&QSerialPort::error), this, &SessionManager::handleError);
+
+    // schedule file_transfer object deletion on main thread
+    QCoreApplication::postEvent(file_transfer, new QEvent(QEvent::DeferredDelete));
+    emit fileTransferEnded(error);
+}
+
+
+void SessionManager::handleTransferCancelledByUser()
+{
+    Q_ASSERT_X(file_transfer, "SessionManager::handleTransferCancelledByUser",
+               "file_transfer shound not be NULL");
+    file_transfer->quit_requested = true;
+}

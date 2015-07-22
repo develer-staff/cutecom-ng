@@ -6,7 +6,7 @@
  *
  * \brief OutputManager class implementation
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #include "outputmanager.h"

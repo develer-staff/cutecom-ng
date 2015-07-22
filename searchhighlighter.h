@@ -6,7 +6,7 @@
  *
  * \brief cutecom-ng search result highlighter header
  *
- * \author Aurelien Rainone <aurelien@develer.org>
+ * \author Aurelien Rainone <aurelien@develer.com>
  */
 
 #ifndef SEARCHHIGHLIGHTER_H
