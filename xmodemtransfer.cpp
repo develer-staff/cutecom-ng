@@ -83,7 +83,7 @@ void _outbyte(int c)
 XModemTransfer::XModemTransfer(QObject *parent, QSerialPort *serial, const QString &filename)
     : FileTransfer(parent, serial, filename)
 {
-    _quit = false;
+    quit_requested = false;
     _byte_sent = 0;
     _last_progress = 0;
     _g_transfer = this;
@@ -98,7 +98,7 @@ void XModemTransfer::performTransfer()
     TransferError ret;
 
     // call xmodem transmission routine
-    int errcode = xmodemTransmit((unsigned char*)buffer.data(), buffer.size(), &_quit);
+    int errcode = xmodemTransmit((unsigned char*)buffer.data(), buffer.size(), &quit_requested);
 
     switch (errcode)
     {

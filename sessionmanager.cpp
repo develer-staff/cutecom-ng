@@ -231,5 +231,5 @@ void SessionManager::handleTransferCancelledByUser()
 {
     Q_ASSERT_X(file_transfer, "SessionManager::handleTransferCancelledByUser",
                "file_transfer shound not be NULL");
-    file_transfer->cancelTransfer();
+    file_transfer->quit_requested = true;
 }

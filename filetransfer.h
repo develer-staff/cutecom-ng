@@ -32,9 +32,7 @@ class QSerialPort;
  *  transferProgressed() should represents the percentage of current
  *  transfer that has already been performed
  *
- *
- *  \note FileTransfer::cancelTransfer can be re-implemented if default
- *  implementation is not suficient, it sets the _quit volatile boolean
+ *  \see FileTransfer::quit_requested
  */
 class FileTransfer : public QObject
 {
@@ -64,6 +62,13 @@ public:
         UnknownError             = 7
     };
 
+    /**
+     * \brief quit_requested flag indicating, if true, that the file transfer
+     * should quit as soon as possible
+     * \warning this flag is read from the worker thread
+     */
+    volatile bool quit_requested;
+
 protected:
 
     /// file to transfer
@@ -81,11 +86,6 @@ protected:
     /// thread in which the transfer is performed
     QThread     *thread;
 
-    /**
-     * \brief _quit flag indicating if the file transfer should
-     * continue or, if true, quit as soon as possible
-     */
-    volatile bool _quit;
 
 public:
 
@@ -98,14 +98,6 @@ public:
      */
     bool startTransfer();
 
-    /**
-     * \brief cancel current transfer
-     * \warning cancelTransfer call may take place in a different thread
-     *  than the one where Filetransfer instance (this) lives. The default
-     *  implementation simply sets the _quit volatile boolean.
-     * \see startTransfer, _quit
-     */
-    virtual void cancelTransfer();
 
     /**
      * \brief return a string corresponding to given TransferError
