@@ -20,20 +20,21 @@ class QSerialPort;
  * \brief serial port file transfer abstract class
  *
  * child classes implementing a specific file transfer protocol must
- * implement these pure virtual methods :
+ * implement this pure virtual method :
  *
  *  - TransferError performTransfer() : this is where the actual file
  *      transfer must take place. At this point 'buffer' and
  *      'total_size' have been set
- *
- *  - void cancelTransfer() : cancel the current transfer, this method
- *      can be called at any moment during the transfer
  *
  *  Furthermore, child class implementation must emit transferProgressed()
  *  signal frequently enough, so that the application can inform the user
  *  about the current state of the transfer. the integer parameter of
  *  transferProgressed() should represents the percentage of current
  *  transfer that has already been performed
+ *
+ *
+ *  \note FileTransfer::cancelTransfer can be re-implemented if default
+ *  implementation is not suficient, it sets the _quit volatile boolean
  */
 class FileTransfer : public QObject
 {
@@ -80,18 +81,31 @@ protected:
     /// thread in which the transfer is performed
     QThread     *thread;
 
+    /**
+     * \brief _quit flag indicating if the file transfer should
+     * continue or, if true, quit as soon as possible
+     */
+    volatile bool _quit;
+
 public:
 
     /**
      * \brief start the file transfer
+     * \note this method returns immediately, the actual file transfer
+     *  is performed in another thread
+     * \see performTransfer
      * \return boolean indicating wether transfer has started or not
      */
     bool startTransfer();
 
     /**
      * \brief cancel current transfer
+     * \warning cancelTransfer call may take place in a different thread
+     *  than the one where Filetransfer instance (this) lives. The default
+     *  implementation simply sets the _quit volatile boolean.
+     * \see startTransfer, _quit
      */
-    virtual void cancelTransfer() = 0;
+    virtual void cancelTransfer();
 
     /**
      * \brief return a string corresponding to given TransferError

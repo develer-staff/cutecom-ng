@@ -91,3 +91,8 @@ QString FileTransfer::errorString(TransferError error)
             return QStringLiteral("Unknown Error");
     }
 }
+
+void FileTransfer::cancelTransfer()
+{
+    _quit = true;
+}

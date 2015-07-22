@@ -87,6 +87,11 @@ public:
      */
     void transferFile(const QString &filename, Protocol type);
 
+    /**
+     * \brief handle file transfer cancelation signal
+     */
+    void handleTransferCancelledByUser();
+
 private:
 
     /**
@@ -140,12 +145,6 @@ signals:
      * \percent percentage of file transfered
      */
     void fileTransferProgressed(int percent);
-
-    /**
-     * \brief signal forwarded from outside to indicate that current
-     * file transfer should be cancelled
-     */
-    void transferCancelledByUser();
 };
 
 #endif // SESSIONMANAGER_H

@@ -23,12 +23,6 @@ QSerialPort *g_serial = 0;
 XModemTransfer *_g_transfer = 0;
 
 /**
- * \brief _quit global variable used to indicate to the xmodem library that
- *              current transfer has to be stopped prematurily
- */
-bool _quit = false;
-
-/**
  * \brief global variable representing the total size of file transferred
  */
 qint64 _total_bytes = 0;
@@ -104,7 +98,7 @@ void XModemTransfer::performTransfer()
     TransferError ret;
 
     // call xmodem transmission routine
-    int errcode = xmodemTransmit((unsigned char*)buffer.data(), buffer.size());
+    int errcode = xmodemTransmit((unsigned char*)buffer.data(), buffer.size(), &_quit);
 
     switch (errcode)
     {
@@ -136,7 +130,3 @@ void XModemTransfer::performTransfer()
     emit transferEnded(ret);
 }
 
-void XModemTransfer::cancelTransfer()
-{
-    _quit = true;
-}

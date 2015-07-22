@@ -213,10 +213,6 @@ void SessionManager::transferFile(const QString &filename, Protocol type)
     connect(file_transfer, &FileTransfer::transferProgressed,
             this, &SessionManager::fileTransferProgressed);
 
-    // forward progressDialogCancelled signal from outside to FileTransfer
-    connect(this, &SessionManager::transferCancelledByUser,
-            file_transfer, &FileTransfer::cancelTransfer, Qt::DirectConnection);
-
     disconnect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>
                 (&QSerialPort::error), this, &SessionManager::handleError);
 
@@ -234,4 +230,12 @@ void SessionManager::handleFileTransferEnded(FileTransfer::TransferError error)
 
     file_transfer->deleteLater();
     emit fileTransferEnded(error);
+}
+
+
+void SessionManager::handleTransferCancelledByUser()
+{
+    Q_ASSERT_X(file_transfer, "SessionManager::handleTransferCancelledByUser",
+               "file_transfer shound not be NULL");
+    file_transfer->cancelTransfer();
 }

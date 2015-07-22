@@ -31,11 +31,6 @@ public:
      */
     XModemTransfer(QObject *parent, QSerialPort *serial, const QString &filename);
 
-    /**
-     * \brief cancel current transfer
-     */
-    void cancelTransfer();
-
 private:
 
     /**
