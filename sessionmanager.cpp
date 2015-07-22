@@ -222,7 +222,8 @@ void SessionManager::handleFileTransferEnded(FileTransfer::TransferError error)
     connect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>
                 (&QSerialPort::error), this, &SessionManager::handleError);
 
-    file_transfer->deleteLater();
+    // schedule file_transfer object deletion on main thread
+    QCoreApplication::postEvent(this, new QEvent(QEvent::DeferredDelete));
     emit fileTransferEnded(error);
 }
 
