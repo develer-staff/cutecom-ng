@@ -201,15 +201,9 @@ void SessionManager::transferFile(const QString &filename, Protocol type)
             return;
     }
 
-    connect(file_transfer, &FileTransfer::transferEnded,
-            this, &SessionManager::handleFileTransferEnded);
-
-    // forward FileTransfer signals to outside
-
-    // FileTransfer::transferEnded signal
+    // forward FileTransfer signals
     connect(file_transfer, &FileTransfer::transferEnded,
             this, &SessionManager::fileTransferEnded);
-    // FileTransfer::transferProgressed signal
     connect(file_transfer, &FileTransfer::transferProgressed,
             this, &SessionManager::fileTransferProgressed);
 
