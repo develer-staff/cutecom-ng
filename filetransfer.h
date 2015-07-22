@@ -86,7 +86,6 @@ protected:
     /// thread in which the transfer is performed
     QThread     *thread;
 
-
 public:
 
     /**
@@ -97,7 +96,6 @@ public:
      * \return boolean indicating wether transfer has started or not
      */
     bool startTransfer();
-
 
     /**
      * \brief return a string corresponding to given TransferError

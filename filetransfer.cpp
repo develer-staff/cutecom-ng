@@ -62,8 +62,11 @@ void FileTransfer::handleTransferEnded(TransferError error)
 {
     Q_UNUSED(error)
 
-    // move serial instance back to main thread
+    // move serial and this instance back to main thread so...
     serial->moveToThread(QApplication::instance()->thread());
+    moveToThread(QApplication::instance()->thread());
+
+    // ... we can end the thread
     thread->quit();
 }
 

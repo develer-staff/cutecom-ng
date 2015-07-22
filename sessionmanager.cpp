@@ -13,6 +13,7 @@
 #include "outputmanager.h"
 #include "xmodemtransfer.h"
 
+#include <QCoreApplication>
 #include <QSerialPortInfo>
 #include <QProgressDialog>
 #include <QMessageBox>
@@ -201,9 +202,10 @@ void SessionManager::transferFile(const QString &filename, Protocol type)
             return;
     }
 
-    // forward FileTransfer signals
     connect(file_transfer, &FileTransfer::transferEnded,
-            this, &SessionManager::fileTransferEnded);
+            this, &SessionManager::handleFileTransferEnded);
+
+    // forward FileTransfer::transferProgressed signals
     connect(file_transfer, &FileTransfer::transferProgressed,
             this, &SessionManager::fileTransferProgressed);
 
@@ -223,7 +225,7 @@ void SessionManager::handleFileTransferEnded(FileTransfer::TransferError error)
                 (&QSerialPort::error), this, &SessionManager::handleError);
 
     // schedule file_transfer object deletion on main thread
-    QCoreApplication::postEvent(this, new QEvent(QEvent::DeferredDelete));
+    QCoreApplication::postEvent(file_transfer, new QEvent(QEvent::DeferredDelete));
     emit fileTransferEnded(error);
 }
 
