@@ -139,7 +139,7 @@ private:
 
     /**
      * \brief handle currentIndexChanged for end of line char combobox
-     * \param index index os selected item
+     * \param index index of selected item
      */
     void handleEOLCharChanged(int index);
 };
