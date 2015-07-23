@@ -27,9 +27,6 @@
 #include "outputmanager.h"
 #include "searchhighlighter.h"
 
-/// line ending char appended to the commands sent to the serial port
-const QString LINE_ENDING = "\n";
-
 /// maximum count of document blocks for the bootom output
 const int MAX_OUTPUT_LINES = 100;
 
@@ -116,6 +113,17 @@ MainWindow::MainWindow(QWidget *parent) :
     // transfer file over XModem protocol
     connect(ui->fileTransferButton, &QToolButton::clicked, this, &MainWindow::handleFileTransfer);
     connect(session_mgr, &SessionManager::fileTransferEnded, this, &MainWindow::handleFileTransferEnded);
+
+    // fill end of line chars combobox
+    ui->eolCombo->addItem(QStringLiteral("CR \'\\r\'"), CR);
+    ui->eolCombo->addItem(QStringLiteral("LF \'\\n\'"), LF);
+    ui->eolCombo->addItem(QStringLiteral("CR+LF \'\\r\\n\'"), CRLF);
+    ui->eolCombo->addItem(QStringLiteral("None"), None);
+    ui->eolCombo->currentData(LF);
+    _end_of_line = QByteArray("\n", 1);
+
+    connect(ui->eolCombo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this, &MainWindow::handleEOLCharChanged);
 
     // install event filters
     ui->mainOutput->viewport()->installEventFilter(this);
@@ -230,8 +238,9 @@ void MainWindow::handleNewInput(QString entry)
     // if session is not open, this also keeps user input
     if (session_mgr->isSessionOpen())
     {
-        entry.append(LINE_ENDING);
-        session_mgr->sendToSerial(entry.toLocal8Bit());
+        QByteArray to_send(entry.toLocal8Bit());
+        to_send.append(_end_of_line);
+        session_mgr->sendToSerial(to_send);
         ui->inputBox->clearEditText();
     }
 }
@@ -392,4 +401,27 @@ void MainWindow::handleTotalOccurencesChanged(int total_occurences)
         search_input->setStyleSheet("QLineEdit{background-color: red;}");
     else
         search_input->setStyleSheet("");
+}
+
+void MainWindow::handleEOLCharChanged(int index)
+{
+    switch(ui->eolCombo->currentData().toInt())
+    {
+        case CR:
+            _end_of_line = QByteArray("\r", 1);
+            break;
+        case LF:
+            _end_of_line = QByteArray("\n", 1);
+            break;
+        case CRLF:
+            _end_of_line = QByteArray("\r\n", 2);
+            break;
+        case None:
+            _end_of_line.clear();
+            break;
+        default:
+            Q_ASSERT_X(false, "MainWindow::handleEOLCharChanged",
+                       "unknown EOL char value: " + ui->eolCombo->currentData().toInt());
+            break;
+    }
 }

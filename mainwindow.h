@@ -34,6 +34,20 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+public:
+
+    /**
+     * \brief different end of line char(s) that can be appended
+     * to every line sent to the serial port
+     */
+    enum EndOfLineChar
+    {
+        None    = 0,    /// none, line is sent as-is
+        LF      = 1,    /// LineFeed:       [0x0a]
+        CR      = 2,    /// CarriageReturn: [0x0d]
+        CRLF    = 3     /// CR + LF:        [0x0d, 0x0a]
+    };
+
 private:
     Ui::MainWindow      *ui;
     SessionManager      *session_mgr;
@@ -44,6 +58,7 @@ private:
     QToolButton         *search_prev_button;
     QToolButton         *search_next_button;
     QProgressDialog     *progress_dialog;
+    QByteArray          _end_of_line;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -121,6 +136,12 @@ private:
      * \param percent transfer current progression
      */
     void handleFileTransferProgressed(int percent);
+
+    /**
+     * \brief handle currentIndexChanged for end of line char combobox
+     * \param index index os selected item
+     */
+    void handleEOLCharChanged(int index);
 };
 
 #endif // MAINWINDOW_H
