@@ -405,6 +405,8 @@ void MainWindow::handleTotalOccurencesChanged(int total_occurences)
 
 void MainWindow::handleEOLCharChanged(int index)
 {
+    Q_UNUSED(index)
+
     switch(ui->eolCombo->currentData().toInt())
     {
         case CR:
