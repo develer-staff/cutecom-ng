@@ -98,32 +98,14 @@ contributing
 
 ### Issues
 
-you can create issues
- [here](https://github.com/develersrl/cutecom-ng/issues/new)
+Don't hesitate to create issue
+[here](https://github.com/develersrl/cutecom-ng/issues/new)
 
-but before doing that,
- - please check [there](https://github.com/develersrl/cutecom-ng/issues) that a
- similar issue doesn't already exist
- - include as many details as you can possibly get,
- - a reproducible test case would be perfect
-
-### Pull-requests:
-
-#### git commit messages
-- use the present tense ("Add feature" not "Added feature")
-- use imperative ("Close serial port" not "Closes serial port")
-- limit the first line to 72 characters or less
-
-#### coding style
-- keep the same coding style as the file in which you are adding/removing code
-(tabs/spaces, indentation, etc.)
-- if your pull-request adds a new source file, it should have the same coding
-style as `MainWindow.cpp`
-- end of line are linux-style
+include as many details as you can possibly get
 
 ## Credits
 
-People and project deserving credits are listed in... [CREDITS](./CREDITS)
+People and project deserving credits are listed in [CREDITS](./CREDITS)
 
 ## License
 
