@@ -112,7 +112,12 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
     // configure port
 #if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0)) && defined(Q_OS_MAC)
     // connection error on MacOsX if port name is set with setPortName instead
-    // of setPort (issue #7)
+    // of setPort
+    // issues:
+    // - https://github.com/develersrl/cutecom-ng/issues/7
+    // - https://github.com/develersrl/cutecom-ng/issues/17
+    // QT bug correction:
+    // - https://codereview.qt-project.org/#/c/108571/
     // on OSX, versions prior to Qt5.5 do not prepend device path to device name
     serial->setPort(QSerialPortInfo(port_cfg[QStringLiteral("device")]));
 #else
