@@ -141,8 +141,9 @@ void MainWindow::handleSessionOpened()
     ui->connectButton->setDisabled(true);
     ui->disconnectButton->setEnabled(true);
 
-    // enable file transfer
+    // enable file transfer and input line
     ui->fileTransferButton->setEnabled(true);
+    ui->inputBox->setEnabled(true);
 }
 
 void MainWindow::handleSessionClosed()
@@ -150,8 +151,9 @@ void MainWindow::handleSessionClosed()
     ui->connectButton->setEnabled(true);
     ui->disconnectButton->setDisabled(true);
 
-    // disable file transfer
+    // disable file transfer and input line
     ui->fileTransferButton->setDisabled(true);
+    ui->inputBox->setDisabled(true);
 }
 
 void MainWindow::handleFileTransfer()
