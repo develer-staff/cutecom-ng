@@ -52,6 +52,7 @@ deploy:
     auth_token:
       secure: lziQJPVKc595Bs7w+GK1ES3BeVA64EX4A5Gt70NHh4ezkLZYk2HR4SuBwLC14cWD
     draft: true
+    skip_tags: true
     on:
       branch: master
       appveyor_repo_tag: true       # deploy on tag push only
