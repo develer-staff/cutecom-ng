@@ -1,0 +1,60 @@
+os: MinGW
+init:
+  - git config --global core.autocrlf input
+
+build:
+  verbosity: minimal
+
+environment:
+  QTDIR: C:\Qt\5.4\mingw491_32
+  TARGET: cutecom-ng
+
+configuration: Release
+
+install:
+  - set PATH="C:\Program Files\7-Zip";%PATH%
+  - set PATH=%QTDIR%\bin;C:\MinGW\bin;%PATH%
+
+before_build:
+  - qmake cutecom-ng.pro
+  - ps: $env:RELEASE = $env:TARGET + ".win." + $env:APPVEYOR_BUILD_VERSION
+  - ps: $env:ZIP_RELEASE = $env:RELEASE + ".zip"
+
+build_script:
+  - mingw32-make -j8
+  - windeployqt %APPVEYOR_BUILD_FOLDER%\bin\cutecom-ng.exe
+  # add missing libwinpthread-1.dll
+  - copy /Y %QTDIR%\bin\libwinpthread-1.dll %APPVEYOR_BUILD_FOLDER%\bin
+
+after_build:
+  - rename %APPVEYOR_BUILD_FOLDER%\bin %RELEASE% 
+  - 7z a %ZIP_RELEASE% %RELEASE%
+
+artifacts:
+  - path: $(ZIP_RELEASE)
+    name: ZipRelease
+
+deploy:
+
+  - provider: GitHub
+    artifact: ZipRelease
+    auth_token:
+      secure: lziQJPVKc595Bs7w+GK1ES3BeVA64EX4A5Gt70NHh4ezkLZYk2HR4SuBwLC14cWD
+    prerelease: true
+    release: latest
+    description: "Automatic build of latest master branch."
+    on:
+      branch: master
+
+  # Deploy to GitHub Releases only for tag builds
+  - provider: GitHub
+    artifact: ZipRelease
+    auth_token:
+      secure: lziQJPVKc595Bs7w+GK1ES3BeVA64EX4A5Gt70NHh4ezkLZYk2HR4SuBwLC14cWD
+    draft: true
+    on:
+      branch: master
+      appveyor_repo_tag: true       # deploy on tag push only
+
+# version visible in AppVeyor dashboard only, not correlated with github
+version: "{build}-{branch}"
