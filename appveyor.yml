@@ -39,7 +39,7 @@ deploy:
   - provider: GitHub
     artifact: ZipRelease
     auth_token:
-      secure: lziQJPVKc595Bs7w+GK1ES3BeVA64EX4A5Gt70NHh4ezkLZYk2HR4SuBwLC14cWD
+      secure: DP+lbxV/P0SXFccQVIJe0u9Nni6jRs9xxx4JW6Mp9z4DWZIoYZSYnGCCDw2q37Et
     prerelease: true
     release: latest
     description: "Automatic build of latest master branch."
@@ -50,7 +50,7 @@ deploy:
   - provider: GitHub
     artifact: ZipRelease
     auth_token:
-      secure: lziQJPVKc595Bs7w+GK1ES3BeVA64EX4A5Gt70NHh4ezkLZYk2HR4SuBwLC14cWD
+      secure: DP+lbxV/P0SXFccQVIJe0u9Nni6jRs9xxx4JW6Mp9z4DWZIoYZSYnGCCDw2q37Et
     draft: true
     skip_tags: true
     on:
