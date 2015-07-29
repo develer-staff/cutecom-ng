@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/079twee8wyvhamp5?svg=true)](https://ci.appveyor.com/project/aurelien-rainone/cutecom-ng)
+
 # Cutecom-ng #
 
 Cutecom-ng is a graphical serial port terminal,<br>

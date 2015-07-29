@@ -10,8 +10,13 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = cutecom-ng
 TEMPLATE = app
-
+DESTDIR = bin
 INCLUDEPATH += libs
+
+OBJECTS_DIR = .generated/
+MOC_DIR = .generated/
+RCC_DIR = .generated/
+UI_DIR = .generated/
 
 SOURCES += main.cpp\
         mainwindow.cpp \
