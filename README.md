@@ -17,9 +17,9 @@ Cutecom-ng is a graphical serial port terminal,<br>
 
 ## Installation
 
-**download the zip**
+### Windows
 
-*TODO*
+ Download zip file [here](https://github.com/develersrl/cutecom-ng/releases)
 
 **OR**
 
@@ -88,6 +88,7 @@ If all goes well, a copy of `myfile` named `filename` should be created in the
 directory you were when you opened the screen session.
 
 :exclamation: Warning, if filename exists it will be overwritten
+
 
 ## Contribute
 
