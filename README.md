@@ -89,6 +89,14 @@ directory you were when you opened the screen session.
 
 :exclamation: Warning, if filename exists it will be overwritten
 
+### more fun with socat :
+
+#### use cutecom-ng as a shell terminal :
+do
+```
+socat -d -d pty,raw,echo=1 SYSTEM:"/bin/bash"
+```
+and connect cutecom-ng to the PTY created by socat
 
 ## Contribute
 
