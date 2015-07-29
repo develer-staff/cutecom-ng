@@ -111,10 +111,18 @@ void SessionManager::openSession(const QHash<QString, QString>& port_cfg)
 
     // configure port
 #if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0)) && defined(Q_OS_MAC)
-    // connection error on MacOsX if port name is set with setPortName instead
-    // of setPort (issue #7)
-    // on OSX, versions prior to Qt5.5 do not prepend device path to device name
-    serial->setPort(QSerialPortInfo(port_cfg[QStringLiteral("device")]));
+    // 'device not found' error on MacOsX when we try to open port
+    // after calling setPortName with a full device name (eg: /dev/ttyUSB01)
+
+    // issues:
+    // - https://github.com/develersrl/cutecom-ng/issues/7
+    // - https://github.com/develersrl/cutecom-ng/issues/17
+    // this is a QSerialPort bug, corrected for Qt > 5.5:
+    // - https://codereview.qt-project.org/#/c/108571/
+    if (port_cfg[QStringLiteral("device")].contains('/'))
+        serial->setPortName(port_cfg[QStringLiteral("device")]);
+    else
+        serial->setPort(QSerialPortInfo(port_cfg[QStringLiteral("device")]));
 #else
     // tested on linux and windows
     // and this is necessary to make QSerialPort work with pseudo
