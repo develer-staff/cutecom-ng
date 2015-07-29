@@ -48,16 +48,6 @@ artifacts:
     name: ZipRelease
 
 deploy:
-  - provider: GitHub
-    artifact: ZipRelease
-    auth_token:
-      secure: DP+lbxV/P0SXFccQVIJe0u9Nni6jRs9xxx4JW6Mp9z4DWZIoYZSYnGCCDw2q37Et
-    prerelease: true
-    release: latest
-    description: "Automatic build of latest master branch."
-    on:
-      branch: master
-
   # Deploy to GitHub Releases only for tag builds
   - provider: GitHub
     artifact: ZipRelease
@@ -68,3 +58,22 @@ deploy:
     on:
       branch: master
       appveyor_repo_tag: true       # deploy on tag push only
+
+  # Deploy to 'latest' GitHub Releases for every push
+# commented the 'latest' release because of the naming problem :
+# github won't accept multiple  releases with same name under same tag (latest)
+# solution to implement : 
+#      # when and if artifact has been created successfully,
+#      # remove previous $env:ZIP_RELEASE from github (on latest tag)
+# there is MAYBE a way to do this directly on github, with a webhook, though
+# i'm not sure about that
+#   
+#  - provider: GitHub
+#    artifact: ZipRelease
+#    auth_token:
+#      secure: DP+lbxV/P0SXFccQVIJe0u9Nni6jRs9xxx4JW6Mp9z4DWZIoYZSYnGCCDw2q37Et
+#    prerelease: true
+#     release: latest
+#    description: "Automatic build of latest master branch."
+#    on:
+#      branch: master
