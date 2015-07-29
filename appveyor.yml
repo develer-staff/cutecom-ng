@@ -51,9 +51,7 @@ deploy:
   - provider: GitHub
     artifact: ZipRelease
     auth_token:
-      secure: qTpbgWuGB+yNCAmJGQ6O5Ir6iI1F1N9Ty71lDjwqCFjjk2itXW+cxCh/Csdg/u6z
-      # develersrl token
-      #secure: DP+lbxV/P0SXFccQVIJe0u9Nni6jRs9xxx4JW6Mp9z4DWZIoYZSYnGCCDw2q37Et
+      secure: DP+lbxV/P0SXFccQVIJe0u9Nni6jRs9xxx4JW6Mp9z4DWZIoYZSYnGCCDw2q37Et
     prerelease: true
     release: latest
     description: "Automatic build of latest master branch."
@@ -64,9 +62,7 @@ deploy:
   - provider: GitHub
     artifact: ZipRelease
     auth_token:
-      secure: qTpbgWuGB+yNCAmJGQ6O5Ir6iI1F1N9Ty71lDjwqCFjjk2itXW+cxCh/Csdg/u6z
-      # develersrl token
-      #secure: DP+lbxV/P0SXFccQVIJe0u9Nni6jRs9xxx4JW6Mp9z4DWZIoYZSYnGCCDw2q37Et
+      secure: DP+lbxV/P0SXFccQVIJe0u9Nni6jRs9xxx4JW6Mp9z4DWZIoYZSYnGCCDw2q37Et
     draft: true
     skip_tags: true
     on:
