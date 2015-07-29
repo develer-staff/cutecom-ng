@@ -1,4 +1,7 @@
-os: MinGW
+# version visible in AppVeyor dashboard only, not correlated with github
+version: "{build}-{branch}"
+platform: x86
+
 init:
   - git config --global core.autocrlf input
 
@@ -7,16 +10,19 @@ build:
 
 environment:
   QTDIR: C:\Qt\5.4\mingw491_32
+  MINGW: C:\Qt\Tools\mingw491_32
   TARGET: cutecom-ng
 
 configuration: Release
 
 install:
-  - set PATH="C:\Program Files\7-Zip";%PATH%
-  - set PATH=%QTDIR%\bin;C:\MinGW\bin;%PATH%
+  # add Qt, MinGW and 7z to the PATH
+  - set PATH=%PATH%;%QTDIR%\bin;%MINGW%\bin
+  - set PATH=%PATH%;"C:\Program Files\7-Zip"
 
 before_build:
   - qmake cutecom-ng.pro
+  # generate name for releases
   - ps: $env:RELEASE = $env:TARGET + ".win." + $env:APPVEYOR_BUILD_VERSION
   - ps: $env:ZIP_RELEASE = $env:RELEASE + ".zip"
 
@@ -56,6 +62,3 @@ deploy:
     on:
       branch: master
       appveyor_repo_tag: true       # deploy on tag push only
-
-# version visible in AppVeyor dashboard only, not correlated with github
-version: "{build}-{branch}"
