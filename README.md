@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/079twee8wyvhamp5?svg=true)](https://ci.appveyor.com/project/aurelien-rainone/cutecom-ng)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/develersrl/cutecom-ng)](https://ci.appveyor.com/project/develer/cutecom-ng)
 
 # Cutecom-ng #
 
