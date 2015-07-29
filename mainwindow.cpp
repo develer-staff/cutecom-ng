@@ -115,9 +115,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(session_mgr, &SessionManager::fileTransferEnded, this, &MainWindow::handleFileTransferEnded);
 
     // fill end of line chars combobox
-    ui->eolCombo->addItem(QStringLiteral("CR \'\\r\'"), CR);
-    ui->eolCombo->addItem(QStringLiteral("LF \'\\n\'"), LF);
-    ui->eolCombo->addItem(QStringLiteral("CR+LF \'\\r\\n\'"), CRLF);
+    ui->eolCombo->addItem(QStringLiteral("CR"), CR);
+    ui->eolCombo->addItem(QStringLiteral("LF"), LF);
+    ui->eolCombo->addItem(QStringLiteral("CR+LF"), CRLF);
     ui->eolCombo->addItem(QStringLiteral("None"), None);
     ui->eolCombo->currentData(LF);
     _end_of_line = QByteArray("\n", 1);
