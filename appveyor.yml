@@ -1,5 +1,5 @@
 # version visible in AppVeyor dashboard only, not correlated with github
-version: "{build}-{branch}"
+version: "v0.1.{build}"
 platform: x86
 
 init:
@@ -23,7 +23,14 @@ install:
 before_build:
   - qmake cutecom-ng.pro
   # generate name for releases
-  - ps: $env:RELEASE = $env:TARGET + ".win." + $env:APPVEYOR_BUILD_VERSION
+  - ps: >-
+      if($env:APPVEYOR_REPO_TAG -eq 'true') {
+        # tag build: concat executable name with tagname
+        $env:RELEASE = $env:TARGET + ".win-" + $env:APPVEYOR_REPO_TAG_NAME
+      } else {
+        # commit build: concat executable name with 'latest'
+        $env:RELEASE = $env:TARGET + ".win-latest"
+      }
   - ps: $env:ZIP_RELEASE = $env:RELEASE + ".zip"
 
 build_script:
