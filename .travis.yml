@@ -1,17 +1,40 @@
 sudo: required
+
 before_install:
-    - sudo add-apt-repository --yes ppa:beineri/opt-qt541
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq qt54base qt54serialport qt54tools
-    - source /opt/qt54/bin/qt54-env.sh
-    - gem install fpm
+- sudo add-apt-repository --yes ppa:beineri/opt-qt541
+- sudo apt-get update -qq
+- sudo apt-get install -qq qt54base qt54serialport qt54tools
+- sudo apt-get install -qq chrpath
+- source /opt/qt54/bin/qt54-env.sh
+- gem install fpm
+
 script:
-    - qmake -v
-    - qmake
-    - make
-    - ldd bin/cutecom-ng
-    - cp deploy/linux/* bin/
-    - cp /opt/qt54/lib/libQt5{SerialPort,Widgets,Gui,Core}.so.5 bin/
-    - ls -l bin/
-    - fpm -s dir -t deb -n cutecom-ng -v 0.1 --prefix /opt/cutecom-ng bin/
-    - dpkg --contents *.deb
+- cat /etc/issue
+- qmake -v
+- qmake
+- make
+- ldd bin/cutecom-ng
+- cp deploy/linux/* bin/
+- cp /opt/qt54/lib/libQt5{SerialPort,Widgets,Gui,Core}.so.5 bin/
+- ls -l bin/
+- chrpath -r \$ORIGIN bin/cutecom-ng
+- chrpath bin/cutecom-ng
+- fpm -s dir -t deb -n cutecom-ng -v 0.1 --prefix /opt/cutecom-ng bin/
+- dpkg --contents *.deb
+
+before_deploy:
+  - export RELEASE_PKG_FILE=$(ls *.deb)
+  - echo "deploying $RELEASE_PKG_FILE to GitHub releases"
+
+deploy:
+  provider: releases
+  api_key: $GH_OAUTH_TOKEN
+  file_glob: true
+  file: "${RELEASE_PKG_FILE}"
+  skip_cleanup: true
+  on:
+    tags: true
+
+env:
+  global:
+    secure: Ft5430SqJlZycAStoOHYnACvFxE27r/OODgSAfbFSCNAX7ibLL0YV7N5/TzVJiQHmEorUSM3cOVoZRY7h0A7tTfFvL0NUNW3iPjzyi1XzI5Ru6+pKEyCM41MXKiYpq+jC5MtGYoi5oyz0ICd2hICHoOYu0pwXQjopS+gkV1Q9s8GaTgYloANS8zReR6+3zEMw/LfbuUevN37Y4lqcq3kLY7Uhtkogkk66tVt5+5v4ie85JUlMCByDbxkmZjbFtq1lm9/EcCuRKsvc0kW03lZyzTKcqIFgmkZogX7FPK86HNS5RGc6wJ4nmU35XGCXC+DvAHirupOZoLEPsV2pAPBqJd4PY7zPpvBfpq84Kxfdcj9VYK87CNLCnlTQzzSJm7iRjn+4lxx5nRo0aX2ru+d3/1DwA7BTUfBlgOmsb4H65znp4DBL4WjbiH1IqyTHtZ51bGX8l5hVhN9Rg6AYQ22HQh1qmPdvRQyzMyjIE7oeQDOysoPVUcraAPFKN3cv7GYIL9kusxJrKFiYW5MieSNO08nngueLav+sN59DeeImi5H8vwoRv41qI4rvqTcyt4+gOszk4OY1JfZQGlkTvnN9wa35FOJpGy6syQzKvh32TxfRzB6L3rnA8Gb7aBMpWIO4bb/18grNTraQcc0IZBlnWwSHUCmjJiHFznGlQVUFUE=
