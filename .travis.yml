@@ -4,7 +4,7 @@ before_install:
 - sudo add-apt-repository --yes ppa:beineri/opt-qt541
 - sudo apt-get update -qq
 - sudo apt-get install -qq qt54base qt54serialport qt54tools
-- sudo apt-get install -qq chrpath
+# sudo apt-get install -qq chrpath
 - source /opt/qt54/bin/qt54-env.sh
 - gem install fpm
 
@@ -15,11 +15,12 @@ script:
 - make
 - ldd bin/cutecom-ng
 - cp deploy/linux/* bin/
-- cp /opt/qt54/lib/libQt5{SerialPort,Widgets,Gui,Core}.so.5 bin/
+# cp /opt/qt54/lib/libQt5{SerialPort,Widgets,Gui,Core}.so.5 bin/
 - ls -l bin/
-- chrpath -r \$ORIGIN bin/cutecom-ng
-- chrpath bin/cutecom-ng
-- fpm -s dir -t deb -n cutecom-ng -v 0.1 --prefix /opt/cutecom-ng bin/
+# chrpath -r \$ORIGIN bin/cutecom-ng
+# chrpath bin/cutecom-ng
+# fpm -s dir -t deb -n cutecom-ng -v 0.1 --prefix /opt/cutecom-ng bin/
+- fpm -s dir -t deb -n cutecom-ng -v 0.1 -d libqt5serialport5 -d libqt5widgets5 -d libqt5core5a -d libqt5gui5 bin/
 - dpkg --contents *.deb
 
 before_deploy:
