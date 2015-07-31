@@ -1,6 +1,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/github/develersrl/cutecom-ng)](https://ci.appveyor.com/project/develer/cutecom-ng)
 
-[![Build status](https://travis-ci.org/aurelien-rainone/cutecom-ng.svg?branch=master)](https://travis-ci.org/develersrl/cutecom-ng)
+[![Build status](https://travis-ci.org/develersrl/cutecom-ng.svg?branch=master)](https://travis-ci.org/develersrl/cutecom-ng)
 
 # Cutecom-ng #
 
