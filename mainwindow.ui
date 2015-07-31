@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>950</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,48 +24,16 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QToolButton" name="connectButton">
-        <property name="minimumSize">
-         <size>
-          <width>70</width>
-          <height>30</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>13</pointsize>
-         </font>
-        </property>
+       <widget class="QPushButton" name="connectButton">
         <property name="text">
          <string>Connect</string>
         </property>
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Minimum</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>10</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QToolButton" name="disconnectButton">
+       <widget class="QPushButton" name="disconnectButton">
         <property name="enabled">
          <bool>false</bool>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>13</pointsize>
-         </font>
         </property>
         <property name="text">
          <string>Disconnect</string>
@@ -102,24 +70,14 @@
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="clearButton">
-        <property name="font">
-         <font>
-          <pointsize>13</pointsize>
-         </font>
-        </property>
+       <widget class="QPushButton" name="clearButton">
         <property name="text">
          <string>Clear</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="searchButton">
-        <property name="font">
-         <font>
-          <pointsize>13</pointsize>
-         </font>
-        </property>
+       <widget class="QPushButton" name="searchButton">
         <property name="text">
          <string>Search</string>
         </property>
@@ -141,8 +99,8 @@
       <widget class="QPlainTextEdit" name="mainOutput">
        <property name="font">
         <font>
-         <family>Monospace</family>
-         <pointsize>9</pointsize>
+         <family>Courier</family>
+         <pointsize>10</pointsize>
         </font>
        </property>
        <property name="readOnly">
@@ -152,8 +110,8 @@
       <widget class="QPlainTextEdit" name="bottomOutput">
        <property name="font">
         <font>
-         <family>Monospace</family>
-         <pointsize>9</pointsize>
+         <family>Courier</family>
+         <pointsize>10</pointsize>
         </font>
        </property>
        <property name="focusPolicy">
@@ -222,8 +180,11 @@
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <item>
-       <widget class="QToolButton" name="fileTransferButton">
+       <widget class="QPushButton" name="fileTransferButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -234,6 +195,9 @@
       </item>
       <item>
        <widget class="QComboBox" name="protocolCombo">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -275,6 +239,22 @@
        </widget>
       </item>
       <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Minimum</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>10</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <widget class="QComboBox" name="eolCombo">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -312,7 +292,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
