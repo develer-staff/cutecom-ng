@@ -19,6 +19,7 @@
 #include <QFileDialog>
 #include <QProgressDialog>
 #include <QMessageBox>
+#include <QPushButton>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -61,14 +62,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(session_mgr, &SessionManager::sessionClosed, this, &MainWindow::handleSessionClosed);
 
     // clear both output text when 'clear' is clicked
-    connect(ui->clearButton, &QToolButton::clicked, ui->mainOutput, &QPlainTextEdit::clear);
-    connect(ui->clearButton, &QToolButton::clicked, ui->bottomOutput, &QPlainTextEdit::clear);
+    connect(ui->clearButton, &QPushButton::clicked, ui->mainOutput, &QPlainTextEdit::clear);
+    connect(ui->clearButton, &QPushButton::clicked, ui->bottomOutput, &QPlainTextEdit::clear);
 
     // connect open/close session slots
     connect(connect_dlg, &ConnectDialog::openDeviceClicked, session_mgr, &SessionManager::openSession);
-    connect(ui->disconnectButton, &QToolButton::clicked, session_mgr, &SessionManager::closeSession);
+    connect(ui->disconnectButton, &QPushButton::clicked, session_mgr, &SessionManager::closeSession);
 
-    connect(ui->splitOutputBtn, &QToolButton::clicked, this, &MainWindow::toggleOutputSplitter);
+    connect(ui->splitOutputBtn, &QPushButton::clicked, this, &MainWindow::toggleOutputSplitter);
 
     // load search widget and hide it
     QUiLoader loader;
@@ -91,15 +92,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(search_input, &QLineEdit::textChanged, search_highlighter_bottom, &SearchHighlighter::setSearchString);
 
     // connect search-related signals/slots
-    connect(search_prev_button, &QToolButton::clicked,
+    connect(search_prev_button, &QPushButton::clicked,
 	search_highlighter_main, &SearchHighlighter::previousOccurence);
-    connect(search_next_button, &QToolButton::clicked,
+    connect(search_next_button, &QPushButton::clicked,
 	search_highlighter_main, &SearchHighlighter::nextOccurence);
     connect(search_highlighter_main, &SearchHighlighter::cursorPosChanged,
 	this, &MainWindow::handleCursosPosChanged);
     connect(search_highlighter_main, &SearchHighlighter::totalOccurencesChanged,
 	this, &MainWindow::handleTotalOccurencesChanged);
-    connect(ui->searchButton, &QToolButton::toggled, this, &MainWindow::showSearchWidget);
+    connect(ui->searchButton, &QPushButton::toggled, this, &MainWindow::showSearchWidget);
 
     // additional configuration for bottom output
     ui->bottomOutput->hide();
@@ -111,7 +112,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->protocolCombo->addItem("ZModem", SessionManager::ZMODEM);
 
     // transfer file over XModem protocol
-    connect(ui->fileTransferButton, &QToolButton::clicked, this, &MainWindow::handleFileTransfer);
+    connect(ui->fileTransferButton, &QPushButton::clicked, this, &MainWindow::handleFileTransfer);
     connect(session_mgr, &SessionManager::fileTransferEnded, this, &MainWindow::handleFileTransferEnded);
 
     // fill end of line chars combobox
