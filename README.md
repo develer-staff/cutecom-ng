@@ -22,9 +22,34 @@ Cutecom-ng is a graphical serial port terminal,<br>
 
 ## Installation
 
+### Linux
+
+#### Debian based distributions (eg: Ubuntu, Mint, ...)
+
+ 1. download the debian package file [here](https://github.com/develersrl/cutecom-ng/releases)
+
+ 2. ```sudo dpkg -i cutecom-ng_0.5_amd64.deb``` <br>
+
+ 3. if dpkg complains about some missing dependencies, run:
+
+```sudo apt-get -f install```
+or install them yourself
+
+#### Distributions without debian package management
+
+**build the release yourself**
+
+ 1. download / install Qt5 and the QSerialPort add-on
+
+ 2. clone cutecom-ng repository:  
+ ```git clone https://github.com/develersrl/cutecom-ng```
+
+ 3. open ./cutecom-ng/cutecom-ng.pro with QtCreator
+ 4. build
+
 ### Windows
 
- Download zip file [here](https://github.com/develersrl/cutecom-ng/releases)
+ Download zip containing binaries [here](https://github.com/develersrl/cutecom-ng/releases)
 
 **OR**
 
@@ -32,7 +57,7 @@ Cutecom-ng is a graphical serial port terminal,<br>
 
  1. download / install Qt5 and the QSerialPort add-on
 
- 2. clone the repository  
+ 2. clone cutecom-ng repository:  
  ```git clone https://github.com/develersrl/cutecom-ng```
 
  3. open ./cutecom-ng/cutecom-ng.pro with QtCreator
