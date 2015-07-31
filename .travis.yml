@@ -1,23 +1,22 @@
+os:
+  - linux
+  - osx
+
 sudo: required
 
+language: cpp
+
 before_install:
-- sudo add-apt-repository --yes ppa:beineri/opt-qt541
-- sudo apt-get update -qq
-- sudo apt-get install -qq qt54base qt54serialport qt54tools
-- source /opt/qt54/bin/qt54-env.sh
-- gem install fpm
+# see here: https://github.com/numenta/nupic/blob/master/.travis.yml
+- "if [ ${TRAVIS_OS_NAME} = 'linux' ]; then . ./ci/travis/before_install-linux.sh; fi"
+- "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then . ./ci/travis/before_install-osx.sh; fi"
 
 script:
-- qmake -v
-- qmake
-- make
-- ldd bin/cutecom-ng
+- "if [ ${TRAVIS_OS_NAME} = 'linux' ]; then . ./ci/travis/script-linux.sh; fi"
+- "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then . ./ci/travis/script-osx.sh; fi"
 
 before_deploy:
-- fpm -s dir -t deb -n cutecom-ng -v "$TRAVIS_TAG" -d libqt5serialport5 -d libqt5widgets5 -d libqt5core5a -d libqt5gui5 bin/
-- dpkg --contents *.deb
-- export RELEASE_PKG_FILE=$(ls *.deb)
-- echo "deploying $RELEASE_PKG_FILE to GitHub releases"
+- "if [ ${TRAVIS_OS_NAME} = 'linux' ]; then . ./ci/travis/before_deploy-linux.sh; fi"
 
 deploy:
   provider: releases
