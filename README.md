@@ -11,6 +11,7 @@ Cutecom-ng is a graphical serial port terminal,<br>
 [![Cutecom-ng screenshot](cutecom-ng.screenshot.png)]
 ## Features
 
+ - serial ports auto-detection
  - readline-like history for sent commands
  - splittable terminal window for easy browsing
  - handy search feature
