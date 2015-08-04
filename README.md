@@ -6,9 +6,12 @@ Cutecom-ng is a graphical serial port terminal,<br>
 &nbsp;&nbsp;running on Linux/Mac OSX and Windows,<br>
 &nbsp;&nbsp;written in Qt5
 
+## Screenshot
 
+![Cutecom-ng screenshot](cutecom-ng.screenshot.png)
 ## Features
 
+ - serial ports auto-detection
  - readline-like history for sent commands
  - splittable terminal window for easy browsing
  - handy search feature
