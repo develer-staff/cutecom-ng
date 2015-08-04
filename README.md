@@ -8,7 +8,7 @@ Cutecom-ng is a graphical serial port terminal,<br>
 
 ## Screenshot
 
-[![Cutecom-ng screenshot](cutecom-ng.screenshot.png)]
+![Cutecom-ng screenshot](cutecom-ng.screenshot.png)
 ## Features
 
  - serial ports auto-detection
