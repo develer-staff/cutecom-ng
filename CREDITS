@@ -9,3 +9,6 @@ License (BSD) http://www.menie.org/georges/embedded/#xmodem
 
 Project: xmodem-1k https://github.com/kelvinlawson/xmodem-1k
 License (BSD) https://github.com/kelvinlawson/xmodem-1k
+
+Greetings and special thanks to Qt experts Lorenzo Mancini and Gianni Valdambrini,
+that guided me through the development of cutecom-ng during my Qt formation at Develer
