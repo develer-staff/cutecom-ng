@@ -5,7 +5,7 @@
 # Cutecom-ng #
 
 Cutecom-ng is a graphical serial port terminal,<br>
-&nbsp;&nbsp;running on Linux/Mac OSX and Windows,<br>
+&nbsp;&nbsp;available for all major platforms (Linux, Mac OSX and Windows),<br>
 &nbsp;&nbsp;written in Qt5
 
 ## Screenshot
@@ -13,7 +13,7 @@ Cutecom-ng is a graphical serial port terminal,<br>
 ![Cutecom-ng screenshot](cutecom-ng.screenshot.png)
 ## Features
 
- - serial ports auto-detection
+ - auto-detection of serial ports
  - readline-like history for sent commands
  - splittable terminal window for easy browsing
  - handy search feature
@@ -24,46 +24,51 @@ Cutecom-ng is a graphical serial port terminal,<br>
 
 ## Installation
 
-### Linux
+**Cutecom-ng** binaries are available for **Linux**, **Windows** and **Mac OSX**
 
-#### Debian based distributions (eg: Ubuntu, Mint, ...)
+### Download pre-built binaries
 
- 1. download the debian package file [here](https://github.com/develersrl/cutecom-ng/releases)
+They are all available [here](https://github.com/develersrl/cutecom-ng/releases)
 
- 2. ```sudo dpkg -i cutecom-ng_0.5_amd64.deb``` <br>
+ - **deb package** for debian based **Linux** flavors
+ - **dmg archive** for **Mac OSX**
+ - **zip file** with binaries for **Windows**
 
- 3. if dpkg complains about some missing dependencies, run:
+#### Debian based distributions: Ubuntu, Mint, etc.
+
+1. download the debian package file [here](https://github.com/develersrl/cutecom-ng/releases)
+
+2. ```sudo dpkg -i cutecom-ng_0.5_amd64.deb``` <br>
+
+3. if dpkg complains about some missing dependencies, run:
 
 ```sudo apt-get -f install```
 or install them yourself
 
+#### Mac OSX
+
+Install **cutecom-ng.dmg**
+
+#### Windows
+
+Extract zip content where you want
+
+
 #### Distributions without debian package management
 
-**build the release yourself**
+Follow the steps in *Build the release yourself*
 
- 1. download / install Qt5 and the QSerialPort add-on
+### Build the release yourself
 
- 2. clone cutecom-ng repository:  
- ```git clone https://github.com/develersrl/cutecom-ng```
+If you want the latest cutecom-ng improvements, not yet available in a pre-built binary, or if your pre-built binaries are not available for your platform
 
- 3. open ./cutecom-ng/cutecom-ng.pro with QtCreator
- 4. build
+1. download / install Qt5 and the QSerialPort add-on
 
-### Windows
+2. clone cutecom-ng repository:  
+```git clone https://github.com/develersrl/cutecom-ng```
 
- Download zip containing binaries [here](https://github.com/develersrl/cutecom-ng/releases)
-
-**OR**
-
-**build the release yourself**
-
- 1. download / install Qt5 and the QSerialPort add-on
-
- 2. clone cutecom-ng repository:  
- ```git clone https://github.com/develersrl/cutecom-ng```
-
- 3. open ./cutecom-ng/cutecom-ng.pro with QtCreator
- 4. build
+3. open ./cutecom-ng/cutecom-ng.pro with QtCreator
+4. build
 
 ## Usage / Tips
 
@@ -146,7 +151,7 @@ include as many details as you can possibly get
 
 ## Credits
 
-People and project deserving credits are listed in [CREDITS](./CREDITS)
+People and projects deserving credits are listed in [CREDITS](./CREDITS)
 
 ## License
 
