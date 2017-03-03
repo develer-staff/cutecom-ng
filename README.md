@@ -135,19 +135,11 @@ socat -d -d pty,raw,echo=1 SYSTEM:"/bin/bash"
 ```
 and connect cutecom-ng to the PTY created by socat
 
-## Contribute
+## Contributions/Bugs
 
-All contributions are welcome!
-
-Please respect the following guidelines when
-contributing
-
-### Issues
-
-Don't hesitate to create issue
-[here](https://github.com/develersrl/cutecom-ng/issues/new)
-
-include as many details as you can possibly get
+All contributions are welcome!  
+Don't hesitate to file an issue in case of bug, including as many details as you 
+can (version, platform, qt version, how to reproduce, ...)
 
 ## Credits
 
